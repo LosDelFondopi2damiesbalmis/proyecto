@@ -54,12 +54,11 @@
 
 [🔝 Volver al índice](#índice-de-meses)
 
-
 ## Leyenda de Códigos
 
-- 🔥 Sesión muy productiva  
-- ⚠️ Sesión con muchos bloqueos  
-- 🎯 Sesión enfocada en objetivos específicos  
-- 🔄 Sesión de refactoring / mejoras  
-- 🐛 Sesión dedicada a debugging  
-- 📚 Sesión de aprendizaje / investigación  
+* 🔥 Sesión muy productiva  
+* ⚠️ Sesión con muchos bloqueos  
+* 🎯 Sesión enfocada en objetivos específicos  
+* 🔄 Sesión de refactoring / mejoras  
+* 🐛 Sesión dedicada a debugging  
+* 📚 Sesión de aprendizaje / investigación  
