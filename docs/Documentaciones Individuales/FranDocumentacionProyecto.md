@@ -1,7 +1,7 @@
 # 💇‍♀️ TPV para Peluquería
 
 ## 1️⃣ Título del Proyecto
-**TPV para Peluquerías**  
+**PeluPOS**  
 Sistema de gestión integral que permite administrar citas, ventas, stock de productos y control de clientes en peluquerías, optimizando la eficiencia del negocio y la atención al cliente.
 
 ---
