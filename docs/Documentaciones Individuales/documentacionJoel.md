@@ -12,7 +12,7 @@ En el sector de la peluquería suele haber mucho descontrol sobre la gestion de 
 2. **Aplicación escritorio para el Gerente(WPF con C# y MVVM):** Una herramienta con acceso total a todas las herramientas de la aplicación como crear clientes, crear proveedores, formas de pago, productos y los servicios de la tienda. Además de tener acceso a todos los datos y el rendimiento general de la empresa.
 3. **Servicio Backend (API Rest con Java):** Gestionara la lógica de la aplicación y la autenticación del usuario mediante JWT y asegurará una comunicación segura con la base de datos.
 
-![Texto alternativo](out/diagram/diagram.svg)
+![pepe](out/diagram/diagram.svg)
 
 ## Planificación Aproximada
 
