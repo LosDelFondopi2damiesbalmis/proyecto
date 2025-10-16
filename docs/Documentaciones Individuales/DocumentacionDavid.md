@@ -12,16 +12,6 @@ En la siguiente tabla se muestra los diferentes casos de uso de nuestra aplicaci
 |**Notificaciones**|Reciben una notificación cuando se han reservado sus servicios|Baja|
 |**Consultar agenda**| Podrán comprobar todas las citas y reservas que tengan a lo largo de la semana | Media |
 
-## Para Clientes (App Móvil)
-
-| Casos de uso | Descripción | Prioridad |
-|-------|--------|-------------------|
-|**Registro de usuario**|Tanto los clientes como los trabajadores podrán registrarse en nuestra app cada uno con sus respectivos permisos|Alta|
-|**Realizar pedidos y pedir citas**| Los clientes podrán reservar citas y comprar productos que se ofrezcan | Alta|
-|**Comprobar el estado del producto/cita**|Comprobar el estado del producto por si hubiera algún percance y se tuviese que cancelar|Alta|
-|**Notificaciones**|Reciben una notificación sobre el estado de la cita (por ejemplo si falta poco para que llegue la fecha)|Baja|
-|**Consultar historial de visitas/compras**| Consultar su historial de citas que han tenido así como sus compras |Media|
-
 ## Para Administradores (App Escritorio)
 
 | Casos de uso | Descripción | Prioridad |
