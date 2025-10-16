@@ -52,9 +52,6 @@ El proyecto TPV para Peluquerías contribuye a varios Objetivos de Desarrollo So
 |-------|--------------|-----------------------------|
 | **Administrador** | Propietario o encargado del negocio. | Gestionar usuarios, citas, productos, ventas, informes y configuración general. |
 | **Empleado** | Personal de peluquería. | Registrar ventas, consultar citas, actualizar inventario y clientes. |
-| **Cliente Registrado** | Usuario con cuenta. | Reservar citas, consultar historial y recibir promociones. |
-| **Cliente No Registrado** | Usuario ocasional. | Consultar servicios y precios, pedir cita rápida. |
-
 ---
 
 ## 1️⃣1️⃣ Organización del Repositorio
