@@ -25,3 +25,5 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |13/10| 1 | Diario Trabajo | 20 min | No vine así que me han explicado un poco qué había que hacer | Escuchar a mis compañeros | Venir a clase
+|16/10| 1 | Documentacion Proyecto | 60 min | Faltaba un compañero así que la organización diría | Repartir tareas | Organización
+
