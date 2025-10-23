@@ -90,6 +90,14 @@ En el sector de la peluquería suele haber mucho descontrol sobre la gestion de 
 
 ## Riesgos y mitigación
 
+| Riesgo | Mitigación |
+|--------|-------------|
+| Integración entre backend y apps (Android/WPF) | Uso de Swagger para documentar la API y realizar pruebas con datos mock antes de la integración. |
+| Complejidad del sistema de autenticación JWT | Taller interno de seguridad + uso de plantilla base o sesiones temporales durante el desarrollo inicial. |
+| Retraso en la integración entre módulos | Aplicación de *feature flags* para desactivar funcionalidades no críticas sin afectar la estabilidad general. |
+| *Scope creep* (ampliación del alcance del proyecto) | Definición clara del MVP y priorización estricta del backlog por sprint. |
+| Falta de experiencia técnica en parte del equipo | Uso de IA para generación de código, resolución de dudas y revisión de buenas prácticas. |
+
 ## Planificación aproximada Sprints
 
 | Sprint | Semanas | Fecha fin | Entregable clave |
