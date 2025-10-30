@@ -25,3 +25,7 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |06/10| 1 | Diario Trabajo | 1 hora | - | - | -
+|13/10| 1 | Inicio de documentación de proyecto | 2 horas |- |- | -
+|16/10| 1 | Documentación proyecto y aprender scrum | 1 hora |- |- | -
+|21/10| 2 | Actividad Scrum hacer aviones | 2 horas | Eramos solo 3 y no sabia hacer aviones | Me dedique a hacer cosas que podía hacer e intentamos ir más rápido| -
+|23/10| 1 | Métrica Scrum de la actividad de los aviones | 1 hora | - | - | -
