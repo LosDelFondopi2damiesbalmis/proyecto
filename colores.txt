@@ -1,0 +1,98 @@
+=======================================================
+PELUPOS — COLOR PALETTE REFERENCE
+Versión: 1.0
+Autora: Eva Puntual
+Uso: Base cromática para Web, WPF (XAML) y Jetpack Compose
+=======================================================
+
+──────────────────────────────
+🌞 LIGHT THEME (Modo claro)
+──────────────────────────────
+
+#5B8DEF   → COLOR PRIMARY
+   Azul suave — color de marca principal y acciones primarias.
+
+#4ECDC4   → COLOR ACCENT
+   Verde menta — acento fresco, usado para éxito o elementos destacados.
+
+#F7F9FC   → COLOR BACKGROUND
+   Fondo general claro, usado en la interfaz base o layouts amplios.
+
+#FFFFFF   → COLOR SURFACE
+   Blanco puro — tarjetas, paneles, contenedores, zonas elevadas.
+
+#E5E9F2   → COLOR BORDER
+   Gris azulado claro — divisores, bordes y contornos suaves.
+
+#2E2E2E   → COLOR TEXT PRIMARY
+   Texto principal, títulos y contenido de alto contraste.
+
+#6E6E6E   → COLOR TEXT SECONDARY
+   Texto secundario, descripciones y placeholders.
+
+#4ECDC4   → COLOR SUCCESS
+   Verde menta — estados correctos o confirmaciones.
+
+#FFB347   → COLOR WARNING
+   Naranja suave — advertencias o alertas leves.
+
+#FF6B6B   → COLOR ERROR
+   Rojo coral — errores, eliminaciones o mensajes críticos.
+
+
+──────────────────────────────
+🌙 DARK THEME (Modo oscuro)
+──────────────────────────────
+
+#6DA9FF   → COLOR PRIMARY (dark)
+   Azul brillante — destaca sobre fondos oscuros.
+
+#4ECDC4   → COLOR ACCENT (dark)
+   Verde menta — mantiene coherencia cromática con el modo claro.
+
+#1C1F26   → COLOR BACKGROUND (dark)
+   Fondo principal del modo oscuro.
+
+#2A2F3A   → COLOR SURFACE (dark)
+   Paneles y tarjetas oscuras, contraste suave.
+
+#3A4151   → COLOR BORDER (dark)
+   Divisores y bordes sobre fondos oscuros.
+
+#FFFFFF   → COLOR TEXT PRIMARY (dark)
+   Texto principal en modo oscuro, alto contraste.
+
+#C8CDD7   → COLOR TEXT SECONDARY (dark)
+   Texto secundario o atenuado en modo oscuro.
+
+#9CE5DC   → COLOR SUCCESS (dark)
+   Verde menta claro — confirmaciones o estados exitosos.
+
+#FFC46D   → COLOR WARNING (dark)
+   Amarillo anaranjado — advertencias.
+
+#FF7B7B   → COLOR ERROR (dark)
+   Rojo claro — errores o acciones destructivas.
+
+
+──────────────────────────────
+🎨 RECOMENDACIONES DE USO
+──────────────────────────────
+
+- Usa siempre la **paleta semántica** (Primary, Accent, Background, etc.)
+  en lugar de códigos hex directos. Esto facilita mantener consistencia.
+
+- En **WPF (XAML)**:
+  Convierte los valores a recursos:
+  <SolidColorBrush x:Key="ColorPrimary" Color="#5B8DEF"/>
+
+- En **Jetpack Compose (Kotlin)**:
+  Usa:
+  val ColorPrimary = Color(0xFF5B8DEF)
+  val ColorBackgroundDark = Color(0xFF1C1F26)
+
+- Mantén los mismos nombres de variables para facilitar portabilidad.
+
+=======================================================
+FIN DEL ARCHIVO — PELUPOS COLOR SYSTEM
+=======================================================
