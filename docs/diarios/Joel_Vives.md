@@ -47,7 +47,7 @@
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
-| *Pendiente* | *—* | *—* | *—* | *—* | *—* | *—* |
+| 06/11 | S1 | Creacion de mapa de navegación | 1h | Pensar sobre como queremos que el usuario interactue con las diferentes pantalls | Hemos pensado una interfaz interactiva con un dashboard para mostrar todos los datos mas relevantes | Hemos aprendido a crear un mapa de navegacion de una aplicacion real |
 
 **Resumen del mes:**  
 
