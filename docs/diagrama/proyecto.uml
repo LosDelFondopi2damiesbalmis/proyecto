@@ -1,0 +1,83 @@
+@startuml
+
+
+' ========================
+' CLASES PRINCIPALES
+' ========================
+
+class Empleado {
+    +id_empleado : bigint
+    +Nombre : text
+    +Telefono : bigint
+    +Email : text
+    +Cargo : text
+    +id_local : bigint
+    +Usuario : Usuario
+    +Servicios : ArrayList<Servicio>
+}
+
+class Usuario {
+    +id_usuario : bigint
+    +Contrasena : varchar
+}
+
+class Cliente {
+    +id_cliente : bigint
+    +Nombre : text
+    +Telefono : bigint
+    +Deuda : double
+    
+
+}
+
+class Local {
+    +id_local : bigint
+    +Nombre : text
+    +Direccion : text
+    +Empleados : ArrayList<Empleado>
+}
+
+class Factura {
+    +id_factura : bigint
+    +Monto : double
+    +Fecha : date
+    +Pendiente : boolean
+    +Tipo_Pago : text
+    +Servicio : Servicio
+    +Producto : Producto
+}
+
+class Producto {
+    +id_producto : bigint
+    +Nombre : text
+    +PrecioCompra : double
+    +PrecioVenta : double
+    +Stock : bigint
+}
+
+class Servicio {
+    +id_servicio : bigint
+    +Nombre : text
+    +Precio : double
+    +Descripcion : text
+}
+
+' ========================
+' RELACIONES UML
+' ========================
+
+' Composición
+Empleado  *-- Usuario : "Composición (Empleado posee Usuario)"
+Factura *-- Producto : "Composición (Factura contiene Productos)"
+Factura *-- Servicio : "Composición (Factura incluye Servicios)"
+
+' Agregación
+Local o-- Empleado : "Agregación (Local agrupa Empleados)"
+Empleado o-- Servicio : "El empleado ejerce el servicio"
+Empleado o-- Factura : "El empleado genera la Factura pero la factura es independiente"
+
+' Asociaciones
+Cliente --> Factura : "Asociación (Cliente realiza Factura)"
+Empleado --> Factura : "Asociación (Empleado emite Factura)"
+
+@enduml
