@@ -67,17 +67,16 @@ class Servicio {
 ' ========================
 
 ' Composición
-Empleado  *-- Usuario : "Composición (Empleado posee Usuario)"
-Factura *-- Producto : "Composición (Factura contiene Productos)"
-Factura *-- Servicio : "Composición (Factura incluye Servicios)"
+Empleado "1"  *-- "1" Usuario : "Composición (Empleado posee Usuario)"
+Factura "1" *-- "1" Producto : "Composición (Factura contiene Productos)"
+Factura "1" *-- "1" Servicio : "Composición (Factura incluye Servicios)"
 
 ' Agregación
-Local o-- Empleado : "Agregación (Local agrupa Empleados)"
-Empleado o-- Servicio : "El empleado ejerce el servicio"
-Empleado o-- Factura : "El empleado genera la Factura pero la factura es independiente"
+Local"1" o-- "*" Empleado : "Agregación (Local agrupa Empleados)"
+Empleado "1" o-- "*" Servicio : "El empleado ejerce el servicio"
+Empleado "1" o-- "*" Factura : "El empleado genera la Factura pero la factura es independiente"
 
 ' Asociaciones
-Cliente --> Factura : "Asociación (Cliente realiza Factura)"
-Empleado --> Factura : "Asociación (Empleado emite Factura)"
+Cliente "1" --> "*" Factura : "Asociación (Cliente realiza Factura)"
 
 @enduml
