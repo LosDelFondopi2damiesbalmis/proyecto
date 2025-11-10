@@ -38,3 +38,4 @@
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |03/11| 2 | Creación del diagrama UML | 2 horas | - | - | -
 |06/11| 1 | Asignación de las relaciones entre clases | 1 hora | - | - | -
+|10/11| 2 | Realización de sprint review, creación de retrospective y sprint planning del sprint 2| 2 horas | - | - | -
