@@ -29,3 +29,5 @@
 |21/10| 3 | Scrum | 60 min | Eramos solo 3 | Repartir tareas | Discutir mejores opciones 
 |27/10| 4 | Definicion de tareas del proyecto | 60 min | ninguno | Hablar sobre los fuertes y débiles de cada uno | Empatizar 
 |30/10| 5 | Creación del diagrama | 60 min | ninguno |- | - 
+|06/11| 6 | Creación de las clases | 60 min | ninguno |- | - 
+|10/11| 7 | Planificar spring 2 | 60 min | ninguno |- | - 
