@@ -7,6 +7,7 @@
 
 * [📅 Septiembre 2025](#septiembre-2025)
 * [📅 Octubre 2025](#octubre-2025)
+* [📅 Noviembre 2025](#noviembre-2025)
 
 ## Septiembre 2025
 
@@ -48,6 +49,7 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
 | 06/11 | S1 | Creacion de mapa de navegación | 1h | Pensar sobre como queremos que el usuario interactue con las diferentes pantalls | Hemos pensado una interfaz interactiva con un dashboard para mostrar todos los datos mas relevantes | Hemos aprendido a crear un mapa de navegacion de una aplicacion real |
+| 10/11 | S1/S2 | Sprint Review y Sprint Retrospective | 2h | Entender el funcionamiento de la retrospectiva | Hablar cuales van a ser lo sobjetivos de la charla | Hemos aprendido como se debe hacer la retrospectiva en un grupo para seguir mejorando |
 
 **Resumen del mes:**  
 
