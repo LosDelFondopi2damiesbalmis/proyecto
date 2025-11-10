@@ -25,3 +25,16 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |06/10| 1 | Diario Trabajo | 1 hora | - | - | -
+|13/10| 1 | Inicio de documentación de proyecto | 2 horas |- |- | -
+|16/10| 1 | Documentación proyecto y aprender scrum | 1 hora |- |- | -
+|21/10| 2 | Actividad Scrum hacer aviones | 2 horas | Eramos solo 3 y no sabia hacer aviones | Me dedique a hacer cosas que podía hacer e intentamos ir más rápido| -
+|23/10| 1 | Métrica Scrum de la actividad de los aviones | 1 hora | - | - | -
+|27/10| 2 | Creación de github projects e inicialización de proyecto | 2 horas | - | - | -
+|30/10| 1 | Creación de la estructura de base de datos del proyecto | 1 hora | - | - | -
+
+## Noviembre 2025
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|03/11| 2 | Creación del diagrama UML | 2 horas | - | - | -
+|06/11| 1 | Asignación de las relaciones entre clases | 1 hora | - | - | -

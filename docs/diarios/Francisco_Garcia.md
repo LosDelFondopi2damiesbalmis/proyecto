@@ -26,4 +26,6 @@
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |13/10| 1 | Diario Trabajo | 20 min | No vine así que me han explicado un poco qué había que hacer | Escuchar a mis compañeros | Venir a clase
 |16/10| 1 | Documentacion Proyecto | 60 min | Faltaba un compañero así que la organización diría | Repartir tareas | Organización
-
+|21/10| 3 | Scrum | 60 min | Eramos solo 3 | Repartir tareas | Discutir mejores opciones 
+|27/10| 4 | Definicion de tareas del proyecto | 60 min | ninguno | Hablar sobre los fuertes y débiles de cada uno | Empatizar 
+|30/10| 5 | Creación del diagrama | 60 min | ninguno |- | - 
