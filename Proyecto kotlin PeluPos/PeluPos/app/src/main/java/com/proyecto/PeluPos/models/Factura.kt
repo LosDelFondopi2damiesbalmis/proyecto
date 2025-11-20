@@ -1,5 +1,5 @@
+package com.proyecto.PeluPos.models
 import java.util.Date
-
 data class Factura(
     val idFactura: Long,
     var monto: Double = 0.0,
