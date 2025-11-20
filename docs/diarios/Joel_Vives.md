@@ -48,8 +48,9 @@
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
-| 06/11 | S1 | Creacion de mapa de navegación | 1h | Pensar sobre como queremos que el usuario interactue con las diferentes pantalls | Hemos pensado una interfaz interactiva con un dashboard para mostrar todos los datos mas relevantes | Hemos aprendido a crear un mapa de navegacion de una aplicacion real |
-| 10/11 | S1/S2 | Sprint Review y Sprint Retrospective | 2h | Entender el funcionamiento de la retrospectiva | Hablar cuales van a ser lo sobjetivos de la charla | Hemos aprendido como se debe hacer la retrospectiva en un grupo para seguir mejorando |
+| 06/11 | S1 | Creacion de mapa de navegación | 1h | Pensar sobre como queremos que el usuario interactue con las diferentes pantallas | Hemos pensado una interfaz interactiva con un dashboard para mostrar todos los datos mas relevantes | Hemos aprendido a crear un mapa de navegacion de una aplicacion real |
+| 10/11 | S1/S2 | Realizacion de Sprint Review y Sprint Retrospective | 2h | No habiamos hecho esto nunca antes | Aprender como realizarlo correctamente | Hemos entendido las ventajas de hacer esto en un grupo |
+| 13/11 | S1 | Creacion de datos mock y modelos de la aplicacion en WPF | 1h | No sabíabien como hacer la estructura de a aplicación | Preguntar a chatgpt como crearla para aprenderlo | Las IAs son muy utiles para trabajos de este estilo |
 
 **Resumen del mes:**  
 

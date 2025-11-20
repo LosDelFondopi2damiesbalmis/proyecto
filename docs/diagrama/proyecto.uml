@@ -1,6 +1,5 @@
 @startuml
 
-
 ' ========================
 ' CLASES PRINCIPALES
 ' ========================
@@ -14,6 +13,7 @@ class Empleado {
     +id_local : bigint
     +Usuario : Usuario
     +Servicios : ArrayList<Servicio>
+    +Facturas : ArrayList<Factura>
 }
 
 class Usuario {
@@ -26,8 +26,7 @@ class Cliente {
     +Nombre : text
     +Telefono : bigint
     +Deuda : double
-    
-
+    +Facturas : ArrayList<Factura>
 }
 
 class Local {
@@ -43,8 +42,18 @@ class Factura {
     +Fecha : date
     +Pendiente : boolean
     +Tipo_Pago : text
-    +Servicio : Servicio
+    +Cliente : Cliente
+    +Empleado : Empleado
+    +Lineas : ArrayList<LineaFactura>
+}
+
+class LineaFactura {
+    +id_linea : bigint
+    +Cantidad : int
+    +PrecioUnitario : double
+    +Importe : double
     +Producto : Producto
+    +Servicio : Servicio
 }
 
 class Producto {
@@ -53,6 +62,7 @@ class Producto {
     +PrecioCompra : double
     +PrecioVenta : double
     +Stock : bigint
+    +LineasFactura : ArrayList<LineaFactura>
 }
 
 class Servicio {
@@ -60,6 +70,7 @@ class Servicio {
     +Nombre : text
     +Precio : double
     +Descripcion : text
+    +LineasFactura : ArrayList<LineaFactura>
 }
 
 ' ========================
@@ -67,16 +78,24 @@ class Servicio {
 ' ========================
 
 ' Composición
-Empleado "1"  *-- "1" Usuario : "Composición (Empleado posee Usuario)"
-Factura "1" *-- "1" Producto : "Composición (Factura contiene Productos)"
-Factura "1" *-- "1" Servicio : "Composición (Factura incluye Servicios)"
+Empleado "1"  *-- "1" Usuario : "Empleado posee Usuario"
+Factura "1" *-- "1..*" LineaFactura : "Factura contiene líneas"
 
 ' Agregación
-Local"1" o-- "*" Empleado : "Agregación (Local agrupa Empleados)"
-Empleado "1" o-- "*" Servicio : "El empleado ejerce el servicio"
-Empleado "1" o-- "*" Factura : "El empleado genera la Factura pero la factura es independiente"
+Local "1" o-- "*" Empleado : "Local agrupa Empleados"
+Empleado "1" o-- "*" Servicio : "Empleado ejerce Servicios"
+Empleado "1" o-- "*" Factura : "Empleado genera Facturas (relación débil)"
 
 ' Asociaciones
-Cliente "1" --> "*" Factura : "Asociación (Cliente realiza Factura)"
+Cliente "1" --> "*" Factura : "Cliente realiza Facturas"
+
+' Relación líneas con Producto y Servicio
+LineaFactura "0..1" --> "0..1" Producto : "Puede referenciar un Producto"
+LineaFactura "0..1" --> "0..1" Servicio : "Puede referenciar un Servicio"
+
+' Relación Producto/Servicio con sus líneas
+Producto "1" <-- "*" LineaFactura : "Aparece en líneas de factura"
+Servicio "1" <-- "*" LineaFactura : "Aparece en líneas de factura"
 
 @enduml
+
