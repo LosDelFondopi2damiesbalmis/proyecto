@@ -40,4 +40,7 @@
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |03/11| 2 | diseñar la navegacion de la aplicacion con joel | 2 horas | pensamos que seria mas facil hasta que empezamos a indagar mas en la aplicacion | segun ibamos pensando pantallas, las ibamos agregando | -
 |06/11| 1 | - | - | - | - | -
+
 |10/11| 1 | sprint review | - | - | - | - |
+|13/11| 1 | sprint review | - | - | - | - |
+|20/11| 1 | archiv xaml y cs con la declaracion de los colores  | 30 | he tenido algun problema a la hora de implementarlo con el codigo | buscando algo de informacion en internet he podido solucionarlo | - |
