@@ -1,0 +1,101 @@
+@startuml
+
+' ========================
+' CLASES PRINCIPALES
+' ========================
+
+class Empleado {
+    +id_empleado : bigint
+    +Nombre : text
+    +Telefono : bigint
+    +Email : text
+    +Cargo : text
+    +id_local : bigint
+    +Usuario : Usuario
+    +Servicios : ArrayList<Servicio>
+    +Facturas : ArrayList<Factura>
+}
+
+class Usuario {
+    +id_usuario : bigint
+    +Contrasena : varchar
+}
+
+class Cliente {
+    +id_cliente : bigint
+    +Nombre : text
+    +Telefono : bigint
+    +Deuda : double
+    +Facturas : ArrayList<Factura>
+}
+
+class Local {
+    +id_local : bigint
+    +Nombre : text
+    +Direccion : text
+    +Empleados : ArrayList<Empleado>
+}
+
+class Factura {
+    +id_factura : bigint
+    +Monto : double
+    +Fecha : date
+    +Pendiente : boolean
+    +Tipo_Pago : text
+    +Cliente : Cliente
+    +Empleado : Empleado
+    +Lineas : ArrayList<LineaFactura>
+}
+
+class LineaFactura {
+    +id_linea : bigint
+    +Cantidad : int
+    +PrecioUnitario : double
+    +Importe : double
+    +Producto : Producto
+    +Servicio : Servicio
+}
+
+class Producto {
+    +id_producto : bigint
+    +Nombre : text
+    +PrecioCompra : double
+    +PrecioVenta : double
+    +Stock : bigint
+    +LineasFactura : ArrayList<LineaFactura>
+}
+
+class Servicio {
+    +id_servicio : bigint
+    +Nombre : text
+    +Precio : double
+    +Descripcion : text
+    +LineasFactura : ArrayList<LineaFactura>
+}
+
+' ========================
+' RELACIONES UML
+' ========================
+
+' Composición
+Empleado "1"  *-- "1" Usuario : "Empleado posee Usuario"
+Factura "1" *-- "1..*" LineaFactura : "Factura contiene líneas"
+
+' Agregación
+Local "1" o-- "*" Empleado : "Local agrupa Empleados"
+Empleado "1" o-- "*" Servicio : "Empleado ejerce Servicios"
+Empleado "1" o-- "*" Factura : "Empleado genera Facturas (relación débil)"
+
+' Asociaciones
+Cliente "1" --> "*" Factura : "Cliente realiza Facturas"
+
+' Relación líneas con Producto y Servicio
+LineaFactura "0..1" --> "0..1" Producto : "Puede referenciar un Producto"
+LineaFactura "0..1" --> "0..1" Servicio : "Puede referenciar un Servicio"
+
+' Relación Producto/Servicio con sus líneas
+Producto "1" <-- "*" LineaFactura : "Aparece en líneas de factura"
+Servicio "1" <-- "*" LineaFactura : "Aparece en líneas de factura"
+
+@enduml
+

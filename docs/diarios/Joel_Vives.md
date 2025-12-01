@@ -7,6 +7,7 @@
 
 * [📅 Septiembre 2025](#septiembre-2025)
 * [📅 Octubre 2025](#octubre-2025)
+* [📅 Noviembre 2025](#noviembre-2025)
 
 ## Septiembre 2025
 
@@ -47,7 +48,12 @@
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
-| *Pendiente* | *—* | *—* | *—* | *—* | *—* | *—* |
+| 06/11 | S1 | Creacion de mapa de navegación | 1h | Pensar sobre como queremos que el usuario interactue con las diferentes pantallas | Hemos pensado una interfaz interactiva con un dashboard para mostrar todos los datos mas relevantes | Hemos aprendido a crear un mapa de navegacion de una aplicacion real |
+| 10/11 | S1/S2 | Realizacion de Sprint Review y Sprint Retrospective | 2h | No habiamos hecho esto nunca antes | Aprender como realizarlo correctamente | Hemos entendido las ventajas de hacer esto en un grupo |
+| 13/11 | S1 | Creacion de datos mock y modelos de la aplicacion en WPF | 1h | No sabíabien como hacer la estructura de a aplicación | Preguntar a chatgpt como crearla para aprenderlo | Las IAs son muy utiles para trabajos de este estilo |
+| 17/11 | S1/S2 | Creacion de los enums de colores en WPF y repaso de DINT porque tenemos examen ahora | 1h | El tiempo porque estamos empezando a tener muchos examenes ahora pero vamos un poco avanzados | Adelantar trabajo anteriormente | Hemos aprendido a organizar bien nuestro tiempo |
+| 20/11 | S1 | Preparacion de dao mocks | 1h | Decidir como va a ser la estructura de los daoMock | Le he explicado a Jesus como hacerlo | Es bueno ayudar a los compañeros para poder avanzar rapidamente |
+| 24/11 | S1/S2 | Creacion Dashboard y navbar WPF | 2h | No sabia como hacer la aquitectura de carpetas | Cree las carpetas de Views y ViewModels | Aprendí la estructura de carpetas de una aplicacion no muy grande |
 
 **Resumen del mes:**  
 

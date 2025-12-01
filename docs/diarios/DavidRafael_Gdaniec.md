@@ -31,3 +31,14 @@
 |23/10| 1 | Métrica Scrum de la actividad de los aviones | 1 hora | - | - | -
 |27/10| 2 | Creación de github projects e inicialización de proyecto | 2 horas | - | - | -
 |30/10| 1 | Creación de la estructura de base de datos del proyecto | 1 hora | - | - | -
+
+## Noviembre 2025
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|03/11| 2 | Creación del diagrama UML | 2 horas | - | - | -
+|06/11| 1 | Asignación de las relaciones entre clases | 1 hora | - | - | -
+|10/11| 2 | Realización de sprint review, creación de retrospective y sprint planning del sprint 2| 2 horas | - | - | -
+|13/11| 1 | Inicialización del proyecto de kotlin| 1 hora | - | - | -
+|17/11| 2 | Estudiar para desarrollo de interfaces| 2 horas | - | - | -
+|20/11| 2 | Creación de los data mocks en el proyecto de kotlin| 2 horas | - | - | -
