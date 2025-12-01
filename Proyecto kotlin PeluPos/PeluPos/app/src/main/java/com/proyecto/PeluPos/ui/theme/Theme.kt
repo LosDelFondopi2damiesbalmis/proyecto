@@ -52,7 +52,6 @@ fun PeluPosTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
@@ -62,4 +61,11 @@ fun PeluPosTheme(
         typography = Typography,
         content = content
     )
+}
+object SidebarColors {
+    val Background = Color(0xFF111827)
+    val Content = Color.White
+    val ContentSecondary = Color(0xFF9CA3AF)
+    val Hover = Color(0xFF374151) // El color que buscabas
+    val Separator = Color(0xFF4B5563)
 }

@@ -1,0 +1,159 @@
+package com.proyecto.PeluPos.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.proyecto.PeluPos.ui.composables.DashboardCard
+import com.proyecto.PeluPos.ui.composables.DataRow
+import com.proyecto.PeluPos.ui.composables.NavButton
+import com.proyecto.PeluPos.ui.composables.NavSeparator
+import com.proyecto.PeluPos.ui.theme.PeluPosTheme
+import com.proyecto.PeluPos.ui.theme.SidebarColors
+
+@Composable
+fun MainScreen() {
+    // Aplicamos tu tema aquí envolviendo todo
+    PeluPosTheme {
+        Row(modifier = Modifier.fillMaxSize()) {
+
+            // --- SIDEBAR (Siempre oscuro) ---
+            Column(
+                modifier = Modifier
+                    .width(150.dp)
+                    .fillMaxHeight()
+                    .background(SidebarColors.Background) // Color fijo XAML #111827
+                    .padding(10.dp)
+            ) {
+                // Logo
+                Column(modifier = Modifier.padding(bottom = 20.dp)) {
+                    Text("PeluPOS", color = SidebarColors.Content, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    Text("Gestión de peluquerías", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
+                }
+
+                // Menú
+                Column(modifier = Modifier.weight(1f)) {
+                    NavButton("Dashboard", onClick = {}, isActive = true) // Ejemplo activo
+                    NavSeparator()
+                    NavButton("Clientes", onClick = {})
+                    NavButton("Servicios", onClick = {})
+                    // ... resto de botones
+                }
+
+                // Footer Usuario
+                Column(modifier = Modifier.padding(top = 20.dp)) {
+                    NavSeparator()
+                    Text("Usuario: Admin", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
+                    Text("Peluquería Central", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
+                }
+            }
+
+            // --- CONTENIDO (Dinámico según tema) ---
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.background) // Color de fondo del tema
+            ) {
+                DashboardPage()
+            }
+        }
+    }
+}
+@Composable
+fun DashboardPage() {
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        // -- CABECERA PÁGINA --
+        Column(modifier = Modifier.padding(bottom = 15.dp)) {
+            Text(
+                text = "Dashboard general",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = "Resumen de ventas, empleados y stock",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+
+        // -- GRID 2x2 --
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 280.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+
+            // 🟦 TARJETA 1: ÚLTIMAS VENTAS
+            item {
+                DashboardCard(title = "Últimas ventas") {
+                    val weights = listOf(0.2f, 0.3f, 0.3f, 0.2f)
+                    DataRow("Hora", "Cliente", "Servicio", "Importe", isHeader = true, weights = weights)
+                    DataRow("10:15", "Ana López", "Corte + tinte", "45,00 €", weights = weights)
+                    DataRow("10:45", "María Pérez", "Peinado evento", "35,00 €", weights = weights)
+                    DataRow("11:05", "Juan Ruiz", "Corte caballero", "18,00 €", weights = weights)
+                }
+            }
+
+            // 🟦 TARJETA 2: EMPLEADOS TOP
+            item {
+                DashboardCard(title = "Empleados con más ventas") {
+                    val weights = listOf(0.5f, 0.2f, 0.3f) // 3 columnas
+                    DataRow("Empleado", "Servicios", "Total", isHeader = true, weights = weights)
+                    DataRow("Laura", "18", "420,00 €", weights = weights)
+                    DataRow("Marta", "15", "380,00 €", weights = weights)
+                    DataRow("Carlos", "12", "310,00 €", weights = weights)
+                }
+            }
+
+            // 🟦 TARJETA 3: VENTAS POR LOCAL
+            item {
+                DashboardCard(title = "Ventas por local") {
+                    val weights = listOf(0.4f, 0.3f, 0.3f)
+                    DataRow("Local", "Hoy", "Este mes", isHeader = true, weights = weights)
+                    DataRow("Centro Alicante", "12 vtas", "1.250 €", weights = weights)
+                    DataRow("San Juan Playa", "8 vtas", "780 €", weights = weights)
+                    DataRow("Elche Centro", "10 vtas", "1.050 €", weights = weights)
+                }
+            }
+
+            // 🟦 TARJETA 4: STOCK BAJO
+            item {
+                DashboardCard(title = "Productos con stock bajo") {
+                    val weights = listOf(0.6f, 0.2f, 0.2f)
+                    DataRow("Producto", "Stock", "Min", isHeader = true, weights = weights)
+                    DataRow("Champú teñido", "3", "10", weights = weights)
+                    DataRow("Mascarilla hidra", "5", "12", weights = weights)
+                    DataRow("Laca fijación", "2", "8", weights = weights)
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MainScreenPreview()
+{
+    PeluPosTheme {
+        MainScreen()
+    }
+}
