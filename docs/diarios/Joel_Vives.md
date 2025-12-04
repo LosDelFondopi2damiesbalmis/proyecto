@@ -5,24 +5,9 @@
 
 ## Índice de Meses
 
-* [📅 Septiembre 2025](#septiembre-2025)
 * [📅 Octubre 2025](#octubre-2025)
 * [📅 Noviembre 2025](#noviembre-2025)
-
-## Septiembre 2025
-
-| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
-|-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
-| *Pendiente* | *—* | *—* | *—* | *—* | *—* | *—* |
-
-**Resumen del mes:**  
-
-* **Total de horas:**
-* **Principales logros:**  
-* **Área de mejora:**
-* **Próximos objetivos:**
-
-[🔝 Volver al índice](#índice-de-meses)  
+* [📅 Diciembre 2025](#diciembre-2025)
 
 ## Octubre 2025
 
@@ -34,13 +19,6 @@
 | 20/10 | S1/S2 | - Creación de aviones de papel mediante trabajo en SCRUM | 2h | Era complicado estimar el tiempo que necesitabamos para cada tarea | Prueba y error hasta encontrar la velocidad idónea | A veces es cuestión de probar simplemente |
 | 23/10 | S1 | - Creacion de proyecto en GitHub | 1h | Nunca habiamos usado la herramienta | Con los apuntes hemos aprendido | Es una herramienta muy potente con la que se puede tener un muy control sobre el trabajo del grupo |
 | 27/10 | S1/S2 | - Division de tareas y preparacion de tablero SCRUM | 2h | Decidir quien va a hacer que parte | Nos pusimos de acuerdo entre todos teniendo en cuenta nuestras habilidades | El consenso en el grupo es importante para llegar a acuerdos todos juntos |
-
-**Resumen del mes:**  
-
-* **Total de horas:** 2
-* **Principales logros:**  Crear Markdown
-* **Área de mejora:** Markdown
-* **Próximos objetivos:** Documentacion de proyectos
 
 [🔝 Volver al índice](#índice-de-meses)
 
@@ -55,12 +33,14 @@
 | 20/11 | S1 | Preparacion de dao mocks | 1h | Decidir como va a ser la estructura de los daoMock | Le he explicado a Jesus como hacerlo | Es bueno ayudar a los compañeros para poder avanzar rapidamente |
 | 24/11 | S1/S2 | Creacion Dashboard y navbar WPF | 2h | No sabia como hacer la aquitectura de carpetas | Cree las carpetas de Views y ViewModels | Aprendí la estructura de carpetas de una aplicacion no muy grande |
 
-**Resumen del mes:**  
+[🔝 Volver al índice](#índice-de-meses)
 
-* **Total de horas:**
-* **Principales logros:**  
-* **Área de mejora:**
-* **Próximos objetivos:**
+## Diciembre 2025
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
+|-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
+| 01/12 | S1/S2 | Sprint Retrospective | 2h | No teniamos muy claro como continuar con el proyecto | Leer la documentacion | A veces es bueno mirar hacia atrás par aseguir hacia delante |
+| 04/12 | S1 | Creacion de pantalla Clientes | 1h | No sabia por donde empezar | Investigar como deberia crearla | La IA es muy útil para empezar con los proyectos ya que te da la base |
 
 [🔝 Volver al índice](#índice-de-meses)
 
