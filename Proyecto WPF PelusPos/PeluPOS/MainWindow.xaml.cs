@@ -33,7 +33,7 @@ namespace PeluPOS
         private void Clientes_Click(object sender, RoutedEventArgs e)
         {
             // Cuando crees ClientesPage:
-            // MainFrame.Navigate(new ClientesPage());
+            MainFrame.Navigate(new ClientesPage());
         }
 
         private void Servicios_Click(object sender, RoutedEventArgs e)
