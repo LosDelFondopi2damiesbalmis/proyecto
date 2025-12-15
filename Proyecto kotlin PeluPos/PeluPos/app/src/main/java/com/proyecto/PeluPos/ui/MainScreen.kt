@@ -36,26 +36,17 @@ import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.NavButton
 import com.proyecto.PeluPos.ui.composables.NavSeparator
+import com.proyecto.PeluPos.ui.composables.Sidebar
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 import com.proyecto.PeluPos.ui.theme.SidebarColors
 
 @Composable
 fun MainScreen() {
-    // 1. Definir el estado: Por defecto está visible (true)
     var isSidebarVisible by remember { mutableStateOf(true) }
-
-    // 2. Definir el ancho de la barra:
-    // Ancho si está visible (150.dp) o si está oculto/colapsado (0.dp o un ícono pequeño, aquí usaremos 0.dp para simplicidad)
-    val sidebarWidth = if (isSidebarVisible) 150.dp else 0.dp
-
-    // Para una transición más suave, podemos animar el ancho:
-    val animatedWidth by animateDpAsState(
-        targetValue = sidebarWidth,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium)
-    )
     PeluPosTheme {
         Row(modifier = Modifier.fillMaxSize()) {
 
+<<<<<<< HEAD
             // --- SIDEBAR (Siempre oscuro) ---
             Column(
                 modifier = Modifier
@@ -92,6 +83,9 @@ fun MainScreen() {
                     Text("Peluquería Central", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
                 }
             }
+=======
+            Sidebar(isSidebarVisible = isSidebarVisible)
+>>>>>>> 81bdccf8655ebf3809ae9cf5600d2be72f323971
 
             // --- CONTENIDO
             Box(
