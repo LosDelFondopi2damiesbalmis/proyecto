@@ -76,6 +76,12 @@ fun MainScreen() {
                     NavSeparator()
                     NavButton("Clientes", onClick = {})
                     NavButton("Servicios", onClick = {})
+                    NavButton("Productos", onClick = {})
+                    NavButton("Empleado", onClick = {})
+                    NavButton("Ventas", onClick = {})
+                    NavButton("Usuarios", onClick = {})
+                    NavButton("Locales", onClick = {})
+
                     // ... resto de botones
                 }
 
