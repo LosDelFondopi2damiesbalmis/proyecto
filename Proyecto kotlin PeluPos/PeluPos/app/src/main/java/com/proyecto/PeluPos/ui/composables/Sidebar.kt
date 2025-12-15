@@ -25,7 +25,7 @@ import com.proyecto.PeluPos.ui.theme.SidebarColors
 @Composable
 fun Sidebar(isSidebarVisible : Boolean)
 {
-    
+
 
     // 2. Definir el ancho de la barra:
     // Ancho si está visible (150.dp) o si está oculto/colapsado (0.dp o un ícono pequeño, aquí usaremos 0.dp para simplicidad)
