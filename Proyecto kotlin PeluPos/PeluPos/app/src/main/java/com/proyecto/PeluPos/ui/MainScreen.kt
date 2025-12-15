@@ -46,47 +46,10 @@ fun MainScreen() {
     PeluPosTheme {
         Row(modifier = Modifier.fillMaxSize()) {
 
-<<<<<<< HEAD
-            // --- SIDEBAR (Siempre oscuro) ---
-            Column(
-                modifier = Modifier
-                    .width(animatedWidth)
-                    .fillMaxHeight()
-                    .background(SidebarColors.Background) // Color fijo XAML #111827
-                    .padding(10.dp)
-            ) {
-                // Logo
-                Column(modifier = Modifier.padding(bottom = 20.dp)) {
-                    Text("PeluPOS", color = SidebarColors.Content, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    Text("Gestión de peluquerías", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
-                }
-
-                // Menú
-                Column(modifier = Modifier.weight(1f)) {
-                    NavButton("Dashboard", onClick = {}, isActive = true) // Ejemplo activo
-                    NavSeparator()
-                    NavButton("Clientes", onClick = {})
-                    NavButton("Servicios", onClick = {})
-                    NavButton("Productos", onClick = {})
-                    NavButton("Empleado", onClick = {})
-                    NavButton("Ventas", onClick = {})
-                    NavButton("Usuarios", onClick = {})
-                    NavButton("Locales", onClick = {})
-
-                    // ... resto de botones
-                }
-
-                // Footer Usuario
-                Column(modifier = Modifier.padding(top = 20.dp)) {
-                    NavSeparator()
-                    Text("Usuario: Admin", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
-                    Text("Peluquería Central", color = SidebarColors.ContentSecondary, fontSize = 12.sp)
-                }
-            }
-=======
-            Sidebar(isSidebarVisible = isSidebarVisible)
->>>>>>> 81bdccf8655ebf3809ae9cf5600d2be72f323971
-
+            Sidebar(
+                isSidebarVisible = isSidebarVisible,
+                onToggleSidebar = {isSidebarVisible = !isSidebarVisible}
+            )
             // --- CONTENIDO
             Box(
                 modifier = Modifier
