@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.sp
 import com.proyecto.PeluPos.ui.theme.PeluposLightSuccess
 import com.proyecto.PeluPos.ui.theme.PeluposLightError
 
@@ -175,11 +176,7 @@ fun ProductsHeader(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Botón sidebar + Título
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = toggleSidebar) {
-                    Icon(Icons.Default.Menu, contentDescription = "Alternar Sidebar")
-                }
+
 
                 Column(modifier = Modifier.padding(start = 8.dp)) {
                     Text(
@@ -200,7 +197,10 @@ fun ProductsHeader(
                 onClick = onAddProduct,
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary
-                )
+
+                ),
+
+                modifier = Modifier.align(Alignment.Start)
             ) {
                 Icon(
                     Icons.Default.Add,
@@ -266,7 +266,7 @@ fun ProductsHeader(
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
         )
     }
-}
+
 
 @Composable
 fun SummaryItem(label: String, value: String) {
