@@ -9,6 +9,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PeluPOS.Views;
+using PeluPOS.Views.Locales;
+using PeluPOS.Views.Productos;
+using PeluPOS.Views.Servicios;
 
 namespace PeluPOS
 {
@@ -32,18 +35,17 @@ namespace PeluPOS
 
         private void Clientes_Click(object sender, RoutedEventArgs e)
         {
-            // Cuando crees ClientesPage:
-            // MainFrame.Navigate(new ClientesPage());
+            MainFrame.Navigate(new ClientesPage());
         }
 
         private void Servicios_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new ServiciosPage());
+            MainFrame.Navigate(new ServiciosPage());
         }
 
         private void Productos_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new ProductosPage());
+            MainFrame.Navigate(new ProductosPage());
         }
 
         private void Empleados_Click(object sender, RoutedEventArgs e)
@@ -63,7 +65,7 @@ namespace PeluPOS
 
         private void Locales_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new LocalesPage());
+            MainFrame.Navigate(new LocalesPage());
         }
 
         private void Tpv_Click(object sender, RoutedEventArgs e)
