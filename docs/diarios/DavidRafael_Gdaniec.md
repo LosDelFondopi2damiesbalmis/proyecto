@@ -42,3 +42,10 @@
 |13/11| 1 | Inicialización del proyecto de kotlin| 1 hora | - | - | -
 |17/11| 2 | Estudiar para desarrollo de interfaces| 2 horas | - | - | -
 |20/11| 2 | Creación de los data mocks en el proyecto de kotlin| 2 horas | - | - | -
+
+## Diciembre 2025
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|01/12| 2 | Creación de la vista de kotlin | 2 horas | - | - | -
+|04/12| 1 | Arreglando vistas para el main | 1 hora | - | - | -

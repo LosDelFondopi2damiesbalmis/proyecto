@@ -28,3 +28,9 @@ val PeluposDarkTextSecondary = Color(0xFFC8CDD7)
 val PeluposDarkSuccess = Color(0xFF9CE5DC)
 val PeluposDarkWarning = Color(0xFFFFC46D)
 val PeluposDarkError = Color(0xFFFF7B7B)
+
+val SidebarColorBackground = Color(0xFF111827)
+val SidebarColorText = Color.White
+val SidebarColorTextSecondary = Color(0xFF9CA3AF)
+val SidebarColorHover = Color(0xFF374151)
+val SidebarColorSeparator = Color(0xFF4B5563)
