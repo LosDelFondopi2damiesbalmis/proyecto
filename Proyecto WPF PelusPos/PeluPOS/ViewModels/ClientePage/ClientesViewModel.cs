@@ -47,7 +47,7 @@ namespace PeluPOS.ViewModels
             try
             {
                 _todosLosClientes.Clear();
-                var clientes = await _clienteService.GetClientesAsync();
+                var clientes = await _clienteService.GetAllAsync();
                 _todosLosClientes.AddRange(clientes);
 
                 AplicarFiltro();

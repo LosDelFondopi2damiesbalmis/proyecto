@@ -6,6 +6,6 @@ namespace PeluPOS.Services
 {
     public interface IClienteService
     {
-        Task<IReadOnlyList<Cliente>> GetClientesAsync();
+        Task<IReadOnlyList<Cliente>> GetAllAsync();
     }
 }

@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PeluPOS.Views;
 using PeluPOS.Views.Locales;
+using PeluPOS.Views.Productos;
 using PeluPOS.Views.Servicios;
 
 namespace PeluPOS
@@ -44,7 +45,7 @@ namespace PeluPOS
 
         private void Productos_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new ProductosPage());
+            MainFrame.Navigate(new ProductosPage());
         }
 
         private void Empleados_Click(object sender, RoutedEventArgs e)

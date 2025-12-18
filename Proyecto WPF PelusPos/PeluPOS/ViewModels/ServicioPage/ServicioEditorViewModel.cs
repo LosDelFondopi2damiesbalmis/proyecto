@@ -22,7 +22,7 @@ namespace PeluPOS.ViewModels.ServicioPage
         {
             if (string.IsNullOrWhiteSpace(Nombre))
                 Error = "El nombre del servicio es obligatorio.";
-            else if (Precio < 0)
+            if (Precio < 0)
                 Error = "El precio no puede ser negativo.";
             else
                 Error = null;
