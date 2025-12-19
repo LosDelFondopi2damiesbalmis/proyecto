@@ -41,6 +41,9 @@
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
 | 01/12 | S1/S2 | Sprint Retrospective | 2h | No teniamos muy claro como continuar con el proyecto | Leer la documentacion | A veces es bueno mirar hacia atrás par aseguir hacia delante |
 | 04/12 | S1 | Creacion de pantalla Clientes | 1h | No sabia por donde empezar | Investigar como deberia crearla | La IA es muy útil para empezar con los proyectos ya que te da la base |
+| 08/12 | S1/S2 | Creacion de pantalla Servicios con sus pantallas extra | Problemas con la pantalla de ventas asociadas | Creacion de la tabla intermedia | He aprendido a relacionar la talas en el codigo |
+| 11/12 | S1 | Creacion de pantalla Locales | 1h | No hubo problemas | Todo fue bien | Aprendi a aplicar lo aprendido con las anteriores pantallas |
+| 15/12 | S1/S2 | Creacion de la pantalla productos | 2h | Esta pantalla era mas compleja con mas ventanas y funcionalidades | Ayudarme de la IA | Me ayudé mucho de la IA para poder crear todo lo necesario y esto me sirvió para entender bien como hacer uso de esta
 
 [🔝 Volver al índice](#índice-de-meses)
 
