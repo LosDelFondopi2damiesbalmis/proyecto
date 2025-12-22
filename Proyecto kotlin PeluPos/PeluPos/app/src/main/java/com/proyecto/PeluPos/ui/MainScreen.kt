@@ -10,104 +10,206 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
-import com.proyecto.PeluPos.ui.composables.NavButton
-import com.proyecto.PeluPos.ui.composables.NavSeparator
 import com.proyecto.PeluPos.ui.composables.Sidebar
+import com.proyecto.PeluPos.ui.navigation.Screen
+import com.proyecto.PeluPos.ui.products.NewProductScreen
+import com.proyecto.PeluPos.ui.products.Product
+import com.proyecto.PeluPos.ui.products.ProductsScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
-import com.proyecto.PeluPos.ui.theme.SidebarColors
+import kotlin.random.Random
 
 @Composable
 fun MainScreen() {
     var isSidebarVisible by remember { mutableStateOf(true) }
+    val navController = rememberNavController()
+    val products = remember { mutableStateListOf<Product>() }
+
+    // Inicializar con datos de ejemplo
+    if (products.isEmpty()) {
+        products.addAll(
+            listOf(
+                Product(
+                    id = "1",
+                    name = "Champú Reparador Kerastase",
+                    code = "CH-KERA-001",
+                    category = "Champús",
+                    price = 24.99,
+                    stock = 15,
+                    minStock = 5,
+                    supplier = "L'Oréal Professional"
+                ),
+                Product(
+                    id = "2",
+                    name = "Tinte Wella Koleston",
+                    code = "TINT-WELLA-55",
+                    category = "Tintes",
+                    price = 12.50,
+                    stock = 3,
+                    minStock = 10,
+                    supplier = "Wella Professionals"
+                ),
+                Product(
+                    id = "3",
+                    name = "Mascarilla Hidratante",
+                    code = "MASC-HIDRA-02",
+                    category = "Mascarillas",
+                    price = 18.75,
+                    stock = 8,
+                    minStock = 6,
+                    supplier = "Schwarzkopf"
+                ),
+                Product(
+                    id = "4",
+                    name = "Laca Fijación Extra Fuerte",
+                    code = "LACA-EXTRA-01",
+                    category = "Fijadores",
+                    price = 9.99,
+                    stock = 22,
+                    minStock = 8,
+                    supplier = "Taft"
+                ),
+                Product(
+                    id = "5",
+                    name = "Tijeras Profesionales Jaguar",
+                    code = "TIJ-JAG-7",
+                    category = "Herramientas",
+                    price = 89.99,
+                    stock = 2,
+                    minStock = 3,
+                    supplier = "Jaguar"
+                )
+            )
+        )
+    }
+
     PeluPosTheme {
         Row(modifier = Modifier.fillMaxSize()) {
+            Sidebar(
+                isSidebarVisible = isSidebarVisible,
+                currentRoute = navController.currentDestination?.route,
+                onNavigationItemClick = { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.startDestinationId ?: return@navigate) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onToggleSidebar = { isSidebarVisible = !isSidebarVisible }
+            )
 
-            Sidebar(isSidebarVisible = isSidebarVisible)
-
-            // --- CONTENIDO
-            Box(
+            // NAVEGACIÓN PRINCIPAL
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Dashboard.route,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.background) // Color de fondo del tema
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                DashboardPage(toggleSidebar = { isSidebarVisible = !isSidebarVisible })
+                // DASHBOARD
+                composable(Screen.Dashboard.route) {
+                    DashboardPage(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible }
+                    )
+                }
+
+                // PRODUCTOS
+                composable(Screen.Products.route) {
+                    ProductsScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToProductDetail = { productId ->
+                            // Aquí puedes implementar la navegación al detalle
+                        },
+                        navigateToNewProduct = {
+                            // ¡ESTA ES LA LÍNEA CLAVE!
+                            navController.navigate(Screen.NewProduct.route)
+                        }
+                    )
+                }
+
+                // NUEVO PRODUCTO
+                composable(Screen.NewProduct.route) {
+                    NewProductScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onSaveProduct = { newProduct ->
+                            // Agregar el nuevo producto a la lista
+                            products.add(newProduct)
+                            // Volver a la pantalla de productos
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                // AQUÍ PUEDES AÑADIR MÁS PANTALLAS:
+                // composable(Screen.Clients.route) { ... }
+                // composable(Screen.Services.route) { ... }
+                // composable(Screen.Employees.route) { ... }
+                // etc.
             }
         }
     }
 }
+
 @Composable
 fun DashboardPage(toggleSidebar: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        // -- CABECERA PÁGINA --
+
+
+            Column(modifier = Modifier.padding(start = 8.dp)) {
+                Text(
+                    text = "Dashboard general",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = "Resumen de ventas, empleados y stock",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(15.dp) // Añadimos padding al contenido general
+                .padding(16.dp)
         ) {
-
-            // -- CABECERA PÁGINA --
-            Row( // Usamos Row para alinear el título y el botón
-                modifier = Modifier.padding(bottom = 15.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Botón de alternancia (Toggle Button)
-                IconButton(onClick = toggleSidebar) {
-                    // Puedes usar un icono de "Menú" (si la barra está oculta) o "Flecha" (si está visible)
-                    Icon(
-                        imageVector = Icons.Default.Menu, // Usaremos solo Menú por simplicidad
-                        contentDescription = "Alternar Barra Lateral",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-
-                // Títulos (ahora en Column)
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(
-                        text = "Dashboard general",
-                        // ... estilos
-                    )
-                    Text(
-                        text = "Resumen de ventas, empleados y stock",
-                        // ... estilos
-                    )
-                }
-            }
-
-            // -- GRID 2x2 --
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 280.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-
                 // 🟦 TARJETA 1: ÚLTIMAS VENTAS
                 item {
                     DashboardCard(title = "Últimas ventas") {
@@ -121,27 +223,15 @@ fun DashboardPage(toggleSidebar: () -> Unit) {
                             weights = weights
                         )
                         DataRow("10:15", "Ana López", "Corte + tinte", "45,00 €", weights = weights)
-                        DataRow(
-                            "10:45",
-                            "María Pérez",
-                            "Peinado evento",
-                            "35,00 €",
-                            weights = weights
-                        )
-                        DataRow(
-                            "11:05",
-                            "Juan Ruiz",
-                            "Corte caballero",
-                            "18,00 €",
-                            weights = weights
-                        )
+                        DataRow("10:45", "María Pérez", "Peinado evento", "35,00 €", weights = weights)
+                        DataRow("11:05", "Juan Ruiz", "Corte caballero", "18,00 €", weights = weights)
                     }
                 }
 
                 // 🟦 TARJETA 2: EMPLEADOS TOP
                 item {
                     DashboardCard(title = "Empleados con más ventas") {
-                        val weights = listOf(0.5f, 0.2f, 0.3f) // 3 columnas
+                        val weights = listOf(0.5f, 0.2f, 0.3f)
                         DataRow(
                             "Empleado",
                             "Servicios",
@@ -183,8 +273,7 @@ fun DashboardPage(toggleSidebar: () -> Unit) {
 
 @Preview
 @Composable
-fun MainScreenPreview()
-{
+fun MainScreenPreview() {
     PeluPosTheme {
         MainScreen()
     }
