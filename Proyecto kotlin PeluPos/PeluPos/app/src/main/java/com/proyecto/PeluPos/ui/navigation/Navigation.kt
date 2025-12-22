@@ -6,7 +6,7 @@ import androidx.navigation.navArgument
 
 // Definición de las pantallas
 sealed class Screen(val route: String) {
-    // Pantallas principales (sin parámetros)
+    // Pantallas principales
     object Dashboard : Screen("dashboard")
     object Clients : Screen("clients")
     object Services : Screen("services")
@@ -16,24 +16,30 @@ sealed class Screen(val route: String) {
     object Users : Screen("users")
     object Locations : Screen("locations")
 
-    // Pantallas con parámetros
-    object ProductDetail : Screen("product_detail/{productId}") {
-        fun createRoute(productId: String) = "product_detail/$productId"
-    }
-
+    // Pantallas de Empleados
     object EmployeeDetail : Screen("employee_detail/{employeeId}") {
-        fun createRoute(employeeId: String) = "employee_detail/$employeeId"
+        fun createRoute(employeeId: Long) = "employee_detail/$employeeId"
     }
 
-    // Pantallas de formulario
-    object NewProduct : Screen("new_product")
     object NewEmployee : Screen("new_employee")
+
+    object EditEmployee : Screen("edit_employee/{employeeId}") {
+        fun createRoute(employeeId: Long) = "edit_employee/$employeeId"
+    }
+
+    // Otras pantallas
+    object ProductDetail : Screen("product_detail/{productId}") {
+        fun createRoute(productId: Long) = "product_detail/$productId"
+    }
+
+    object NewProduct : Screen("new_product")
+
     object EditProduct : Screen("edit_product/{productId}") {
-        fun createRoute(productId: String) = "edit_product/$productId"
+        fun createRoute(productId: Long) = "edit_product/$productId"
     }
 }
 
-// Rutas principales para la sidebar
+// Rutas principales para sidebar
 val mainScreens = listOf(
     Screen.Dashboard,
     Screen.Clients,
