@@ -1,5 +1,6 @@
 package com.proyecto.PeluPos.ui
 
+import ServicesScreen
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -29,6 +30,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
@@ -159,6 +161,26 @@ fun MainScreen() {
                             products.add(newProduct)
                             // Volver a la pantalla de productos
                             navController.popBackStack()
+                        }
+                    )
+                }
+                composable(Screen.Services.route) {
+                    ServicesScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToServiceDetail = { serviceId ->
+                        },
+                        navigateToNewService = {
+                            navController.navigate(Screen.Services.route)
+                        }
+                    )
+                }
+                composable(Screen.Clients.route) {
+                    ClienteScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToClienteDetail = { clienteId ->
+                        },
+                        navigateToNewCliente = {
+                            navController.navigate(Screen.Services.route)
                         }
                     )
                 }

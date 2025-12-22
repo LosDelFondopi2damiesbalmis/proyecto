@@ -186,24 +186,14 @@ fun ClientNameListItem(
     }
 }
 @Composable
-fun ClienteScreen()
+fun ClienteScreen(
+    toggleSidebar: () -> Unit,
+    navigateToClienteDetail: (serviceId: Long) -> Unit,
+    navigateToNewCliente: () -> Unit
+)
 {
-    var isSidebarVisible by remember { mutableStateOf(true) }
-    Row(modifier = Modifier.fillMaxSize()) {
-        Sidebar(
-            isSidebarVisible = isSidebarVisible
-        )
-        IconButton(onClick = {isSidebarVisible = !isSidebarVisible}) {
-            // Puedes usar un icono de "Menú" (si la barra está oculta) o "Flecha" (si está visible)
-            Icon(
-                imageVector = Icons.Default.Menu, // Usaremos solo Menú por simplicidad
-                contentDescription = "Alternar Barra Lateral",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
         ClientSearchPage()
 
-    }
 }
 
 @Preview(showBackground = true)
@@ -211,6 +201,8 @@ fun ClienteScreen()
 fun ClienteScreenPreview()
 {
     PeluPosTheme {
-        ClienteScreen()
+        ClienteScreen(toggleSidebar = {},
+            navigateToClienteDetail = {},
+            navigateToNewCliente = {})
     }
 }
