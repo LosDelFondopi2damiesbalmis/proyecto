@@ -31,6 +31,12 @@ sealed class Screen(val route: String) {
     object EditProduct : Screen("edit_product/{productId}") {
         fun createRoute(productId: String) = "edit_product/$productId"
     }
+    object NewLocal : Screen("new_local")
+
+    object EditLocal : Screen("edit_local/{localId}") {
+        // Helper para crear la ruta pasando el ID (ej: "edit_local/5")
+        fun createRoute(localId: Int) = "edit_local/$localId"
+    }
 }
 
 // Rutas principales para la sidebar

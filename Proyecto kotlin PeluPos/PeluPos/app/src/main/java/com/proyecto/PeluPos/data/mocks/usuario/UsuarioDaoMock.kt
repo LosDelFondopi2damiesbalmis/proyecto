@@ -2,12 +2,13 @@ package com.proyecto.PeluPos.data.mocks.usuario
 
 import com.proyecto.PeluPos.data.mocks.EmpleadoMock
 import com.proyecto.PeluPos.data.mocks.UsuarioMock
+import com.proyecto.PeluPos.models.RolUsuario
 
 class UsuarioDaoMock {
 
     private val usuarios = mutableListOf(
-        UsuarioMock(1, "admin", "1234", EmpleadoMock(1)),
-        UsuarioMock(2, "carlos", "abcd", EmpleadoMock(2))
+        UsuarioMock(1, "admin", "1234", EmpleadoMock(1), rolUsuario = RolUsuario.ADMINISTRADOR),
+        UsuarioMock(2, "carlos", "abcd", EmpleadoMock(2), rolUsuario = RolUsuario.EMPLEADO)
     )
 
     fun getAll(): List<UsuarioMock> = usuarios.toList()
