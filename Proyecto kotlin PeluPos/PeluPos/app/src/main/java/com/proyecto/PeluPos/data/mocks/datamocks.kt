@@ -1,5 +1,7 @@
 package com.proyecto.PeluPos.data.mocks
 
+import com.proyecto.PeluPos.models.RolUsuario
+
 data class ClienteMock(
     val idCliente: Long = 0L,
     val nombre: String = "",
@@ -55,5 +57,6 @@ data class UsuarioMock(
     val idUsuario: Long = 0L,
     val usuario: String = "",
     val contrasena: String = "",
-    val empleado: EmpleadoMock = EmpleadoMock()
+    val empleado: EmpleadoMock = EmpleadoMock(),
+    val rolUsuario: RolUsuario
 )
