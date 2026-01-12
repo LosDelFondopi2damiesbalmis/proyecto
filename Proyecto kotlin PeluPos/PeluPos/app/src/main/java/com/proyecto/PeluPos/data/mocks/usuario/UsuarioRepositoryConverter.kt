@@ -6,13 +6,13 @@ import com.proyecto.PeluPos.data.mocks.empleado.toEmpleadoMock
 import com.proyecto.PeluPos.models.Usuario
 
 fun Usuario.toUsuarioMock() =
-    UsuarioMock(idUsuario, usuario, contrasena, empleado.toEmpleadoMock())
+    UsuarioMock(idUsuario, usuario, contrasena, empleado.toEmpleadoMock(), rolUsuario)
 
 fun List<Usuario>.toUsuariosMock() =
     map { it.toUsuarioMock() }
 
 fun UsuarioMock.toUsuario() =
-    Usuario(idUsuario, usuario, contrasena, empleado.toEmpleado())
+    Usuario(idUsuario, usuario, contrasena, empleado.toEmpleado(), rolUsuario = rolUsuario)
 
 fun List<UsuarioMock>.toUsuarios() =
     map { it.toUsuario() }

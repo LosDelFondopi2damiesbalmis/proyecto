@@ -1,5 +1,6 @@
 package com.proyecto.PeluPos.ui
 
+import ServicesScreen
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -26,9 +27,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.proyecto.PeluPos.locales.CreateLocalScreen
+import com.proyecto.PeluPos.locales.EditLocalScreen
+import com.proyecto.PeluPos.locales.LocalesScreen
+import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
@@ -160,6 +167,65 @@ fun MainScreen() {
                             // Volver a la pantalla de productos
                             navController.popBackStack()
                         }
+                    )
+                }
+                composable(Screen.Services.route) {
+                    ServicesScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToServiceDetail = { serviceId ->
+                        },
+                        navigateToNewService = {
+                            navController.navigate(Screen.Services.route)
+                        }
+                    )
+                }
+                composable(Screen.Clients.route) {
+                    ClienteScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToClienteDetail = { clienteId ->
+                        },
+                        navigateToNewCliente = {
+                            navController.navigate(Screen.Services.route)
+                        }
+                    )
+                }
+                composable(Screen.Locations.route) {
+                    LocalesScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToNewLocal = {
+                            // Usamos la ruta del objeto Screen
+                            navController.navigate(Screen.NewLocal.route)
+                        },
+                        navigateToLocalDetail = { localId ->
+                            navController.navigate(Screen.EditLocal.createRoute(localId))
+                        },
+                        navigateToEditLocal = { localId ->
+                            // Usamos la función helper para pasar el ID
+                            navController.navigate(Screen.EditLocal.createRoute(localId))
+                        }
+                    )
+                }
+
+                // 2. CREAR NUEVO LOCAL
+                composable(Screen.NewLocal.route) {
+                    CreateLocalScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onSaveSuccess = { navController.popBackStack() }
+                    )
+                }
+
+                // 3. EDITAR LOCAL (Recibiendo el ID)
+                composable(
+                    route = Screen.EditLocal.route,
+                    arguments = listOf(navArgument("localId") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    // Recuperamos el ID de los argumentos
+                    val id = backStackEntry.arguments?.getInt("localId") ?: 0
+
+                    EditLocalScreen(
+                        localId = id,
+                        onNavigateBack = { navController.popBackStack() },
+                        onSaveSuccess = { navController.popBackStack() }
                     )
                 }
 
