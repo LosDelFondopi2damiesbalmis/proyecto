@@ -44,6 +44,7 @@ import com.proyecto.PeluPos.ui.products.NewProductScreen
 import com.proyecto.PeluPos.ui.products.Product
 import com.proyecto.PeluPos.ui.products.ProductsScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
+import com.proyecto.PeluPos.ventas.VentasScreen
 import kotlin.random.Random
 
 @Composable
@@ -228,6 +229,18 @@ fun MainScreen() {
                         onSaveSuccess = { navController.popBackStack() }
                     )
                 }
+//                composable(Screen.Sales.route) {
+//                    VentasScreen(
+//                        toggleSidebar = { /* Lógica opcional */ },
+//                        // 👇 AQUÍ CONECTAMOS EL BOTÓN "AÑADIR" CON LA PANTALLA
+//                        navigateToNewSale = {
+//                            navController.navigate(Screen.NewSale.route)
+//                        },
+//                        navigateToSaleDetail = { id ->
+//                            navController.navigate(Screen.DetallesVentaScreen.createRoute(id))
+//                        }
+//                    )
+//                }
 
                 // AQUÍ PUEDES AÑADIR MÁS PANTALLAS:
                 // composable(Screen.Clients.route) { ... }
