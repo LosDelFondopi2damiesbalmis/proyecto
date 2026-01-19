@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ventas
+package com.proyecto.PeluPos.ui.ventas
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
