@@ -49,3 +49,9 @@
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |01/12| 2 | Creación de la vista de kotlin | 2 horas | - | - | -
 |04/12| 1 | Arreglando vistas para el main | 1 hora | - | - | -
+
+## Enero 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|12/01| 2 | Creación de la vista de los locales con el composable SelectorEmpleados, añadido de la propiedad roles en usuarios, se añade la vista de locales screen a la navegación y creación de la vista de ventas | 2 horas | - | - | -
