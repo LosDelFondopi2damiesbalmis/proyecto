@@ -1,6 +1,5 @@
-package com.proyecto.PeluPos.ui.navigation
-
 // ui/navigation/AppNavigation.kt
+package com.proyecto.PeluPos.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
