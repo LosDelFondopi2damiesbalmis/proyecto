@@ -45,6 +45,12 @@
 | 11/12 | S1 | Creacion de pantalla Locales | 1h | No hubo problemas | Todo fue bien | Aprendi a aplicar lo aprendido con las anteriores pantallas |
 | 15/12 | S1/S2 | Creacion de la pantalla productos | 2h | Esta pantalla era mas compleja con mas ventanas y funcionalidades | Ayudarme de la IA | Me ayudé mucho de la IA para poder crear todo lo necesario y esto me sirvió para entender bien como hacer uso de esta
 
+## Febrero 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
+|-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
+| 12/02 | S1 | Creacion de pantalla Ventas | 1h | Daba un error en el xaml | Entender donde estaba el error y corregirlo | Hay que leer los errores que salen por consola para poder encontrarlos facilmente |
+
 [🔝 Volver al índice](#índice-de-meses)
 
 ## Leyenda de Códigos
