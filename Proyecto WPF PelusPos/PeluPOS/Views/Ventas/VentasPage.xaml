@@ -1,0 +1,92 @@
+﻿<Page x:Class="PeluPOS.Views.Ventas.VentasPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:PeluPOS.Views.Ventas" 
+      xmlns:ventapage="clr-namespace:PeluPOS.ViewModels.VentaPage" 
+      d:DataContext="{d:DesignInstance Type=ventapage:VentasViewModel}"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="VentasPage" Background="{DynamicResource BackgroundBrush}">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0 0 0 16">
+            <TextBlock Text="Ventas"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="Consulta las ventas realizadas. No se pueden crear ni modificar facturas (solo pago)."
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                CornerRadius="12"
+                Padding="12"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1">
+
+            <DataGrid ItemsSource="{Binding Ventas}"
+                      SelectedItem="{Binding VentaSeleccionada}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      RowHeight="44"
+                      MouseDoubleClick="VentasGrid_DoubleClick">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Producto/Servicio"
+                                        Binding="{Binding ItemsResumen}"
+                                        Width="3*"/>
+
+                    <DataGridTextColumn Header="Monto"
+                                        Binding="{Binding Monto, StringFormat={}{0:0.00} €}"
+                                        Width="*"/>
+
+                    <DataGridTextColumn Header="Fecha"
+                                        Binding="{Binding Fecha, StringFormat={}{0:dd/MM/yyyy}}"
+                                        Width="*"/>
+
+                    <DataGridCheckBoxColumn Header="Pendiente"
+                        Binding="{Binding Pendiente, Mode=OneWay}"
+                        Width="Auto"
+                        IsReadOnly="True">
+                        <DataGridCheckBoxColumn.ElementStyle>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Focusable" Value="False"/>
+                            </Style>
+                        </DataGridCheckBoxColumn.ElementStyle>
+                    </DataGridCheckBoxColumn>
+
+                    <DataGridTemplateColumn Header="" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Ver"
+                                        Width="60" Height="28"
+                                        Click="Ver_Click"
+                                        Background="{DynamicResource AccentBrush}"
+                                        Foreground="{DynamicResource TextPrimaryBrush}"
+                                        BorderThickness="0"
+                                        Tag="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+
+            </DataGrid>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,201 @@
+﻿<Window x:Class="PeluPOS.Views.Ventas.VentaDetalleDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PeluPOS.Views.Ventas" xmlns:ventas="clr-namespace:PeluPOS.Services.Ventas" d:DataContext="{d:DesignInstance Type=ventas:VentaDetalleViewModel}"
+        mc:Ignorable="d"
+        Title="Detalle de venta"
+        Width="720" Height="560"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource BackgroundBrush}">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0 0 0 14">
+            <TextBlock Text="Detalle de venta"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="{Binding Factura.Id, StringFormat=Factura #{0}}"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Body -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="16">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Datos principales -->
+                <Grid Grid.Row="0" Margin="0 0 0 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Fecha" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 IsReadOnly="True"
+                                 Text="{Binding Factura.Fecha, StringFormat={}{0:dd/MM/yyyy}}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Cliente" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 IsReadOnly="True"
+                                 Text="{Binding Factura.Cliente.Nombre}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="Empleado" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 IsReadOnly="True"
+                                 Text="{Binding Factura.Empleado.Nombre}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Tipo pago (editable) + Pendiente (editable) + Monto -->
+                <Grid Grid.Row="1" Margin="0 0 0 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Tipo de pago (editable)" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <ComboBox Height="34"
+                                  ItemsSource="{Binding TiposPago}"
+                                  SelectedItem="{Binding TipoPago}"
+                                  Background="{DynamicResource BackgroundBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}"
+                                  BorderThickness="1"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Pendiente (editable)" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <CheckBox IsChecked="{Binding Pendiente}"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  Content="Pendiente de pago"
+                                  Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="Monto" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 IsReadOnly="True"
+                                 Text="{Binding Factura.Monto, StringFormat={}{0:0.00} €}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Línea separadora -->
+                <Separator Grid.Row="3" Background="{DynamicResource BorderBrush}"/>
+
+                <!-- Líneas (LineaFactura) -->
+                <DataGrid Grid.Row="4"
+                          ItemsSource="{Binding Factura.Lineas}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          RowHeight="42">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Producto/Servicio"
+                                            Binding="{Binding Producto.Nombre}"
+                                            Width="2*"/>
+                        <DataGridTextColumn Header=""
+                                            Binding="{Binding Servicio.Nombre}"
+                                            Width="2*"/>
+
+                        <DataGridTextColumn Header="Cant."
+                                            Binding="{Binding Cantidad}"
+                                            Width="Auto"/>
+
+                        <DataGridTextColumn Header="P.Unit."
+                                            Binding="{Binding PrecioUnitario, StringFormat={}{0:0.00} €}"
+                                            Width="*"/>
+
+                        <DataGridTextColumn Header="Total"
+                                            Binding="{Binding Cantidad}"
+                                            Width="0" Visibility="Collapsed"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,14,0,0">
+            <Button Content="Cerrar"
+                    Width="110" Height="38"
+                    Margin="0,0,10,0"
+                    Click="Cerrar_Click"
+                    Background="{DynamicResource SurfaceBrush}"
+                    Foreground="{DynamicResource TextPrimaryBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"/>
+
+            <Button Content="Guardar"
+                    Width="110" Height="38"
+                    Click="Guardar_Click"
+                    Background="{DynamicResource PrimaryBrush}"
+                    Foreground="{DynamicResource TextPrimaryDarkBrush}"
+                    BorderThickness="0"/>
+        </StackPanel>
+    </Grid>
+</Window>
