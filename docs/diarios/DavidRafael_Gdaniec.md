@@ -56,3 +56,9 @@
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 12/01 | 2 | Creación de la vista de los locales con el composable SelectorEmpleados, añadido de la propiedad roles en usuarios, se añade la vista de locales screen a la navegación y creación de la vista de ventas | 2 horas | - | - | -
 | 22/01 | 1 | Creación de las tareas del Sprint 5 | 1 horas | - | - | -
+
+## Febrero 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+| ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+| 12/02 | 2 | Actualización de la navegación para implementar NavHost y NavGraphBuilder en vez de la navegación que teníamos antes, se pasa la carpeta de locales a ui | 2 horas | - | - | -
