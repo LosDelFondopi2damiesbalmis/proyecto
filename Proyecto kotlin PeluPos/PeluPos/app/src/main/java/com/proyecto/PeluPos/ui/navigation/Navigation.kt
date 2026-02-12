@@ -28,6 +28,7 @@ sealed class Screen(val route: String) {
     // Pantallas de formulario
     object NewProduct : Screen("new_product")
     object NewEmployee : Screen("new_employee")
+    object NewSale : Screen("new_sale")
     object EditProduct : Screen("edit_product/{productId}") {
         fun createRoute(productId: String) = "edit_product/$productId"
     }
