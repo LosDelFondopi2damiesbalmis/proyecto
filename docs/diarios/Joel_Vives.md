@@ -50,6 +50,7 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones aplicadas | Reflexión/Aprendizaje |
 |-------|--------|-------------------|--------|-----------------------|----------------------|----------------------------|
 | 12/02 | S1 | Creacion de pantalla Ventas | 1h | Daba un error en el xaml | Entender donde estaba el error y corregirlo | Hay que leer los errores que salen por consola para poder encontrarlos facilmente |
+| 19/02 | S1 | Preparacion de entorno para TPV | 1h | Entender el funcionamiento del TPV | Pensar como resolver los problemas | A veces es bueno pararse a pensar que es lo que quieres implementar
 
 [🔝 Volver al índice](#índice-de-meses)
 
