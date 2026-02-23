@@ -24,18 +24,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.proyecto.PeluPos.locales.CreateLocalScreen
-import com.proyecto.PeluPos.locales.EditLocalScreen
-import com.proyecto.PeluPos.locales.LocalesScreen
+
 import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
+import com.proyecto.PeluPos.ui.locales.CreateLocalScreen
+import com.proyecto.PeluPos.ui.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.locales.LocalesScreen
 import com.proyecto.PeluPos.ui.navigation.Screen
 import com.proyecto.PeluPos.ui.products.NewProductScreen
 import com.proyecto.PeluPos.ui.products.Product
 import com.proyecto.PeluPos.ui.products.ProductsScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
+import com.proyecto.PeluPos.ui.tpv.TpvScreen
 
 @Composable
 fun MainScreen() {
@@ -118,7 +120,7 @@ fun MainScreen() {
                 onToggleSidebar = { isSidebarVisible = !isSidebarVisible }
             )
 
-            // NAVEGACIÓN PRINCIPAL
+            // ESTO HAY QUE CAMBIARLO
             NavHost(
                 navController = navController,
                 startDestination = Screen.Dashboard.route,
@@ -217,6 +219,15 @@ fun MainScreen() {
                         localId = id,
                         onNavigateBack = { navController.popBackStack() },
                         onSaveSuccess = { navController.popBackStack() }
+                    )
+                }
+                composable(Screen.Tpv.route) {
+                    TpvScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToSales = {
+                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
+                            navController.navigate(Screen.Sales.route)
+                        }
                     )
                 }
 //                composable(Screen.Sales.route) {
