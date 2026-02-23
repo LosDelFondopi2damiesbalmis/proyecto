@@ -15,6 +15,7 @@ namespace PeluPOS.Data.Seed
         public static List<Servicio> Servicios;
         public static List<Factura> Facturas;
         public static List<Local> Locales;
+        public static List<Usuario> Usuarios;
 
         static MockData()
         {
@@ -65,7 +66,7 @@ namespace PeluPOS.Data.Seed
             Email="pedro@local.com",
             Cargo="Barbero",
             LocalId=1,
-            Usuario = new Usuario { Id=1, Contrasena="1234" },
+            Usuario = new Usuario { Id=1, Contrasena="1234", Roles = Models.Enums.Roles.Empleado },
             Servicios = { Servicios[0], Servicios[1], Servicios[2] }
         },
         new Empleado
@@ -76,7 +77,7 @@ namespace PeluPOS.Data.Seed
             Email="laura@local.com",
             Cargo="Estilista",
             LocalId=1,
-            Usuario = new Usuario { Id=2, Contrasena="abcd" },
+            Usuario = new Usuario { Id=2, Contrasena="abcd", Roles = Models.Enums.Roles.Manager },
             Servicios = { Servicios[4], Servicios[3] }
         },
         new Empleado
@@ -87,7 +88,7 @@ namespace PeluPOS.Data.Seed
             Email="carlos@local.com",
             Cargo="Barbero Senior",
             LocalId=2,
-            Usuario = new Usuario { Id=3, Contrasena="9876" },
+            Usuario = new Usuario { Id=3, Contrasena="9876", Roles = Models.Enums.Roles.Administrador },
             Servicios = { Servicios[0], Servicios[2], Servicios[3] }
         }
     };
