@@ -62,3 +62,4 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 12/02 | 2 | Actualización de la navegación para implementar NavHost y NavGraphBuilder en vez de la navegación que teníamos antes, se pasa la carpeta de locales a ui | 2 horas | - | - | -
+| 23/02 | 2 | Creación de kas pantallas de TPV y de las últimas de empleados | 2 horas | - | - | -
