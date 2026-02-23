@@ -7,9 +7,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.proyecto.PeluPos.locales.EditLocalScreen
-import com.proyecto.PeluPos.locales.LocalesScreen
+
 import com.proyecto.PeluPos.ui.DashboardPage
+import com.proyecto.PeluPos.ui.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.locales.LocalesScreen
 import com.proyecto.PeluPos.ui.products.NewProductScreen
 import com.proyecto.PeluPos.ui.products.Product
 import com.proyecto.PeluPos.ui.products.ProductsScreen

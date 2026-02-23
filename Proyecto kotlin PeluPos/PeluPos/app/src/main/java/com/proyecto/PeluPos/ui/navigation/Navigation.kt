@@ -38,6 +38,7 @@ sealed class Screen(val route: String) {
         // Helper para crear la ruta pasando el ID (ej: "edit_local/5")
         fun createRoute(localId: Int) = "edit_local/$localId"
     }
+    object Tpv : Screen("tpv")
 }
 
 // Rutas principales para la sidebar
