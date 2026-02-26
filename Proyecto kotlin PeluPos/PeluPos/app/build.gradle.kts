@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
-//    alias(libs.plugins.devtools.ksp)
-//    alias(libs.plugins.com.google.dagger)
+    alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.com.google.dagger)
     id("kotlin-parcelize")
 }
 
@@ -66,13 +66,13 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-//    ksp(libs.dagger.hilt.android.compiler)
-//    kspAndroidTest(libs.dagger.hilt.android.compiler)
+    ksp(libs.dagger.hilt.android.compiler)
+    kspAndroidTest(libs.dagger.hilt.android.compiler)
 
     implementation(libs.compose.navigation)
 
     implementation(libs.androidx.room.ktx)
-//    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.com.squareup.retrofit2.converter.gson)
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(platform(libs.com.squareup.okhttp3.okhttp.bom))

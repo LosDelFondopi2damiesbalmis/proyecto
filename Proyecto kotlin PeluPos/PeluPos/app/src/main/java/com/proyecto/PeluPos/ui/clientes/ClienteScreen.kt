@@ -36,46 +36,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.proyecto.PeluPos.models.Cliente
 import com.proyecto.PeluPos.ui.composables.Sidebar
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 
 
 @Composable
-fun ClientSearchPage() {
+fun ClientSearchPage(listaClientes : List<Cliente>) {
     // ----------------------------------------------------
     // ESTADO DE LA BÚSQUEDA
     // ----------------------------------------------------
     var searchText by remember { mutableStateOf("") }
 
-    // ----------------------------------------------------
-    // DATOS DE EJEMPLO (Solo una lista de Strings, simplificando el modelo de datos)
-    // ----------------------------------------------------
-    val allClientNames = remember {
-        listOf(
-            "Ana García Pérez",
-            "Manuel López Ruiz",
-            "Sara Martínez Cano",
-            "Jorge Fernández Gil",
-            "Laura Pérez Jiménez",
-            "Carlos Gómez Díaz",
-            "Elena Ruiz Soler",
-            "David Torres Vega",
-            "Alicia Valls Roig",
-            "Pedro Sánchez Mora",
-            "María José Ramos"
-        )
-    }
-
-    // ----------------------------------------------------
-    // LÓGICA DE FILTRADO
-    // ----------------------------------------------------
-    val filteredNames = remember(searchText, allClientNames) {
+    val filteredNames = remember(searchText, listaClientes) {
         if (searchText.isBlank()) {
-            allClientNames // Mostrar todos si la caja de búsqueda está vacía
+            listaClientes // Mostrar todos si la caja de búsqueda está vacía
         } else {
             // Filtrar nombres que contengan el texto de búsqueda (sin importar mayúsculas/minúsculas)
-            allClientNames.filter {
-                it.contains(searchText, ignoreCase = true)
+            listaClientes.filter {
+                it.nombre.contains(searchText, ignoreCase = true)
             }
         }
     }
@@ -126,7 +105,7 @@ fun ClientSearchPage() {
         } else {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(filteredNames) { name ->
-                    ClientNameListItem(clientName = name) {
+                    ClientNameListItem(clientName = name.nombre) {
                         // Acción al hacer clic en el nombre del cliente
                         println("¡Cliente seleccionado: $name!")
                     }
@@ -192,7 +171,27 @@ fun ClienteScreen(
     navigateToNewCliente: () -> Unit
 )
 {
-        ClientSearchPage()
+   val clientes : List<Cliente> = listOf(
+       Cliente(
+           idCliente = 1L,
+           nombre = "diddy",
+           deuda = 500000.0,
+           telefono = 6543802
+       ),
+       Cliente(
+           idCliente = 1L,
+           nombre = "einstein",
+           deuda = 500000.0,
+           telefono = 6543802
+       ),
+       Cliente(
+           idCliente = 1L,
+           nombre = "rafa nadal",
+           deuda = 500000.0,
+           telefono = 6543802
+       ),
+   )
+        ClientSearchPage(clientes)
 
 }
 

@@ -41,52 +41,68 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Estructura para el ticket
-data class CartItem(val name: String, val price: Double, var quantity: Int = 1)
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.models.Servicio
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TpvScreen(
+    // Recibimos los catálogos reales desde el ViewModel o nivel superior
+    productosDisponibles: List<Producto>,
+    serviciosDisponibles: List<Servicio>,
     toggleSidebar: () -> Unit,
-    navigateToSales: () -> Unit
+    navigateToSales: () -> Unit,
+    // Pasamos las listas reales a la pantalla de crear factura
+    navigateToCreateInvoice: (productos: List<Producto>, servicios: List<Servicio>) -> Unit
 ) {
-    // Estados
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Productos", "Servicios")
-    val cartItems = remember { mutableStateListOf<CartItem>() }
-    var showCart by remember { mutableStateOf(false) } // Controla si vemos el catálogo o el ticket
 
-    val totalAmount = cartItems.sumOf { it.price * it.quantity }
-    val totalItems = cartItems.sumOf { it.quantity }
+    // ESTADO DEL CARRITO: Ahora guarda objetos reales en lugar de Strings
+    // Como tu modelo Factura pide MutableList, iremos añadiendo los items a estas listas
+    val carritoProductos = remember { mutableStateListOf<Producto>() }
+    val carritoServicios = remember { mutableStateListOf<Servicio>() }
+
+    // Cálculos derivados
+    val totalAmount = carritoProductos.sumOf { it.precioVenta } + carritoServicios.sumOf { it.precio }
+    val totalItems = carritoProductos.size + carritoServicios.size
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(if (showCart) "Ticket Actual" else "TPV", fontWeight = FontWeight.Bold)
-                },
-                navigationIcon = {
-                    if (showCart) {
-                        IconButton(onClick = { showCart = false }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                        }
-                    }
-                },
+                title = { Text("TPV", fontWeight = FontWeight.Bold) },
                 actions = {
-                    if (!showCart) {
-                        TextButton(onClick = navigateToSales) {
-                            Text("Historial")
-                        }
+                    TextButton(onClick = navigateToSales) {
+                        Text("Historial")
                     }
                 }
             )
         },
         bottomBar = {
-            // Barra inferior flotante para ir al ticket (solo visible en el catálogo si hay items)
-            if (!showCart && cartItems.isNotEmpty()) {
+            // Barra inferior flotante: Ahora nos lleva a la pantalla de crear factura
+            if (totalItems > 0) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.fillMaxWidth().clickable { showCart = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            // Navegamos pasando las listas actuales
+                            navigateToCreateInvoice(carritoProductos, carritoServicios)
+                        },
                     tonalElevation = 8.dp
                 ) {
                     Row(
@@ -105,148 +121,73 @@ fun TpvScreen(
             }
         }
     ) { paddingValues ->
-
-        if (showCart) {
-            // ==========================================
-            // VISTA 2: TICKET / CARRITO
-            // ==========================================
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-            ) {
-                // Nodo: "Muestra Usuario Activo"
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Person, contentDescription = "Usuario", tint = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text("Atendido por", fontSize = 12.sp, color = Color.Gray)
-                        Text("Laura Gómez", fontWeight = FontWeight.Bold)
-                    }
-                }
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-                // Lista de productos en el ticket
-                LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(cartItems) { item ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(item.name, fontWeight = FontWeight.Medium)
-                                Text("${item.quantity} x ${item.price} €", fontSize = 14.sp, color = Color.Gray)
-                            }
-                            Text(String.format("%.2f €", item.price * item.quantity), fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-                // Total y Botón de Cobro
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("TOTAL", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(String.format("%.2f €", totalAmount), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                }
-
-                // Nodo: "Crea Factura Nueva"
-                Button(
-                    onClick = {
-                        cartItems.clear()
-                        showCart = false // Volvemos al catálogo tras cobrar
-                    },
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    enabled = cartItems.isNotEmpty()
-                ) {
-                    Text("Cobrar e Imprimir Factura", fontSize = 16.sp)
+        // ==========================================
+        // CATÁLOGO DE SELECCIÓN
+        // ==========================================
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            TabRow(selectedTabIndex = selectedTab) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(title) }
+                    )
                 }
             }
 
-        } else {
-            // ==========================================
-            // VISTA 1: CATÁLOGO
-            // ==========================================
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
-                TabRow(selectedTabIndex = selectedTab) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = { Text(title) }
+                // Dibujamos Productos o Servicios según la pestaña
+                if (selectedTab == 0) {
+                    items(productosDisponibles) { producto ->
+                        ItemCard(
+                            nombre = producto.nombre,
+                            precio = producto.precioVenta,
+                            onClick = { carritoProductos.add(producto) } // Añadimos el objeto real
                         )
                     }
-                }
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2), // 2 columnas fijas para móvil
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    val items = if (selectedTab == 0) {
-                        listOf("Champú Kerastase" to 24.99, "Tinte Wella" to 12.50, "Mascarilla" to 18.75)
-                    } else {
-                        listOf("Corte Caballero" to 15.00, "Corte + Secado" to 25.00, "Tinte Completo" to 40.00)
-                    }
-
-                    items(items) { (name, price) ->
-                        Card(
-                            modifier = Modifier
-                                .height(120.dp)
-                                .clickable {
-                                    val existing = cartItems.find { it.name == name }
-                                    if (existing != null) {
-                                        existing.quantity++
-                                        val index = cartItems.indexOf(existing)
-                                        cartItems[index] = existing.copy(quantity = existing.quantity)
-                                    } else {
-                                        cartItems.add(CartItem(name, price))
-                                    }
-                                },
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize().padding(12.dp),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(text = name, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center, fontSize = 14.sp)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "${price} €", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                            }
-                        }
+                } else {
+                    items(serviciosDisponibles) { servicio ->
+                        ItemCard(
+                            nombre = servicio.nombre,
+                            precio = servicio.precio,
+                            onClick = { carritoServicios.add(servicio) } // Añadimos el objeto real
+                        )
                     }
                 }
             }
         }
     }
 }
-@Preview(
-    showBackground = true,
-    device = "id:pixel_5", // Simula un teléfono móvil estándar
-    name = "Pantalla TPV (Móvil)"
-)
+
+// Componente extraído para no repetir código entre productos y servicios
 @Composable
-fun TpvScreenMobilePreview() {
-    MaterialTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            TpvScreen(
-                toggleSidebar = { },
-                navigateToSales = { }
-            )
+fun ItemCard(nombre: String, precio: Double, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .height(120.dp)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = nombre, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "${precio} €", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
         }
     }
 }

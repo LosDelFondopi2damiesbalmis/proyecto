@@ -115,7 +115,7 @@ fun EmpleadosScreen(
                         }
 
                         IconButton(onClick = { onNavigateToStats(empleado.idEmpleado) }) {
-                            Icon(Icons.Default.BarChart, contentDescription = "Estadísticas", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.BarChart, contentDescription = "Estadística", tint = MaterialTheme.colorScheme.primary)
                         }
                         IconButton(onClick = { onNavigateToEdit(empleado.idEmpleado) }) {
                             Icon(Icons.Default.Edit, contentDescription = "Modificar")
