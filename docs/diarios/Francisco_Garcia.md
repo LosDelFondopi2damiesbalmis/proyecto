@@ -31,12 +31,74 @@
 |30/10| 5 | Creación del diagrama | 60 min | ninguno |- | - 
 
 ## Noviembre 2025
-
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |06/11| 6 | Creación de las clases | 60 min | ninguno |- | -
 |10/11| 7 | Planificar spring 2 | 60 min | ninguno |- | -
 |10/11| 7 | Planificar spring 2 | 60 min | ninguno |- | -
 
 ## Diciembre 2025
-
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 |15/12| 1 | Kotlin vistas | 60 min | no sabemos hacer la mayoría de cosas pero con buenos prompts vamos tirando | Leer manuales  | No intentar hacer todo de golpe
  
+## Febrero 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|26/02| 1 | Actualización del repositorio y eliminación de conflictos | 40 min | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+
+## Marzo 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+
+## Abril 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+
+## Mayo 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+
+## Junio 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+|------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
+|26/02| - | - | - | - | - | -
