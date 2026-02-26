@@ -1,23 +1,16 @@
 package com.proyecto.PeluPos.ui
 
 import ServicesScreen
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,26 +19,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.proyecto.PeluPos.locales.CreateLocalScreen
-import com.proyecto.PeluPos.locales.EditLocalScreen
-import com.proyecto.PeluPos.locales.LocalesScreen
+
 import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
+import com.proyecto.PeluPos.ui.locales.CreateLocalScreen
+import com.proyecto.PeluPos.ui.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.locales.LocalesScreen
 import com.proyecto.PeluPos.ui.navigation.Screen
 import com.proyecto.PeluPos.ui.products.NewProductScreen
 import com.proyecto.PeluPos.ui.products.Product
 import com.proyecto.PeluPos.ui.products.ProductsScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
-import com.proyecto.PeluPos.ventas.VentasScreen
-import kotlin.random.Random
+import com.proyecto.PeluPos.ui.tpv.TpvScreen
 
 @Composable
 fun MainScreen() {
@@ -128,7 +120,7 @@ fun MainScreen() {
                 onToggleSidebar = { isSidebarVisible = !isSidebarVisible }
             )
 
-            // NAVEGACIÓN PRINCIPAL
+            // ESTO HAY QUE CAMBIARLO
             NavHost(
                 navController = navController,
                 startDestination = Screen.Dashboard.route,
@@ -227,6 +219,15 @@ fun MainScreen() {
                         localId = id,
                         onNavigateBack = { navController.popBackStack() },
                         onSaveSuccess = { navController.popBackStack() }
+                    )
+                }
+                composable(Screen.Tpv.route) {
+                    TpvScreen(
+                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                        navigateToSales = {
+                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
+                            navController.navigate(Screen.Sales.route)
+                        }
                     )
                 }
 //                composable(Screen.Sales.route) {

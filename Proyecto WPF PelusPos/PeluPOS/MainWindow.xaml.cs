@@ -13,6 +13,7 @@ using PeluPOS.Views.EmpleadosPage;
 using PeluPOS.Views.Locales;
 using PeluPOS.Views.Productos;
 using PeluPOS.Views.Servicios;
+using PeluPOS.Views.Ventas;
 
 namespace PeluPOS
 {
@@ -56,7 +57,7 @@ namespace PeluPOS
 
         private void Ventas_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new VentasPage());
+            MainFrame.Navigate(new VentasPage());
         }
 
         private void Usuarios_Click(object sender, RoutedEventArgs e)
