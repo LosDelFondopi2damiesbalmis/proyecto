@@ -22,6 +22,7 @@ fun VentasScreen(
     toggleSidebar: () -> Unit,
     navigateToNewSale: () -> Unit,
     navigateToSaleDetail: (String) -> Unit
+
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
