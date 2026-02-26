@@ -54,6 +54,7 @@ import androidx.compose.runtime.*
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Producto
 import com.proyecto.PeluPos.models.Servicio
 import java.util.Date
@@ -188,6 +189,88 @@ fun ItemCard(nombre: String, precio: Double, onClick: () -> Unit) {
             Text(text = nombre, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "${precio} €", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+
+
+// --- PREVIEW ---
+@Preview(
+    showBackground = true,
+    device = "id:pixel_5",
+    name = "Pantalla TPV (Catálogo)"
+)
+@Composable
+fun TpvScreenPreview() {
+    // 1. Simulamos el Empleado (necesario para el Servicio)
+    val empleadoMock = Empleado(
+        idEmpleado = 1L,
+        nombre = "Carlos",
+        email = "carlos@pelupos.com",
+        telefono = 600123456,
+        cargo = "tonto"
+    )
+
+    // 2. Simulamos la lista de Productos usando el nuevo modelo (con precioVenta)
+    val mockProductos = listOf(
+        Producto(
+            idProducto = 1L,
+            nombre = "Champú Kerastase",
+            precioCompra = 10.00,
+            precioVenta = 24.99, // Este es el que se verá en el TPV
+            stock = 15
+        ),
+        Producto(
+            idProducto = 2L,
+            nombre = "Tinte Wella",
+            precioCompra = 5.50,
+            precioVenta = 12.50,
+            stock = 8
+        ),
+        Producto(
+            idProducto = 3L,
+            nombre = "Mascarilla Hidratante",
+            precioCompra = 8.00,
+            precioVenta = 18.75,
+            stock = 5
+        )
+    )
+
+    // 3. Simulamos la lista de Servicios
+    val mockServicios = listOf(
+        Servicio(
+            idServicio = 1L,
+            nombre = "Corte Caballero",
+            precio = 15.00,
+            descripcion = "Corte clásico a tijera y máquina",
+            empleado = empleadoMock
+        ),
+        Servicio(
+            idServicio = 2L,
+            nombre = "Tinte Completo",
+            precio = 40.00,
+            descripcion = "Tinte de raíz a puntas",
+            empleado = empleadoMock
+        ),
+        Servicio(
+            idServicio = 3L,
+            nombre = "Corte + Secado",
+            precio = 25.00,
+            descripcion = "Corte y peinado final",
+            empleado = empleadoMock
+        )
+    )
+
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            TpvScreen(
+                productosDisponibles = mockProductos,
+                serviciosDisponibles = mockServicios,
+                toggleSidebar = { },
+                navigateToSales = { },
+                navigateToCreateInvoice = { _, _ -> }
+            )
         }
     }
 }
