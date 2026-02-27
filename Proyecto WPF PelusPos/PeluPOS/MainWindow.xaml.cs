@@ -13,6 +13,7 @@ using PeluPOS.Views.EmpleadosPage;
 using PeluPOS.Views.Locales;
 using PeluPOS.Views.Productos;
 using PeluPOS.Views.Servicios;
+using PeluPOS.Views.TPV;
 using PeluPOS.Views.Ventas;
 
 namespace PeluPOS
@@ -72,7 +73,7 @@ namespace PeluPOS
 
         private void Tpv_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new TpvPage());
+            MainFrame.Navigate(new TpvPage());
         }
     }
 }
