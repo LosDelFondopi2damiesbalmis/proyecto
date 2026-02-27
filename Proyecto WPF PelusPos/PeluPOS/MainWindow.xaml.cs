@@ -33,23 +33,70 @@ namespace PeluPOS
             InitializeComponent();
 
             SessionService.SessionChanged += ApplySidebarVisibility;
+            SessionService.LoginRequired += async () =>
+            {
+                // OJO: esto puede venir desde otro hilo (TPV), por eso Dispatcher.
+                await Dispatcher.InvokeAsync(async () =>
+                {
+                    var ok = await ShowLoginAsync();
+                    if (!ok)
+                    {
+                        Close();
+                        return;
+                    }
+
+                    ApplySidebarVisibility();
+                    MainFrame.Navigate(new TpvPage());
+                });
+            };
 
             Loaded += async (_, __) =>
             {
-                await EnsureLoginAsync();
-
-                // Redirección según rol:
-                if (SessionService.CurrentUser?.Roles == Roles.Empleado)
+                var ok = await ShowLoginAsync();
+                if (!ok)
                 {
-                    MainFrame.Navigate(new TpvPage()); // TPV directo
-                }
-                else
-                {
-                    MainFrame.Navigate(new DashboardPage()); // Admin/Manager al dashboard
+                    Close();
+                    return;
                 }
 
                 ApplySidebarVisibility();
+                MainFrame.Navigate(new TpvPage());
             };
+        }
+        public async Task<bool> ShowLoginAsync()
+        {
+            while (!SessionService.IsLoggedIn)
+            {
+                var users = await _auth.GetUsersAsync();
+
+                var vm = new LoginViewModel();
+                foreach (var u in users)
+                    vm.Users.Add(u.Empleado);
+
+                vm.SelectedUser = vm.Users.FirstOrDefault();
+
+                var dlg = new LoginDialog(vm, _auth)
+                {
+                    Owner = this
+                };
+
+                if (dlg.ShowDialog() != true)
+                    return false; // cancelado
+
+                var user = dlg.SelectedUser!;
+                var empleado = await _auth.ResolveEmpleadoAsync(user);
+
+                if (empleado == null)
+                {
+                    MessageBox.Show("No se pudo asociar empleado.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+
+                SessionService.Login(user, empleado);
+            }
+
+            return true;
         }
 
         private async Task EnsureLoginAsync()
@@ -85,7 +132,6 @@ namespace PeluPOS
 
         private void ApplySidebarVisibility()
         {
-            // Sidebar visible solo para Admin/Manager
             Sidebar.Visibility = SessionService.CanSeeSidebar
                 ? Visibility.Visible
                 : Visibility.Collapsed;

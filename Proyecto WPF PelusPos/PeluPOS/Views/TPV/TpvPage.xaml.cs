@@ -50,38 +50,8 @@ namespace PeluPOS.Views.TPV
 
             Loaded += async (_, __) =>
             {
-                await EnsureLoginAsync();
                 await ViewModel.LoadAsync();
             };
-        }
-
-        private async System.Threading.Tasks.Task EnsureLoginAsync()
-        {
-            if (SessionService.IsLoggedIn) return;
-
-            var users = await _auth.GetUsersAsync();
-            var vm = new SelectUserViewModel();
-            foreach (var u in users) vm.Users.Add(u.Empleado);
-            vm.SelectedUser = vm.Users.FirstOrDefault();
-
-            var dlg = new SelectedUserDialog(vm)
-            {
-                Owner = Window.GetWindow(this)
-            };
-
-            if (dlg.ShowDialog() != true)
-                return;
-
-            var user = dlg.Selected!;
-            var empleado = await _auth.ResolveEmpleadoAsync(user.Usuario);
-
-            if (empleado == null)
-            {
-                MessageBox.Show("No se pudo asociar un empleado a este usuario.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            SessionService.Login(user.Usuario, empleado);
         }
 
         private void UserMenu_Click(object sender, RoutedEventArgs e)
@@ -89,11 +59,7 @@ namespace PeluPOS.Views.TPV
             var menu = new ContextMenu();
 
             var logout = new MenuItem { Header = "Cerrar sesión" };
-            logout.Click += async (_, __) =>
-            {
-                SessionService.Logout();
-                await EnsureLoginAsync();
-            };
+            logout.Click += (_, __) => SessionService.Logout();
 
             menu.Items.Add(logout);
 

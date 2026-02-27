@@ -11,6 +11,7 @@ namespace PeluPOS.Services
     public static class SessionService
     {
         public static event Action? SessionChanged;
+        public static event Action? LoginRequired;
 
         public static Usuario? CurrentUser { get; private set; }
         public static Empleado? CurrentEmpleado { get; private set; }
@@ -32,7 +33,9 @@ namespace PeluPOS.Services
         {
             CurrentUser = null;
             CurrentEmpleado = null;
+
             SessionChanged?.Invoke();
+            LoginRequired?.Invoke(); // 👈 DISPARA login
         }
     }
 }
