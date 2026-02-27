@@ -15,7 +15,6 @@ namespace PeluPOS.Data.Seed
         public static List<Servicio> Servicios;
         public static List<Factura> Facturas;
         public static List<Local> Locales;
-        public static List<Usuario> Usuarios;
 
         static MockData()
         {

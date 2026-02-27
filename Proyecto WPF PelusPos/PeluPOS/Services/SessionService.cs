@@ -10,30 +10,29 @@ namespace PeluPOS.Services
 {
     public static class SessionService
     {
+        public static event Action? SessionChanged;
+
         public static Usuario? CurrentUser { get; private set; }
         public static Empleado? CurrentEmpleado { get; private set; }
 
         public static bool IsLoggedIn => CurrentUser != null;
 
-        public static bool IsAdmin =>
-            CurrentUser?.Roles == Roles.Administrador;
-
-        public static bool IsManager =>
+        public static bool CanAccessDashboard =>
+            CurrentUser?.Roles == Roles.Administrador ||
             CurrentUser?.Roles == Roles.Manager;
 
-        public static bool IsEmpleado =>
-            CurrentUser?.Roles == Roles.Empleado;
-
-        public static void Login(Usuario usuario)
+        public static void Login(Usuario user, Empleado empleado)
         {
-            CurrentUser = usuario;
-            CurrentEmpleado = usuario.Empleado;
+            CurrentUser = user;
+            CurrentEmpleado = empleado;
+            SessionChanged?.Invoke();
         }
 
         public static void Logout()
         {
             CurrentUser = null;
             CurrentEmpleado = null;
+            SessionChanged?.Invoke();
         }
     }
 }
