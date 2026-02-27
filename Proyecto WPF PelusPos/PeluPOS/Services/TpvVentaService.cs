@@ -12,13 +12,12 @@ namespace PeluPOS.Services
     {
         public Task<Factura> CrearFacturaAsync(
             Empleado empleado,
-            Cliente cliente,
+            Cliente? cliente,
             string tipoPago,
             bool pendiente,
             IReadOnlyList<LineaFactura> lineas)
         {
             if (empleado == null) throw new InvalidOperationException("Empleado activo requerido.");
-            if (cliente == null) throw new InvalidOperationException("Cliente requerido.");
             if (lineas == null || lineas.Count == 0) throw new InvalidOperationException("No hay líneas en el ticket.");
             if (string.IsNullOrWhiteSpace(tipoPago)) tipoPago = "Efectivo";
 
