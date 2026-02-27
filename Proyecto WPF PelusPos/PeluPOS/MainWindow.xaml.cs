@@ -14,6 +14,7 @@ using PeluPOS.Views.Locales;
 using PeluPOS.Views.Productos;
 using PeluPOS.Views.Servicios;
 using PeluPOS.Views.TPV;
+using PeluPOS.Views.Usuarios;
 using PeluPOS.Views.Ventas;
 
 namespace PeluPOS
@@ -63,7 +64,7 @@ namespace PeluPOS
 
         private void Usuarios_Click(object sender, RoutedEventArgs e)
         {
-            // MainFrame.Navigate(new UsuariosPage());
+            MainFrame.Navigate(new UsuariosPage());
         }
 
         private void Locales_Click(object sender, RoutedEventArgs e)
