@@ -31,5 +31,11 @@ namespace PeluPOS.Services
             var emp = MockData.Empleados.FirstOrDefault(e => e.Id == usuario.EmpleadoId);
             return Task.FromResult(emp);
         }
+        public Task<bool> ValidatePasswordAsync(Usuario usuario, string password)
+        {
+            // Ajusta el nombre de la propiedad si no es Contrasena
+            var ok = usuario.Contrasena == password;
+            return Task.FromResult(ok);
+        }
     }
 }

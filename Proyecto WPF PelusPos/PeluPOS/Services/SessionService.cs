@@ -17,7 +17,7 @@ namespace PeluPOS.Services
 
         public static bool IsLoggedIn => CurrentUser != null;
 
-        public static bool CanAccessDashboard =>
+        public static bool CanSeeSidebar =>
             CurrentUser?.Roles == Roles.Administrador ||
             CurrentUser?.Roles == Roles.Manager;
 

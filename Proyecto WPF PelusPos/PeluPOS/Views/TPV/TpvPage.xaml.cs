@@ -102,7 +102,7 @@ namespace PeluPOS.Views.TPV
 
         private void Gear_Click(object sender, RoutedEventArgs e)
         {
-            if (!SessionService.CanAccessDashboard)
+            if (!SessionService.CanSeeSidebar)
             {
                 MessageBox.Show("No tienes permisos para acceder al Dashboard.", "Acceso denegado",
                     MessageBoxButton.OK, MessageBoxImage.Information);
