@@ -16,7 +16,7 @@ namespace PeluPOS.Models.Entities
 
         // Cliente asociado
         public long ClienteId { get; set; }
-        public Cliente Cliente { get; set; }
+        public Cliente? Cliente { get; set; }
 
         // Empleado que genera la factura
         public long EmpleadoId { get; set; }

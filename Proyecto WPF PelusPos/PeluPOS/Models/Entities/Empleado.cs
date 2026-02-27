@@ -20,7 +20,7 @@ namespace PeluPOS.Models.Entities
         public Local Local { get; set; }
 
         // Relación composición con Usuario
-        public Usuario Usuario { get; set; }
+        public Usuario? Usuario { get; set; }
 
         // Servicios que puede realizar este empleado
         public ICollection<Servicio> Servicios { get; set; } = new List<Servicio>();

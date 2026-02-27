@@ -4,12 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PeluPOS.Views.TPV"
+        xmlns:vm="clr-namespace:PeluPOS.ViewModels.TPV"
         mc:Ignorable="d"
         Title="Seleccionar usuario"
         Width="520" Height="420"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="{DynamicResource BackgroundBrush}">
+
+    <Window.DataContext>
+        <vm:SelectUserViewModel />
+    </Window.DataContext>
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -56,10 +61,10 @@
                                     Padding="10"
                                     Margin="0,0,0,8">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Empleado.Nombre}"
+                                    <TextBlock Text="{Binding Nombre}"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <TextBlock Text="{Binding Rol, StringFormat=Rol: {0}}"
+                                    <TextBlock Text="{Binding Usuario.Roles, StringFormat=Rol: {0}}"
                                                FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>

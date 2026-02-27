@@ -61,7 +61,7 @@ namespace PeluPOS.Views.TPV
 
             var users = await _auth.GetUsersAsync();
             var vm = new SelectUserViewModel();
-            foreach (var u in users) vm.Users.Add(u);
+            foreach (var u in users) vm.Users.Add(u.Empleado);
             vm.SelectedUser = vm.Users.FirstOrDefault();
 
             var dlg = new SelectedUserDialog(vm)
@@ -73,7 +73,7 @@ namespace PeluPOS.Views.TPV
                 return;
 
             var user = dlg.Selected!;
-            var empleado = await _auth.ResolveEmpleadoAsync(user);
+            var empleado = await _auth.ResolveEmpleadoAsync(user.Usuario);
 
             if (empleado == null)
             {
@@ -81,7 +81,7 @@ namespace PeluPOS.Views.TPV
                 return;
             }
 
-            SessionService.Login(user, empleado);
+            SessionService.Login(user.Usuario, empleado);
         }
 
         private void UserMenu_Click(object sender, RoutedEventArgs e)

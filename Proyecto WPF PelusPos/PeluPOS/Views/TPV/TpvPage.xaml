@@ -3,10 +3,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:PeluPOS.Views.TPV"
+      xmlns:local="clr-namespace:PeluPOS.Views.TPV" 
+      xmlns:vm="clr-namespace:PeluPOS.ViewModels.TPV"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TpvPage" Background="{DynamicResource BackgroundBrush}">
+
+    <Page.DataContext>
+        <vm:TpvViewModel/>
+    </Page.DataContext>
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -157,7 +162,7 @@
                                    FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                        <ComboBox Height="34"
+                        <ComboBox Height="26"
                                   ItemsSource="{Binding TiposPago}"
                                   SelectedItem="{Binding TipoPago}"
                                   Background="{DynamicResource BackgroundBrush}"
@@ -169,6 +174,16 @@
                                   IsChecked="{Binding Pendiente}"
                                   Foreground="{DynamicResource TextPrimaryBrush}"
                                   Margin="0,8,0,0"/>
+                        <TextBlock Text="Cliente asignado"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <ComboBox Height="26"
+                                  ItemsSource="{Binding Clientes}"
+                                  SelectedItem="{Binding ClienteSeleccionado}"
+                                  Background="{DynamicResource BackgroundBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}"
+                                  BorderThickness="1"/>
                     </StackPanel>
 
                     <TextBlock Grid.Row="4"

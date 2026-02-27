@@ -23,7 +23,7 @@ namespace PeluPOS.Views.TPV
     {
         public SelectUserViewModel VM { get; }
 
-        public Usuario? Selected => VM.SelectedUser;
+        public Empleado? Selected => VM.SelectedUser;
 
         public SelectedUserDialog(SelectUserViewModel vm)
         {

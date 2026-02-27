@@ -11,7 +11,7 @@ namespace PeluPOS.Services
     {
         Task<Factura> CrearFacturaAsync(
             Empleado empleado,
-            Cliente cliente,
+            Cliente? cliente,
             string tipoPago,
             bool pendiente,
             IReadOnlyList<LineaFactura> lineas);
