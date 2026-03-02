@@ -24,6 +24,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.models.Servicio
 
 import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
@@ -43,66 +45,8 @@ import com.proyecto.PeluPos.ui.tpv.TpvScreen
 fun MainScreen() {
     var isSidebarVisible by remember { mutableStateOf(true) }
     val navController = rememberNavController()
-    val products = remember { mutableStateListOf<Product>() }
-
-    // Inicializar con datos de ejemplo
-    if (products.isEmpty()) {
-        products.addAll(
-            listOf(
-                Product(
-                    id = "1",
-                    name = "Champú Reparador Kerastase",
-                    code = "CH-KERA-001",
-                    category = "Champús",
-                    price = 24.99,
-                    stock = 15,
-                    minStock = 5,
-                    supplier = "L'Oréal Professional"
-                ),
-                Product(
-                    id = "2",
-                    name = "Tinte Wella Koleston",
-                    code = "TINT-WELLA-55",
-                    category = "Tintes",
-                    price = 12.50,
-                    stock = 3,
-                    minStock = 10,
-                    supplier = "Wella Professionals"
-                ),
-                Product(
-                    id = "3",
-                    name = "Mascarilla Hidratante",
-                    code = "MASC-HIDRA-02",
-                    category = "Mascarillas",
-                    price = 18.75,
-                    stock = 8,
-                    minStock = 6,
-                    supplier = "Schwarzkopf"
-                ),
-                Product(
-                    id = "4",
-                    name = "Laca Fijación Extra Fuerte",
-                    code = "LACA-EXTRA-01",
-                    category = "Fijadores",
-                    price = 9.99,
-                    stock = 22,
-                    minStock = 8,
-                    supplier = "Taft"
-                ),
-                Product(
-                    id = "5",
-                    name = "Tijeras Profesionales Jaguar",
-                    code = "TIJ-JAG-7",
-                    category = "Herramientas",
-                    price = 89.99,
-                    stock = 2,
-                    minStock = 3,
-                    supplier = "Jaguar"
-                )
-            )
-        )
-    }
-
+    val products = remember { mutableStateListOf<Producto>() }
+    val servicios = remember { mutableStateListOf<Servicio>() }
     PeluPosTheme {
         Row(modifier = Modifier.fillMaxSize()) {
             Sidebar(
@@ -151,17 +95,17 @@ fun MainScreen() {
                 }
 
                 // NUEVO PRODUCTO
-                composable(Screen.NewProduct.route) {
-                    NewProductScreen(
-                        onBackClick = { navController.popBackStack() },
-                        onSaveProduct = { newProduct ->
-                            // Agregar el nuevo producto a la lista
-                            products.add(newProduct)
-                            // Volver a la pantalla de productos
-                            navController.popBackStack()
-                        }
-                    )
-                }
+//                composable(Screen.NewProduct.route) {
+//                    NewProductScreen(
+//                        onBackClick = { navController.popBackStack() },
+//                        onSaveProduct = { newProduct ->
+//                            // Agregar el nuevo producto a la lista
+//                            products.add(newProduct)
+//                            // Volver a la pantalla de productos
+//                            navController.popBackStack()
+//                        }
+//                    )
+//                }
                 composable(Screen.Services.route) {
                     ServicesScreen(
                         toggleSidebar = { isSidebarVisible = !isSidebarVisible },
@@ -227,7 +171,10 @@ fun MainScreen() {
                         navigateToSales = {
                             // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
                             navController.navigate(Screen.Sales.route)
-                        }
+                        },
+                        productosDisponibles = products,
+                        serviciosDisponibles = servicios,
+                        navigateToCreateInvoice = { _, _ -> }
                     )
                 }
 //                composable(Screen.Sales.route) {
