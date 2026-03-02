@@ -99,37 +99,6 @@ namespace PeluPOS
             return true;
         }
 
-        private async Task EnsureLoginAsync()
-        {
-            while (!SessionService.IsLoggedIn)
-            {
-                var users = await _auth.GetUsersAsync();
-                var vm = new LoginViewModel();
-                foreach (var u in users) vm.Users.Add(u.Empleado);
-                vm.SelectedUser = vm.Users.Count > 0 ? vm.Users[0] : null;
-
-                var dlg = new LoginDialog(vm, _auth) { Owner = this };
-
-                if (dlg.ShowDialog() != true)
-                {
-                    Close(); // si cancelan, cierras la app o vuelve a pedir login
-                    return;
-                }
-
-                var user = dlg.SelectedUser!;
-                var emp = await _auth.ResolveEmpleadoAsync(user);
-
-                if (emp == null)
-                {
-                    MessageBox.Show("Este usuario no tiene empleado asociado.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
-                }
-
-                SessionService.Login(user, emp);
-            }
-        }
-
         private void ApplySidebarVisibility()
         {
             Sidebar.Visibility = SessionService.CanSeeSidebar
