@@ -6,7 +6,10 @@
       xmlns:local="clr-namespace:PeluPOS.Views.Usuarios"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Usuarios">
+      Title="Usuarios"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Grid Background="#F3F4F6" Margin="16">
         <Grid.RowDefinitions>

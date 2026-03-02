@@ -7,7 +7,10 @@
       xmlns:vm="clr-namespace:PeluPOS.ViewModels.TPV"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="TpvPage" Background="{DynamicResource BackgroundBrush}" >
+      Title="TpvPage" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Page.DataContext>
         <vm:TpvViewModel/>
