@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.composables
+package com.proyecto.PeluPos.ui.features.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
