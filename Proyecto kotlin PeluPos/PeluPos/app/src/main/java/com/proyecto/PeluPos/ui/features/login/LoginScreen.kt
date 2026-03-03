@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.login
+package com.proyecto.PeluPos.ui.features.login
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

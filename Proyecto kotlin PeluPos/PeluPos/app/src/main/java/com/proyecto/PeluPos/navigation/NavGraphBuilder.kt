@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.navigation
+package com.proyecto.PeluPos.navigation
 
 import ServicesScreen
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -9,11 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 
 import com.proyecto.PeluPos.ui.DashboardPage
-import com.proyecto.PeluPos.ui.locales.EditLocalScreen
-import com.proyecto.PeluPos.ui.locales.LocalesScreen
-import com.proyecto.PeluPos.ui.products.NewProductScreen
-import com.proyecto.PeluPos.ui.products.Product
-import com.proyecto.PeluPos.ui.products.ProductsScreen
+import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
+import com.proyecto.PeluPos.ui.features.products.NewProductScreen
+import com.proyecto.PeluPos.ui.features.products.Product
+import com.proyecto.PeluPos.ui.features.products.ProductsScreen
+
 
 fun NavGraphBuilder.appNavigation(
     navController: NavHostController,

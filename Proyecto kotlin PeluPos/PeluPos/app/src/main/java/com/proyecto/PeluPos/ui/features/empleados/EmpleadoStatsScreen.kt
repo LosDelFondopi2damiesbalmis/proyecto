@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.empleados
+package com.proyecto.PeluPos.ui.features.empleados
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

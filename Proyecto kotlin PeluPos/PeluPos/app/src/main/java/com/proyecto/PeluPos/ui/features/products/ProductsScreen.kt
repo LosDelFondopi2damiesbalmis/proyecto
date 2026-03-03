@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.products
+package com.proyecto.PeluPos.ui.features.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll

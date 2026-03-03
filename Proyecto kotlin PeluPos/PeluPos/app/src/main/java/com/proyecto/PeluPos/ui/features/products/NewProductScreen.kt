@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.products
+package com.proyecto.PeluPos.ui.features.products
 
 
 import androidx.compose.foundation.layout.*
@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.proyecto.PeluPos.ui.products.Product
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)

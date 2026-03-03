@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.locales
+package com.proyecto.PeluPos.ui.features.locales
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

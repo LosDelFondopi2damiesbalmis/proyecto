@@ -1,13 +1,14 @@
-package com.proyecto.PeluPos.ui.navigation
+package com.proyecto.PeluPos.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.proyecto.PeluPos.ui.locales.CreateLocalScreen
-import com.proyecto.PeluPos.ui.locales.EditLocalScreen
-import com.proyecto.PeluPos.ui.locales.LocalesScreen
+import com.proyecto.PeluPos.ui.features.locales.CreateLocalScreen
+import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
+
 
 fun NavGraphBuilder.locationsGraph(
     navController: NavController,

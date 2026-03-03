@@ -1,8 +1,5 @@
 // ui/navigation/Navigation.kt
-package com.proyecto.PeluPos.ui.navigation
-
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+package com.proyecto.PeluPos.navigation
 
 // Definición de las pantallas
 sealed class Screen(val route: String) {

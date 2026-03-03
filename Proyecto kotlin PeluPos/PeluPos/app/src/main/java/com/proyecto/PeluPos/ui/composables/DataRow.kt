@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.features.composables
+package com.proyecto.PeluPos.ui.composables
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

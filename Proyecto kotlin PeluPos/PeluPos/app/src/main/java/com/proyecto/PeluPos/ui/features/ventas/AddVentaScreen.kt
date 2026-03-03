@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.ventas
+package com.proyecto.PeluPos.ui.features.ventas
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

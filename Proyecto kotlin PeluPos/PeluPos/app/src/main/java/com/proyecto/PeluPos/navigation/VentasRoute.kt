@@ -1,9 +1,10 @@
-package com.proyecto.PeluPos.ui.navigation
+package com.proyecto.PeluPos.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.proyecto.PeluPos.ui.ventas.VentasScreen
+import com.proyecto.PeluPos.ui.features.ventas.VentasScreen
+
 
 fun NavGraphBuilder.salesDestination(
     navController: NavController,

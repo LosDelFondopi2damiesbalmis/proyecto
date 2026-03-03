@@ -1,5 +1,5 @@
 // ui/composables/Sidebar.kt (VERSIÓN CORREGIDA)
-package com.proyecto.PeluPos.ui.features.composables
+package com.proyecto.PeluPos.ui.composables
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState

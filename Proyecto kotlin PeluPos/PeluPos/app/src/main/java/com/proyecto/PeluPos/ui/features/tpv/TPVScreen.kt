@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.tpv
+package com.proyecto.PeluPos.ui.features.tpv
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.proyecto.PeluPos.ui.servicios
+package com.proyecto.PeluPos.ui.features.servicios
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
