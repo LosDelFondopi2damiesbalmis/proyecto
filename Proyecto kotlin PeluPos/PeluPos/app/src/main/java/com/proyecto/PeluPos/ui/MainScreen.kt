@@ -27,19 +27,18 @@ import androidx.navigation.navArgument
 import com.proyecto.PeluPos.models.Producto
 import com.proyecto.PeluPos.models.Servicio
 
-import com.proyecto.PeluPos.ui.clientes.ClienteScreen
+import com.proyecto.PeluPos.ui.features.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
-import com.proyecto.PeluPos.ui.locales.CreateLocalScreen
-import com.proyecto.PeluPos.ui.locales.EditLocalScreen
-import com.proyecto.PeluPos.ui.locales.LocalesScreen
-import com.proyecto.PeluPos.ui.navigation.Screen
-import com.proyecto.PeluPos.ui.products.NewProductScreen
-import com.proyecto.PeluPos.ui.products.Product
-import com.proyecto.PeluPos.ui.products.ProductsScreen
+import com.proyecto.PeluPos.navigation.Screen
+import com.proyecto.PeluPos.ui.features.locales.CreateLocalScreen
+import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
+import com.proyecto.PeluPos.ui.features.products.ProductsScreen
+import com.proyecto.PeluPos.ui.features.tpv.TpvScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
-import com.proyecto.PeluPos.ui.tpv.TpvScreen
+
 
 @Composable
 fun MainScreen() {
