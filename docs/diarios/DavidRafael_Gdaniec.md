@@ -8,9 +8,16 @@
 
 ## Índice de meses
   
-- [:calendar:Septiembre 2025](#septiembre-2025)
-- [:calendar:Octubre 2025](#octubre-2025)
-
+- [Diario de trabajo individual](#diario-de-trabajo-individual)
+  - [Índice de meses](#índice-de-meses)
+  - [Septiembre 2025](#septiembre-2025)
+  - [Octubre 2025](#octubre-2025)
+  - [Noviembre 2025](#noviembre-2025)
+  - [Diciembre 2025](#diciembre-2025)
+  - [Enero 2026](#enero-2026)
+  - [Febrero 2026](#febrero-2026)
+  - [Marzo 2026](#marzo-2026)
+  
 ## Septiembre 2025
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
@@ -70,3 +77,4 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 02/03 | 1 | Creación del LoginScreen según está en WPF | 1 hora | - | - | -
+| 03/03 | 2 | Cambio en la estructura de carpetas y creación del primer viewmodel | 1 hora | - | - | -
