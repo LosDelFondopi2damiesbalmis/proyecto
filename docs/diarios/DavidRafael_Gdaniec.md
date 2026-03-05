@@ -78,3 +78,4 @@
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 02/03 | 1 | Creación del LoginScreen según está en WPF | 1 hora | - | - | -
 | 03/03 | 2 | Cambio en la estructura de carpetas y creación del primer viewmodel | 1 hora | - | - | -
+| 05/03 | 5 | Creación de las pantallas de usuarios y creada las primeras pantallas funcionales de tpv y ventas con sus eventos y viewmodels | 5 horas | - | - | -
