@@ -5,4 +5,5 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.devtools.ksp) apply false
     alias(libs.plugins.com.google.dagger) apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" apply false
 }

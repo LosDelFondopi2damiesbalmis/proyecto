@@ -22,23 +22,54 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Print
+import androidx.compose.material3.*
+import androidx.compose.runtime.remember
+
+import androidx.compose.ui.draw.clip
+
+import androidx.compose.ui.unit.dp
+import com.proyecto.PeluPos.models.Cliente
+import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.Factura
+import com.proyecto.PeluPos.models.Servicio
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetallesVentaScreen(
-    saleId: String?, // Recibimos el ID desde la navegación
+    factura: Factura?, // <-- Ahora recibimos el objeto real
     onBack: () -> Unit
 ) {
-    // --- DATOS SIMULADOS (En una app real, pedirías esto al ViewModel/Base de Datos usando el saleId) ---
-    val detalleVenta = remember(saleId) {
-        mapOf(
-            "id" to (saleId ?: "V-000"),
-            "servicio" to "Corte Degradado + Barba",
-            "precio" to 25.0,
-            "empleado" to "Carlos",
-            "fecha" to "19 Ene 2024, 10:30",
-            "metodo" to "Tarjeta",
-            "estado" to "Pagado"
-        )
+
+    if (factura == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Factura no encontrada", color = MaterialTheme.colorScheme.error)
+            Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) { Text("Volver") }
+        }
+        return
+    }
+
+
+    val sdf = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
+    val fechaFormateada = sdf.format(factura.fecha)
+
+
+    val resumenItems = remember(factura) {
+        val nombresServicios = factura.servicios.map { it.nombre }
+        val nombresProductos = factura.productos.map { it.nombre }
+        val todosLosItems = nombresServicios + nombresProductos
+        if (todosLosItems.isEmpty()) "Sin ítems" else todosLosItems.joinToString(", ")
     }
 
     Scaffold(
@@ -46,7 +77,7 @@ fun DetallesVentaScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Ticket #${detalleVenta["id"]}",
+                        "Ticket #${factura.idFactura}", // ID Real
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -93,7 +124,7 @@ fun DetallesVentaScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "${detalleVenta["precio"]}0€",
+                text = String.format("%.2f €", factura.monto), // Precio Real Formateado
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -121,28 +152,36 @@ fun DetallesVentaScreen(
                     DetailRow(
                         icon = Icons.Default.ContentCut,
                         label = "Servicio/Producto",
-                        value = detalleVenta["servicio"].toString()
+                        value = resumenItems // Lista unificada de items
                     )
                     Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
                     DetailRow(
                         icon = Icons.Default.Person,
                         label = "Atendido por",
-                        value = detalleVenta["empleado"].toString()
+                        value = factura.empleado.nombre // Nombre del empleado real
                     )
                     Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
                     DetailRow(
                         icon = Icons.Default.CalendarToday,
                         label = "Fecha y Hora",
-                        value = detalleVenta["fecha"].toString()
+                        value = fechaFormateada // Fecha real formateada
                     )
                     Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
                     DetailRow(
-                        icon = if (detalleVenta["metodo"] == "Tarjeta") Icons.Default.CreditCard else Icons.Default.AttachMoney,
+                        icon = if (factura.tipoPago == "Tarjeta") Icons.Default.CreditCard else Icons.Default.AttachMoney,
                         label = "Método de Pago",
-                        value = detalleVenta["metodo"].toString()
+                        value = factura.tipoPago // Método real
+                    )
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                    // ¡Añadimos al Cliente también ya que lo tenemos en el modelo!
+                    DetailRow(
+                        icon = Icons.Default.Face,
+                        label = "Cliente",
+                        value = factura.cliente.nombre
                     )
                 }
             }
@@ -154,7 +193,6 @@ fun DetallesVentaScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Botón Anular (Estilo secundario/error)
                 OutlinedButton(
                     onClick = { /* Lógica devolución */ },
                     modifier = Modifier.weight(1f).height(50.dp),
@@ -166,7 +204,6 @@ fun DetallesVentaScreen(
                     Text("Devolución")
                 }
 
-                // Botón Imprimir (Estilo primario)
                 Button(
                     onClick = { /* Lógica imprimir ticket */ },
                     modifier = Modifier.weight(1f).height(50.dp),
@@ -181,7 +218,7 @@ fun DetallesVentaScreen(
     }
 }
 
-// --- HELPER PARA LAS FILAS DE DETALLE ---
+// --- HELPER PARA LAS FILAS DE DETALLE (Se queda igual) ---
 @Composable
 fun DetailRow(icon: ImageVector, label: String, value: String) {
     Row(
@@ -205,10 +242,30 @@ fun DetailRow(icon: ImageVector, label: String, value: String) {
         }
     }
 }
+
+// --- PREVIEW CON DATOS REALES ---
 @Preview(showBackground = true)
 @Composable
 fun PreviewSaleDetail() {
-    PeluPosTheme {
-        DetallesVentaScreen(saleId = "V-1234", onBack = {})
+    // Mocks
+    val empleadoMock = Empleado(1L, telefono = 5323523, "carlos@pelu.com", "Peluquero", nombre = "Carlos")
+    val clienteMock = Cliente(1L, "Juan Pérez", 0.0, 655111222)
+    val servicioMock =
+        Servicio(1L, "Corte Degradado + Barba", 25.0, "Corte y perfilado", empleadoMock)
+
+    val facturaMock = Factura(
+        idFactura = 123456789L,
+        monto = 25.0,
+        fecha = Date(),
+        pendiente = false,
+        tipoPago = "Tarjeta",
+        cliente = clienteMock,
+        empleado = empleadoMock,
+        servicios = mutableListOf(servicioMock),
+        productos = mutableListOf()
+    )
+
+    MaterialTheme { // Usa tu PeluPosTheme aquí en tu código real
+        DetallesVentaScreen(factura = facturaMock, onBack = {})
     }
 }

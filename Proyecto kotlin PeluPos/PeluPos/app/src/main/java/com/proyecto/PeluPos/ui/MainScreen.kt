@@ -164,18 +164,18 @@ fun MainScreen() {
                         onSaveSuccess = { navController.popBackStack() }
                     )
                 }
-                composable(Screen.Tpv.route) {
-                    TpvScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToSales = {
-                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
-                            navController.navigate(Screen.Sales.route)
-                        },
-                        productosDisponibles = products,
-                        serviciosDisponibles = servicios,
-                        navigateToCreateInvoice = { _, _ -> }
-                    )
-                }
+//                composable(Screen.Tpv.route) {
+//                    TpvScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToSales = {
+//                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
+//                            navController.navigate(Screen.Sales.route)
+//                        },
+//                        productosDisponibles = products,
+//                        serviciosDisponibles = servicios,
+//                        navigateToCreateInvoice = { _, _ -> }
+//                    )
+//                }
 //                composable(Screen.Sales.route) {
 //                    VentasScreen(
 //                        toggleSidebar = { /* Lógica opcional */ },
