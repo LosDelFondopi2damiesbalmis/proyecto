@@ -21,6 +21,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.proyecto.PeluPos.models.Cliente
+import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.models.Servicio
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,25 +33,36 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSaleScreen(
+    // Datos del Carrito (Vienen del TPV)
+    productosCart: List<Producto>,
+    serviciosCart: List<Servicio>,
+
+    // Datos para el formulario
+    empleadosDisponibles: List<Empleado>,
+    clientesDisponibles: List<Cliente>,
+
+    // Estado seleccionado
+    empleadoSeleccionado: Empleado?,
+    clienteSeleccionado: Cliente?,
+    tipoPago: String,
+
+    // Eventos y Navegación
+    onEvent: (FacturacionEvent) -> Unit,
     onBack: () -> Unit,
-    onSave: (Map<String, Any>) -> Unit // Devuelve el mapa listo para tu lista
+    onFacturaGuardada: () -> Unit // Callback para volver al TPV o Historial al terminar
 ) {
-    // --- ESTADOS DEL FORMULARIO ---
-    var servicio by remember { mutableStateOf("") }
-    var precioTexto by remember { mutableStateOf("") }
-    var empleado by remember { mutableStateOf("Carlos") } // Valor por defecto
-    var metodoPago by remember { mutableStateOf("Efectivo") }
-
-    // Estado para el Dropdown de empleados
     var expandedEmpleado by remember { mutableStateOf(false) }
-    val empleadosList = listOf("Carlos", "Elena", "Pedro", "Admin")
-
+    var expandedCliente by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+
+    // Cálculo automático del total del ticket
+    val totalAmount = productosCart.sumOf { it.precioVenta } + serviciosCart.sumOf { it.precio }
+    val isFormValid = empleadoSeleccionado != null && clienteSeleccionado != null
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Nuevo Ticket", fontWeight = FontWeight.Bold) },
+                title = { Text("Cerrar Ticket", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.Close, contentDescription = "Cerrar")
@@ -59,39 +74,52 @@ fun AddSaleScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(16.dp)
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            // 1. SECCIÓN: EMPLEADO (Dropdown)
-            Text("¿Quién atiende?", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            // --- RESUMEN DEL CARRITO ---
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Total a cobrar:", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = String.format("%.2f €", totalAmount),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
+            Divider()
+
+            // --- 1. SECCIÓN: EMPLEADO ---
+            Text("¿Quién ha realizado el servicio?", color = MaterialTheme.colorScheme.primary)
             ExposedDropdownMenuBox(
                 expanded = expandedEmpleado,
                 onExpandedChange = { expandedEmpleado = !expandedEmpleado }
             ) {
                 OutlinedTextField(
-                    value = empleado,
+                    value = empleadoSeleccionado?.nombre ?: "Seleccionar Empleado",
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Empleado") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedEmpleado) },
                     modifier = Modifier.menuAnchor().fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expandedEmpleado) }
                 )
-                ExposedDropdownMenu(
-                    expanded = expandedEmpleado,
-                    onDismissRequest = { expandedEmpleado = false }
-                ) {
-                    empleadosList.forEach { item ->
+                ExposedDropdownMenu(expanded = expandedEmpleado, onDismissRequest = { expandedEmpleado = false }) {
+                    empleadosDisponibles.forEach { emp ->
                         DropdownMenuItem(
-                            text = { Text(item) },
+                            text = { Text(emp.nombre) },
                             onClick = {
-                                empleado = item
+                                onEvent(FacturacionEvent.OnEmpleadoSeleccionado(emp))
                                 expandedEmpleado = false
                             }
                         )
@@ -99,91 +127,69 @@ fun AddSaleScreen(
                 }
             }
 
-            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-            // 2. SECCIÓN: DETALLES DEL SERVICIO
-            Text("Detalles de la venta", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-
-            OutlinedTextField(
-                value = servicio,
-                onValueChange = { servicio = it },
-                label = { Text("Servicio o Producto") },
-                placeholder = { Text("Ej: Corte Caballero") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                leadingIcon = { Icon(Icons.Default.ContentCut, null) },
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
-                singleLine = true
-            )
-
-            OutlinedTextField(
-                value = precioTexto,
-                onValueChange = {
-                    // Validación simple para permitir solo números y puntos decimales
-                    if (it.all { char -> char.isDigit() || char == '.' }) {
-                        precioTexto = it
+            // --- 2. SECCIÓN: CLIENTE ---
+            Text("Asignar a Cliente", color = MaterialTheme.colorScheme.primary)
+            ExposedDropdownMenuBox(
+                expanded = expandedCliente,
+                onExpandedChange = { expandedCliente = !expandedCliente }
+            ) {
+                OutlinedTextField(
+                    value = clienteSeleccionado?.nombre ?: "Seleccionar Cliente",
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expandedCliente) }
+                )
+                ExposedDropdownMenu(expanded = expandedCliente, onDismissRequest = { expandedCliente = false }) {
+                    clientesDisponibles.forEach { cli ->
+                        DropdownMenuItem(
+                            text = { Text("${cli.nombre} - ${cli.telefono}") },
+                            onClick = {
+                                onEvent(FacturacionEvent.OnClienteSeleccionado(cli))
+                                expandedCliente = false
+                            }
+                        )
                     }
-                },
-                label = { Text("Precio (€)") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                leadingIcon = { Icon(Icons.Default.Euro, null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
-                singleLine = true
-            )
+                }
+            }
 
-            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            Divider()
 
-            // 3. SECCIÓN: MÉTODO DE PAGO
-            Text("Método de Pago", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-
+            // --- 3. SECCIÓN: MÉTODO DE PAGO ---
+            Text("Método de Pago", color = MaterialTheme.colorScheme.primary)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 PaymentOptionButton(
                     text = "Efectivo",
                     icon = Icons.Default.AttachMoney,
-                    isSelected = metodoPago == "Efectivo",
-                    onClick = { metodoPago = "Efectivo" },
+                    isSelected = tipoPago == "Efectivo",
+                    onClick = { onEvent(FacturacionEvent.OnTipoPagoSeleccionado("Efectivo")) },
                     modifier = Modifier.weight(1f)
                 )
                 PaymentOptionButton(
                     text = "Tarjeta",
                     icon = Icons.Default.CreditCard,
-                    isSelected = metodoPago == "Tarjeta",
-                    onClick = { metodoPago = "Tarjeta" },
+                    isSelected = tipoPago == "Tarjeta",
+                    onClick = { onEvent(FacturacionEvent.OnTipoPagoSeleccionado("Tarjeta")) },
                     modifier = Modifier.weight(1f)
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f)) // Empuja los botones al final si hay espacio
+            Spacer(modifier = Modifier.weight(1f))
 
-            // 4. BOTONES DE ACCIÓN
+            // --- BOTÓN FINAL ---
             Button(
                 onClick = {
-                    if (servicio.isNotBlank() && precioTexto.isNotBlank()) {
-                        // Construimos el Mapa tal como lo usa tu VentasScreen
-                        val nuevaVenta = mapOf(
-                            "id" to "V-${System.currentTimeMillis().toString().takeLast(4)}", // ID aleatorio simple
-                            "servicio" to servicio,
-                            "fecha" to "Hoy, ${getCurrentTime()}", // Función helper abajo
-                            "precio" to (precioTexto.toDoubleOrNull() ?: 0.0),
-                            "metodo" to metodoPago,
-                            "empleado" to empleado
-                        )
-                        onSave(nuevaVenta)
-                    }
+                    onEvent(FacturacionEvent.OnGuardarFactura)
+                    onFacturaGuardada()
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                enabled = servicio.isNotBlank() && precioTexto.isNotBlank() // Deshabilitado si está vacío
+                enabled = isFormValid // Solo se habilita si hay empleado y cliente seleccionados
             ) {
-                Text("Guardar Ticket", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Cobrar e Imprimir Ticket", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
-
-// --- COMPONENTES AUXILIARES PARA ESTA PANTALLA ---
-
 @Composable
 fun PaymentOptionButton(
     text: String,
@@ -221,14 +227,69 @@ fun getCurrentTime(): String {
 }
 
 
-@Preview
+// --- PREVIEW ---
+@Preview(
+    showBackground = true,
+    device = "id:pixel_5",
+    name = "Pantalla Cerrar Ticket (Crear Factura)"
+)
 @Composable
-fun PreviewAddSale() {
-    // Usamos el tema que definimos antes para ver los colores reales
-    PeluPosTheme(darkTheme = false) {
-        AddSaleScreen(
-            onBack = {},
-            onSave = {}
-        )
+fun AddSaleScreenPreview() {
+    // 1. Mocks de Empleados y Clientes disponibles
+    val empleadoMock1 = Empleado(
+        idEmpleado = 1L,
+        nombre = "Carlos",
+        email = "carlos@pelupos.com",
+        telefono = 600123456,
+        cargo = "Peluquero"
+    )
+
+    val empleadoMock2 = Empleado(
+        idEmpleado = 2L,
+        nombre = "Elena",
+        email = "elena@pelupos.com",
+        telefono = 600654321,
+        cargo = "Estilista"
+    )
+
+    val clienteMock1 = Cliente(
+        idCliente = 1L,
+        nombre = "Juan Pérez",
+        deuda = 0.0, // <-- Le pasamos un número porque el modelo pide deuda, no email
+        telefono = 655111222
+    )
+
+    val clienteMock2 = Cliente(
+        idCliente = 2L,
+        nombre = "María López",
+        deuda = 0.0,
+        telefono = 655333444
+    )
+
+    // 2. Mocks de los ítems en el carrito (vienen del TPV)
+    val productoCartMock = Producto(1L, "Cera Mate", 5.0, 12.0, 10) // 12.0 €
+    val servicioCartMock = Servicio(1L, "Corte Degradado", 15.0, "Corte a máquina", empleadoMock1) // 15.0 €
+
+    // El total automático debería mostrar 27.00 €
+
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            AddSaleScreen(
+                productosCart = listOf(productoCartMock),
+                serviciosCart = listOf(servicioCartMock),
+
+                empleadosDisponibles = listOf(empleadoMock1, empleadoMock2),
+                clientesDisponibles = listOf(clienteMock1, clienteMock2),
+
+                empleadoSeleccionado = empleadoMock1, // Simulamos que ya eligió uno
+                clienteSeleccionado = null,           // Lo dejamos en null para ver el placeholder
+                tipoPago = "Tarjeta",                 // Simulamos que seleccionó Tarjeta
+
+                onEvent = {}, // Lambda vacía para la UI de preview
+                onBack = {},
+                onFacturaGuardada = {}
+            )
+        }
     }
 }
+

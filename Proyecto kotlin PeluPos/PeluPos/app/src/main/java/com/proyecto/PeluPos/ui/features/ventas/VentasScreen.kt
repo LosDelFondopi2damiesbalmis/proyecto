@@ -16,143 +16,91 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.proyecto.PeluPos.models.Cliente
+import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.Factura
+import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.models.Servicio
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VentasScreen(
+    facturas: List<Factura>,
+    searchQuery: String,
+    onEvent: (FacturacionEvent) -> Unit,
     toggleSidebar: () -> Unit,
     navigateToNewSale: () -> Unit,
-    navigateToSaleDetail: (String) -> Unit
-
+    navigateToSaleDetail: (Long) -> Unit,
+    onBack: () -> Unit, // Recibimos el callback
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    // Calculamos el total facturado sumando los montos de la lista visible
+    val totalFacturado = facturas.sumOf { it.monto }
 
-    // DATOS CRUDOS (Sin clases, usando Mapas)
-    // Claves: "id", "servicio", "fecha", "precio", "metodo", "empleado"
-    val ventas = remember {
-        listOf(
-            mapOf(
-                "id" to "V-001",
-                "servicio" to "Corte Degradado",
-                "fecha" to "Hoy, 10:00",
-                "precio" to 15.0,
-                "metodo" to "Efectivo",
-                "empleado" to "Carlos"
-            ),
-            mapOf(
-                "id" to "V-002",
-                "servicio" to "Tinte + Mechas",
-                "fecha" to "Hoy, 11:15",
-                "precio" to 65.5,
-                "metodo" to "Tarjeta",
-                "empleado" to "Elena"
-            ),
-            mapOf(
-                "id" to "V-003",
-                "servicio" to "Cera Mate (Producto)",
-                "fecha" to "Hoy, 11:30",
-                "precio" to 12.0,
-                "metodo" to "Efectivo",
-                "empleado" to "Carlos"
-            ),
-            mapOf(
-                "id" to "V-004",
-                "servicio" to "Afeitado Clásico",
-                "fecha" to "Ayer, 18:45",
-                "precio" to 18.0,
-                "metodo" to "Tarjeta",
-                "empleado" to "Pedro"
-            ),
-            mapOf(
-                "id" to "V-005",
-                "servicio" to "Pack Algo",
-                "fecha" to "Ayer, 16:00",
-                "precio" to 120.0,
-                "metodo" to "Transferencia",
-                "empleado" to "Elena"
-            )
-        )
-    }
-
-    // Lógica de filtrado
-    val filteredVentas = ventas.filter { venta ->
-        val servicio = venta["servicio"] as String
-        val empleado = venta["empleado"] as String
-
-        servicio.contains(searchQuery, ignoreCase = true) ||
-                empleado.contains(searchQuery, ignoreCase = true)
-    }
-
-    // Calcular total (sumando los Doubles del mapa)
-    val totalFacturado = filteredVentas.sumOf { it["precio"] as Double }
-
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-
-        // --- HEADER ---
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Text(
-                "Historial Ventas",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            // Resumen de dinero
-            Text(
-                text = "Total lista: ${totalFacturado}€",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Botón Nueva Venta (Estilo ancho)
-            Button(
-                onClick = navigateToNewSale,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(Icons.Default.AddShoppingCart, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("Nueva Venta / Ticket")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Buscador
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Buscar servicio o empleado...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true
+    // Formateador de fecha real
+    val sdf = remember { SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()) }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Historial de Ventas") },
+                // BOTÓN DE VOLVER
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
+                }
             )
         }
+    ) { paddingValues ->
 
-        // --- LISTA ---
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(filteredVentas) { venta ->
-                // Extraemos los datos del mapa para que sea más fácil leer
-                val id = venta["id"] as String
-                val servicio = venta["servicio"] as String
-                val fecha = venta["fecha"] as String
-                val precio = venta["precio"] as Double
-                val metodo = venta["metodo"] as String
-                val empleado = venta["empleado"] as String
 
-                VentaCardMap(
-                    servicio = servicio,
-                    fecha = fecha,
-                    precio = precio,
-                    metodoPago = metodo,
-                    empleado = empleado,
-                    onClick = { navigateToSaleDetail(id) }
+        Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(paddingValues)) {
+                Text(
+                    "Historial Ventas",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
                 )
+                Text(
+                    "Total lista: ${String.format("%.2f", totalFacturado)}€",
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { onEvent(FacturacionEvent.OnSearchQueryChange(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Buscar por empleado o cliente...") },
+                    leadingIcon = { Icon(Icons.Default.Search, null) },
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true
+                )
+            }
+
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(facturas) { factura ->
+                    // Para mostrar un resumen del servicio, podemos coger el primer servicio o producto
+                    val resumenServicio = factura.servicios.firstOrNull()?.nombre
+                        ?: factura.productos.firstOrNull()?.nombre
+                        ?: "Varios ítems"
+
+                    VentaCardMap(
+                        servicio = resumenServicio,
+                        fecha = sdf.format(factura.fecha),
+                        precio = factura.monto,
+                        metodoPago = factura.tipoPago,
+                        empleado = factura.empleado.nombre,
+                        onClick = { navigateToSaleDetail(factura.idFactura) }
+                    )
+                }
             }
         }
     }
@@ -241,19 +189,98 @@ fun VentaCardMap(
 }
 // --- PREVIEWS (Previsualizaciones) ---
 
-@Preview(showBackground = true, name = "1. Pantalla Completa Ventas")
+@Preview(
+    showBackground = true,
+    device = "id:pixel_8",
+    name = "Pantalla Historial Ventas"
+)
 @Composable
-fun SalesScreenPreview() {
-    MaterialTheme {
-        // Al no tener parámetros de datos, cargará los datos de prueba
-        // que definiste dentro de la función SalesScreen
-        VentasScreen(
-            toggleSidebar = {},
-            navigateToNewSale = {},
-            navigateToSaleDetail = { id ->
-                println("Navegar al detalle de: $id")
-            }
+fun VentasScreenPreview() {
+    // 1. Creamos dependencias falsas (Mock)
+    val empleadoMock = Empleado(
+        idEmpleado = 1L,
+        nombre = "Carlos",
+        email = "carlos@pelupos.com",
+        telefono = 600123456,
+        cargo = "Peluquero"
+    )
+
+    val clienteMock = Cliente(
+        idCliente = 1L,
+        nombre = "Juan Pérez",
+        deuda = 5.5,
+        telefono = 655111222
+    )
+
+    val servicioMock = Servicio(
+        idServicio = 1L,
+        nombre = "Corte Degradado",
+        precio = 15.0,
+        descripcion = "Corte a máquina",
+        empleado = empleadoMock
+    )
+
+    val productoMock = Producto(
+        idProducto = 1L,
+        nombre = "Cera Mate",
+        precioCompra = 5.0,
+        precioVenta = 12.0,
+        stock = 10
+    )
+
+    // 2. Creamos una lista de facturas de prueba
+    val mockFacturas = listOf(
+        // Factura 1: Solo un servicio (Efectivo)
+        Factura(
+            idFactura = 1001L,
+            monto = 15.0,
+            fecha = Date(System.currentTimeMillis() - 1000 * 60 * 30), // Hace 30 min
+            pendiente = false,
+            tipoPago = "Efectivo",
+            cliente = clienteMock,
+            empleado = empleadoMock,
+            servicios = mutableListOf(servicioMock),
+            productos = mutableListOf()
+        ),
+        // Factura 2: Solo un producto (Tarjeta)
+        Factura(
+            idFactura = 1002L,
+            monto = 12.0,
+            fecha = Date(System.currentTimeMillis() - 1000 * 60 * 120), // Hace 2 horas
+            pendiente = false,
+            tipoPago = "Tarjeta",
+            cliente = clienteMock,
+            empleado = empleadoMock,
+            servicios = mutableListOf(),
+            productos = mutableListOf(productoMock)
+        ),
+        // Factura 3: Servicio + Producto
+        Factura(
+            idFactura = 1003L,
+            monto = 27.0,
+            fecha = Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24), // Ayer
+            pendiente = false,
+            tipoPago = "Tarjeta",
+            cliente = clienteMock,
+            empleado = empleadoMock,
+            servicios = mutableListOf(servicioMock),
+            productos = mutableListOf(productoMock)
         )
+    )
+
+    // 3. Renderizamos la pantalla con el tema
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            VentasScreen(
+                facturas = mockFacturas,
+                searchQuery = "", // Prueba a cambiar esto por "Carlos" para simular que hay texto
+                onEvent = {},
+                toggleSidebar = {},
+                navigateToNewSale = {},
+                navigateToSaleDetail = {},
+                onBack = {}
+            )
+        }
     }
 }
 

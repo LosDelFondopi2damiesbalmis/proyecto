@@ -1,7 +1,9 @@
 package com.proyecto.PeluPos.data.mocks.producto
 
 import com.proyecto.PeluPos.models.Producto
+import javax.inject.Singleton
 
+@Singleton
 class ProductoRepository() {
     private val productoDaoMock: ProductoDaoMock = ProductoDaoMock()
     fun getProductos(): List<Producto> =

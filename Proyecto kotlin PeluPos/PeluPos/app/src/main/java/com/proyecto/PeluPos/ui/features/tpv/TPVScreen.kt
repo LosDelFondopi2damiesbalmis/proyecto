@@ -62,23 +62,22 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TpvScreen(
-    // Recibimos los catálogos reales desde el ViewModel o nivel superior
+    // Estados pasados directamente
     productosDisponibles: List<Producto>,
     serviciosDisponibles: List<Servicio>,
+    carritoProductos: List<Producto>,
+    carritoServicios: List<Servicio>,
+    // Eventos de la UI
+    onEvent: (TpvEvent) -> Unit,
+    // Navegación (callbacks)
     toggleSidebar: () -> Unit,
     navigateToSales: () -> Unit,
-    // Pasamos las listas reales a la pantalla de crear factura
     navigateToCreateInvoice: (productos: List<Producto>, servicios: List<Servicio>) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Productos", "Servicios")
 
-    // ESTADO DEL CARRITO: Ahora guarda objetos reales en lugar de Strings
-    // Como tu modelo Factura pide MutableList, iremos añadiendo los items a estas listas
-    val carritoProductos = remember { mutableStateListOf<Producto>() }
-    val carritoServicios = remember { mutableStateListOf<Servicio>() }
-
-    // Cálculos derivados
+    // Cálculos derivados del estado
     val totalAmount = carritoProductos.sumOf { it.precioVenta } + carritoServicios.sumOf { it.precio }
     val totalItems = carritoProductos.size + carritoServicios.size
 
@@ -94,14 +93,12 @@ fun TpvScreen(
             )
         },
         bottomBar = {
-            // Barra inferior flotante: Ahora nos lleva a la pantalla de crear factura
             if (totalItems > 0) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // Navegamos pasando las listas actuales
                             navigateToCreateInvoice(carritoProductos, carritoServicios)
                         },
                     tonalElevation = 8.dp
@@ -122,9 +119,6 @@ fun TpvScreen(
             }
         }
     ) { paddingValues ->
-        // ==========================================
-        // CATÁLOGO DE SELECCIÓN
-        // ==========================================
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -147,13 +141,13 @@ fun TpvScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Dibujamos Productos o Servicios según la pestaña
                 if (selectedTab == 0) {
                     items(productosDisponibles) { producto ->
                         ItemCard(
                             nombre = producto.nombre,
                             precio = producto.precioVenta,
-                            onClick = { carritoProductos.add(producto) } // Añadimos el objeto real
+                            // Emitimos el evento en lugar de llamar al ViewModel
+                            onClick = { onEvent(TpvEvent.OnAgregarProducto(producto)) }
                         )
                     }
                 } else {
@@ -161,7 +155,8 @@ fun TpvScreen(
                         ItemCard(
                             nombre = servicio.nombre,
                             precio = servicio.precio,
-                            onClick = { carritoServicios.add(servicio) } // Añadimos el objeto real
+                            // Emitimos el evento en lugar de llamar al ViewModel
+                            onClick = { onEvent(TpvEvent.OnAgregarServicio(servicio)) }
                         )
                     }
                 }
@@ -195,11 +190,10 @@ fun ItemCard(nombre: String, precio: Double, onClick: () -> Unit) {
 
 
 
-// --- PREVIEW ---
 @Preview(
     showBackground = true,
     device = "id:pixel_5",
-    name = "Pantalla TPV (Catálogo)"
+    name = "Pantalla TPV - MVI"
 )
 @Composable
 fun TpvScreenPreview() {
@@ -209,16 +203,16 @@ fun TpvScreenPreview() {
         nombre = "Carlos",
         email = "carlos@pelupos.com",
         telefono = 600123456,
-        cargo = "tonto"
+        cargo = "Peluquero"
     )
 
-    // 2. Simulamos la lista de Productos usando el nuevo modelo (con precioVenta)
+    // 2. Simulamos la lista de Productos disponibles
     val mockProductos = listOf(
         Producto(
             idProducto = 1L,
             nombre = "Champú Kerastase",
             precioCompra = 10.00,
-            precioVenta = 24.99, // Este es el que se verá en el TPV
+            precioVenta = 24.99,
             stock = 15
         ),
         Producto(
@@ -237,7 +231,7 @@ fun TpvScreenPreview() {
         )
     )
 
-    // 3. Simulamos la lista de Servicios
+    // 3. Simulamos la lista de Servicios disponibles
     val mockServicios = listOf(
         Servicio(
             idServicio = 1L,
@@ -262,11 +256,21 @@ fun TpvScreenPreview() {
         )
     )
 
+    // 4. Simulamos un carrito con 1 producto y 1 servicio para ver el BottomBar
+    val mockCarritoProductos = listOf(mockProductos[0]) // 1 Champú (24.99)
+    val mockCarritoServicios = listOf(mockServicios[0]) // 1 Corte Caballero (15.00)
+
     MaterialTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
             TpvScreen(
                 productosDisponibles = mockProductos,
                 serviciosDisponibles = mockServicios,
+                carritoProductos = mockCarritoProductos,
+                carritoServicios = mockCarritoServicios,
+                onEvent = { /* No hacemos nada en la preview */ },
                 toggleSidebar = { },
                 navigateToSales = { },
                 navigateToCreateInvoice = { _, _ -> }
