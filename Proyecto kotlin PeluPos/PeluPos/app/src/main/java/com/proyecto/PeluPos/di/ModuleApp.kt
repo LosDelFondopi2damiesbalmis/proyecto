@@ -1,8 +1,12 @@
 package com.proyecto.PeluPos.di
 
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
+import com.proyecto.PeluPos.data.mocks.SessionRepository
+import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
+import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
+import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +26,22 @@ class ModuleApp {
     }
     @Provides
     @Singleton
+    fun provideUsuarioRepository(): UsuarioRepository {
+        return UsuarioRepository()
+    }
+    @Provides
+    @Singleton
+    fun provideClienteRepository(): ClienteRepository {
+        return ClienteRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSessionRepository(): SessionRepository {
+        return SessionRepository()
+    }
+    @Provides
+    @Singleton
     fun provideCarritoRepository(): CarritoRepository {
         return CarritoRepository()
     }
@@ -31,4 +51,11 @@ class ModuleApp {
     fun provideServicioRepository(): ServicioRepository {
         return ServicioRepository()
     }
+    @Provides
+    @Singleton
+    fun provideEmpleadoRepository(): EmpleadoRepository {
+        return EmpleadoRepository()
+    }
+
+
 }

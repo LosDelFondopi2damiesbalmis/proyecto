@@ -19,7 +19,7 @@ import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.RolUsuario
 import com.proyecto.PeluPos.models.Usuario
 
-// Modelo de datos equivalente a tu Binding
+
 
 @Composable
 fun LoginScreen(

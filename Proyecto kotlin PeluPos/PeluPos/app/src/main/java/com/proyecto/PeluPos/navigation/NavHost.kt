@@ -5,22 +5,37 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
 import com.proyecto.PeluPos.ui.features.tpv.TpvViewModel
+import com.proyecto.PeluPos.ui.features.usuarios.UsuariosViewModel
 import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
 
-// import androidx.hilt.navigation.compose.hiltViewModel // Para cuando uses Hilt
 
 @Composable
 fun NavHost(toggleSidebar: () -> Unit) {
     val navController = rememberNavController()
     val vmTpv = hiltViewModel<TpvViewModel>()
     val sharedViewModel = hiltViewModel<FacturacionViewModel>()
-
-
+    val vmUsuarios = hiltViewModel<UsuariosViewModel>()
+    val vmClientes = hiltViewModel<ClientesViewModel>()
     NavHost(
         navController = navController,
-        startDestination = TpvHomeRoute
+        startDestination = ClientesListRoute
     ) {
+        // ==========================================
+        // GRAFO 0: LOGIN
+        // ==========================================
+        loginDestination(
+            navigateToHome = {
+
+                navController.navigate(TpvHomeRoute) {
+                    popUpTo(LoginRoute) { inclusive = true }
+                }
+            },
+            onExitApp = {
+
+            }
+        )
 
         // ==========================================
         // GRAFO 1: TPV
@@ -51,5 +66,44 @@ fun NavHost(toggleSidebar: () -> Unit) {
                 navController.popBackStack()
             }
         )
+
+        // ==========================================
+        // GRAFO 2: GESTIÓN DE USUARIOS
+        // ==========================================
+        usuariosDestination(
+            vm = vmUsuarios,
+            navigateToForm = {
+
+                navController.navigate(UsuarioFormRoute)
+            },
+            onBack = {
+                navController.popBackStack()
+            }
+        )
+        // ==========================================
+        // GRAFO 3: GESTIÓN DE CLIENTES
+        // ==========================================
+        clientesDestination(
+            vm = vmClientes,
+            toggleSidebar = toggleSidebar,
+            navigateToForm = {
+                // Navegamos a la pantalla de crear/editar
+                navController.navigate(ClienteFormRoute)
+            },
+            navigateToDetail = { idCliente ->
+                // Si tienes o vas a crear una pantalla de detalle del cliente, la llamarías así:
+                navController.navigate(ClienteDetailRoute(idCliente))
+
+                // Si aún no la tienes, puedes dejar un println o un Toast por ahora:
+                // println("Navegando al detalle del cliente: $idCliente")
+            },
+            onBack = {
+                // Vuelve a la pantalla anterior mágicamente destruyendo el formulario
+                navController.popBackStack()
+            }
+        )
+
     }
+
+
 }
