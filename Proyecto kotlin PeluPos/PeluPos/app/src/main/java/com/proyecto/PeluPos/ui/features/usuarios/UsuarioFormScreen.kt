@@ -47,27 +47,16 @@ import com.proyecto.PeluPos.models.Usuario
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsuarioFormScreen(
-    usuarioId: Long? = null,
-    empleadosDisponibles: List<Empleado>, // Necesitamos la lista de empleados de la BD
+    state: UsuariosUiState, // Recibe el estado
+    onEvent: (UsuariosEvent) -> Unit, // Recibe los eventos
     onBackClick: () -> Unit,
-    onSaveClick: (Usuario) -> Unit
+    onUsuarioGuardado: () -> Unit // Solo para hacer popBackStack
 ) {
-    val isEditing = usuarioId != null
+    val isEditing = state.editandoUsuarioId != null
 
-    // Estados del formulario
-    var nombreUsuario by remember { mutableStateOf("") } // El campo 'usuario'
-    var contrasena by remember { mutableStateOf("") }
-
-    // Estado para el Enum de Rol
-    var rolSeleccionado by remember { mutableStateOf(RolUsuario.EMPLEADO) }
+    // Estos estados de UI pura (abrir/cerrar dropdowns) se quedan aquí
     var expandedRol by remember { mutableStateOf(false) }
-
-    // Estado para vincular el Empleado
-    var empleadoSeleccionado by remember { mutableStateOf<Empleado?>(null) }
     var expandedEmpleado by remember { mutableStateOf(false) }
-
-    // Validación básica: necesitamos un empleado seleccionado y un nombre de usuario
-    val isFormValid = empleadoSeleccionado != null && nombreUsuario.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -87,7 +76,6 @@ fun UsuarioFormScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             // --- 1. SELECCIONAR EMPLEADO ---
             Text("¿A qué empleado pertenece esta cuenta?", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             ExposedDropdownMenuBox(
@@ -95,7 +83,7 @@ fun UsuarioFormScreen(
                 onExpandedChange = { expandedEmpleado = !expandedEmpleado }
             ) {
                 OutlinedTextField(
-                    value = empleadoSeleccionado?.nombre ?: "Seleccionar Empleado...",
+                    value = state.formEmpleadoSeleccionado?.nombre ?: "Seleccionar Empleado...",
                     onValueChange = {},
                     readOnly = true,
                     leadingIcon = { Icon(Icons.Default.Badge, null) },
@@ -104,11 +92,11 @@ fun UsuarioFormScreen(
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
                 ExposedDropdownMenu(expanded = expandedEmpleado, onDismissRequest = { expandedEmpleado = false }) {
-                    empleadosDisponibles.forEach { emp ->
+                    state.empleadosDisponibles.forEach { emp ->
                         DropdownMenuItem(
                             text = { Text(emp.nombre) },
                             onClick = {
-                                empleadoSeleccionado = emp
+                                onEvent(UsuariosEvent.OnEmpleadoChange(emp)) // Evento al ViewModel
                                 expandedEmpleado = false
                             }
                         )
@@ -118,20 +106,20 @@ fun UsuarioFormScreen(
 
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // --- 2. DATOS DE ACCESO (LOGIN) ---
+            // --- 2. DATOS DE ACCESO ---
             Text("Datos de Acceso", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
 
             OutlinedTextField(
-                value = nombreUsuario,
-                onValueChange = { nombreUsuario = it },
+                value = state.formNombreUsuario,
+                onValueChange = { onEvent(UsuariosEvent.OnNombreUsuarioChange(it)) }, // Evento al ViewModel
                 label = { Text("Nombre de Usuario (Login)") },
                 leadingIcon = { Icon(Icons.Default.Person, null) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = contrasena,
-                onValueChange = { contrasena = it },
+                value = state.formContrasena,
+                onValueChange = { onEvent(UsuariosEvent.OnContrasenaChange(it)) }, // Evento al ViewModel
                 label = { Text(if (isEditing) "Nueva Contraseña (vacío para no cambiar)" else "Contraseña") },
                 leadingIcon = { Icon(Icons.Default.Lock, null) },
                 visualTransformation = PasswordVisualTransformation(),
@@ -146,7 +134,7 @@ fun UsuarioFormScreen(
                 onExpandedChange = { expandedRol = !expandedRol }
             ) {
                 OutlinedTextField(
-                    value = rolSeleccionado.name, // Usamos el .name del Enum
+                    value = state.formRol.name,
                     onValueChange = {},
                     readOnly = true,
                     leadingIcon = { Icon(Icons.Default.AdminPanelSettings, null) },
@@ -155,12 +143,11 @@ fun UsuarioFormScreen(
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
                 ExposedDropdownMenu(expanded = expandedRol, onDismissRequest = { expandedRol = false }) {
-                    // Iteramos sobre todos los valores posibles de tu Enum
                     RolUsuario.values().forEach { rol ->
                         DropdownMenuItem(
                             text = { Text(rol.name) },
                             onClick = {
-                                rolSeleccionado = rol
+                                onEvent(UsuariosEvent.OnRolChange(rol)) // Evento al ViewModel
                                 expandedRol = false
                             }
                         )
@@ -172,19 +159,11 @@ fun UsuarioFormScreen(
 
             Button(
                 onClick = {
-                    if (empleadoSeleccionado != null) {
-                        val nuevoUsuario = Usuario(
-                            idUsuario = usuarioId ?: 0L,
-                            usuario = nombreUsuario,
-                            contrasena = contrasena,
-                            empleado = empleadoSeleccionado!!,
-                            rolUsuario = rolSeleccionado
-                        )
-                        onSaveClick(nuevoUsuario)
-                    }
+                    onEvent(UsuariosEvent.GuardarUsuario) // El ViewModel ya tiene todo para guardar
+                    onUsuarioGuardado() // Volvemos atrás
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled = isFormValid // Deshabilitado si no hay empleado o nombre de usuario
+                enabled = state.isFormValid // Computado en el ViewModel
             ) {
                 Text(if (isEditing) "Actualizar Usuario" else "Guardar Usuario")
             }

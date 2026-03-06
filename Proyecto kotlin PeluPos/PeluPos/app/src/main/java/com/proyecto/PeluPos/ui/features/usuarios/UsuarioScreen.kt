@@ -49,9 +49,10 @@ import com.proyecto.PeluPos.models.Usuario
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsuariosScreen(
-    usuarios: List<Usuario>,
+    state: UsuariosUiState, // Recibe el estado
+    onEvent: (UsuariosEvent) -> Unit, // Recibe los eventos
     onNavigateToCreate: () -> Unit,
-    onNavigateToEdit: (Long) -> Unit,
+    onNavigateToEdit: () -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -64,7 +65,10 @@ fun UsuariosScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToCreate) {
+            FloatingActionButton(onClick = {
+                onEvent(UsuariosEvent.PrepararNuevoUsuario) // Limpiamos el formulario
+                onNavigateToCreate()
+            }) {
                 Icon(Icons.Default.Add, contentDescription = "Crear Cuenta")
             }
         }
@@ -78,7 +82,7 @@ fun UsuariosScreen(
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            items(usuarios) { user ->
+            items(state.listaUsuarios) { user ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -100,15 +104,9 @@ fun UsuariosScreen(
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Column(modifier = Modifier.weight(1f)) {
-                            // Nombre de usuario de login
                             Text(text = "@${user.usuario}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-
-                            // A qué empleado pertenece
                             Text(text = "Vinculado a: ${user.empleado.nombre}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-
                             Spacer(modifier = Modifier.height(6.dp))
-
-                            // Badge para el Rol
                             Surface(
                                 color = if (user.rolUsuario == RolUsuario.ADMINISTRADOR) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
                                 shape = MaterialTheme.shapes.small
@@ -123,7 +121,10 @@ fun UsuariosScreen(
                             }
                         }
 
-                        IconButton(onClick = { onNavigateToEdit(user.idUsuario) }) {
+                        IconButton(onClick = {
+                            onEvent(UsuariosEvent.PrepararEdicion(user.idUsuario)) // Cargamos los datos en el ViewModel
+                            onNavigateToEdit()
+                        }) {
                             Icon(Icons.Default.Edit, contentDescription = "Modificar")
                         }
                     }
@@ -143,13 +144,23 @@ private val mockUsuarios = listOf(
     Usuario(2L, "carlos_tpv", "1234", mockEmpleado2, RolUsuario.EMPLEADO)
 )
 
-@Preview(showBackground = true, device = "id:pixel_5", name = "1. Lista de Cuentas")
+
+
+// ==========================================
+// PREVIEWS
+// ==========================================
+
+@Preview(showBackground = true, device = "id:pixel_8", name = "1. Lista de Cuentas")
 @Composable
 fun UsuariosScreenPreview() {
     MaterialTheme {
-        Surface {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            // Pasamos un estado inicializado con nuestra lista falsa
             UsuariosScreen(
-                usuarios = mockUsuarios,
+                state = UsuariosUiState(
+                    listaUsuarios = mockUsuarios
+                ),
+                onEvent = {}, // Lambda vacía porque en preview no hacemos nada
                 onNavigateToCreate = {},
                 onNavigateToEdit = {},
                 onBackClick = {}
@@ -158,16 +169,47 @@ fun UsuariosScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, device = "id:pixel_5", name = "2. Crear Cuenta")
+@Preview(showBackground = true, device = "id:pixel_8", name = "2. Crear Cuenta")
 @Composable
 fun UsuarioFormScreenCreatePreview() {
     MaterialTheme {
-        Surface {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            // Estado simulando que estamos creando (todo vacío)
             UsuarioFormScreen(
-                usuarioId = null,
-                empleadosDisponibles = listOf(mockEmpleado1, mockEmpleado2),
+                state = UsuariosUiState(
+                    empleadosDisponibles = listOf(mockEmpleado1, mockEmpleado2),
+                    editandoUsuarioId = null,
+                    formNombreUsuario = "",
+                    formContrasena = "",
+                    formRol = RolUsuario.EMPLEADO,
+                    formEmpleadoSeleccionado = null
+                ),
+                onEvent = {},
                 onBackClick = {},
-                onSaveClick = {}
+                onUsuarioGuardado = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, device = "id:pixel_8", name = "3. Editar Cuenta")
+@Composable
+fun UsuarioFormScreenEditPreview() {
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            // Estado simulando que ya hemos cargado los datos de un usuario para editarlos
+            UsuarioFormScreen(
+                state = UsuariosUiState(
+                    empleadosDisponibles = listOf(mockEmpleado1, mockEmpleado2),
+                    editandoUsuarioId = 1L,
+                    formNombreUsuario = "laura_admin",
+                    formContrasena = "1234",
+                    formRol = RolUsuario.ADMINISTRADOR,
+                    formEmpleadoSeleccionado = mockEmpleado1
+                ),
+                onEvent = {},
+                onBackClick = {},
+                onUsuarioGuardado = {}
             )
         }
     }

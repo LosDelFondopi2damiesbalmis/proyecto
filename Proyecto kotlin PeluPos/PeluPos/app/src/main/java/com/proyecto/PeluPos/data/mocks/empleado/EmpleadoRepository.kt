@@ -1,7 +1,9 @@
 package com.proyecto.PeluPos.data.mocks.empleado
 
 import com.proyecto.PeluPos.models.Empleado
+import javax.inject.Singleton
 
+@Singleton
 class EmpleadoRepository() {
     private val empleadoDaoMock: EmpleadoDaoMock = EmpleadoDaoMock()
     fun getEmpleados(): List<Empleado> =

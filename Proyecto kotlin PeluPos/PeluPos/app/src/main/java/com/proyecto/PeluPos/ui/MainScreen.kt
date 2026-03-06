@@ -27,11 +27,11 @@ import androidx.navigation.navArgument
 import com.proyecto.PeluPos.models.Producto
 import com.proyecto.PeluPos.models.Servicio
 
-import com.proyecto.PeluPos.ui.features.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
 import com.proyecto.PeluPos.navigation.Screen
+import com.proyecto.PeluPos.ui.features.clientes.ClientesScreen
 import com.proyecto.PeluPos.ui.features.locales.CreateLocalScreen
 import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
 import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
@@ -115,16 +115,16 @@ fun MainScreen() {
                         }
                     )
                 }
-                composable(Screen.Clients.route) {
-                    ClienteScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToClienteDetail = { clienteId ->
-                        },
-                        navigateToNewCliente = {
-                            navController.navigate(Screen.Services.route)
-                        }
-                    )
-                }
+//                composable(Screen.Clients.route) {
+//                    ClientesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToClienteDetail = { clienteId ->
+//                        },
+//                        navigateToNewCliente = {
+//                            navController.navigate(Screen.Services.route)
+//                        }
+//                    )
+//                }
                 composable(Screen.Locations.route) {
                     LocalesScreen(
                         toggleSidebar = { isSidebarVisible = !isSidebarVisible },
