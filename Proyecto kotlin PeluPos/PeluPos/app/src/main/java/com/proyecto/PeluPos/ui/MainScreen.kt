@@ -1,6 +1,6 @@
 package com.proyecto.PeluPos.ui
 
-import ServicesScreen
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -103,16 +103,16 @@ fun MainScreen() {
 //                        }
 //                    )
 //                }
-                composable(Screen.Services.route) {
-                    ServicesScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToServiceDetail = { serviceId ->
-                        },
-                        navigateToNewService = {
-                            navController.navigate(Screen.Services.route)
-                        }
-                    )
-                }
+//                composable(Screen.Services.route) {
+//                    ServicesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToServiceDetail = { serviceId ->
+//                        },
+//                        navigateToNewService = {
+//                            navController.navigate(Screen.Services.route)
+//                        }
+//                    )
+//                }
 //                composable(Screen.Clients.route) {
 //                    ClientesScreen(
 //                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },

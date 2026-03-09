@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
 import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
 import com.proyecto.PeluPos.ui.features.products.ProductosViewModel
+import com.proyecto.PeluPos.ui.features.servicios.ServiciosViewModel
 import com.proyecto.PeluPos.ui.features.tpv.TpvViewModel
 import com.proyecto.PeluPos.ui.features.usuarios.UsuariosViewModel
 import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
@@ -21,9 +22,10 @@ fun NavHost(toggleSidebar: () -> Unit) {
     val vmClientes = hiltViewModel<ClientesViewModel>()
     val vmLocales = hiltViewModel<LocalesViewModel>()
     val vmProductos = hiltViewModel<ProductosViewModel>()
+    val vmServicios = hiltViewModel<ServiciosViewModel>()
     NavHost(
         navController = navController,
-        startDestination = ProductosListRoute
+        startDestination = ServiciosListRoute
     ) {
         // ==========================================
         // GRAFO 0: LOGIN
@@ -133,6 +135,20 @@ fun NavHost(toggleSidebar: () -> Unit) {
             },
             onBack = {
 
+                navController.popBackStack()
+            }
+        )
+        // ==========================================
+        // GRAFO: 6 GESTIÓN DE SERVICIOS
+        // ==========================================
+        serviciosDestination(
+            vm = vmServicios,
+            toggleSidebar = toggleSidebar,
+            navigateToForm = {
+                navController.navigate(ServicioFormRoute)
+            },
+            onBack = {
+                // Volvemos a la pantalla anterior
                 navController.popBackStack()
             }
         )
