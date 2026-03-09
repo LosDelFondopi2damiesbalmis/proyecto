@@ -1,10 +1,11 @@
 package com.proyecto.PeluPos.data.mocks.empleado
 
 import com.proyecto.PeluPos.models.Empleado
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class EmpleadoRepository() {
+class EmpleadoRepository @Inject constructor() {
     private val empleadoDaoMock: EmpleadoDaoMock = EmpleadoDaoMock()
     fun getEmpleados(): List<Empleado> =
         empleadoDaoMock.getAll().toEmpleados()

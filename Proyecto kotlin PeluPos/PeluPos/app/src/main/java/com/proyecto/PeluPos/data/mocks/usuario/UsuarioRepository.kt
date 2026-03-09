@@ -1,10 +1,11 @@
 package com.proyecto.PeluPos.data.mocks.usuario
 
 import com.proyecto.PeluPos.models.Usuario
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UsuarioRepository() {
+class UsuarioRepository @Inject constructor() {
     private val usuarioDaoMock: UsuarioDaoMock = UsuarioDaoMock()
 
     fun getUsuarios(): List<Usuario> =

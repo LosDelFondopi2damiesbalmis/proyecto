@@ -1,8 +1,11 @@
 package com.proyecto.PeluPos.data.mocks.servicio
 
 import com.proyecto.PeluPos.models.Servicio
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ServicioRepository() {
+@Singleton
+class ServicioRepository @Inject constructor() {
     private val servicioDaoMock: ServicioDaoMock = ServicioDaoMock()
     fun getServicios(): List<Servicio> =
         servicioDaoMock.getAll().toServicios()
