@@ -1,13 +1,12 @@
 package com.proyecto.PeluPos.navigation
 
-import androidx.navigation.NavController
+
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.proyecto.PeluPos.ui.features.ventas.VentasScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.proyecto.PeluPos.ui.features.ventas.AddSaleScreen
 import com.proyecto.PeluPos.ui.features.ventas.DetallesVentaScreen

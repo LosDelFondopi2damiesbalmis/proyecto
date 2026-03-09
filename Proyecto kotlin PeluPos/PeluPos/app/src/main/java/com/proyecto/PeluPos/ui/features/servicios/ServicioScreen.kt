@@ -29,28 +29,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.proyecto.PeluPos.data.mocks.EmpleadoMock
-import com.proyecto.PeluPos.data.mocks.ServicioMock
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 
-import androidx.compose.ui.unit.dp
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Servicio
 import com.proyecto.PeluPos.ui.features.servicios.ServiciosEvent

@@ -48,9 +48,6 @@ fun VentasScreen(
                 title = { Text("Historial de Ventas") },
                 // BOTÓN DE VOLVER
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                    }
                 }
             )
         }

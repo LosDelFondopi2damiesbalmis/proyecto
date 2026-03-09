@@ -59,9 +59,6 @@ fun UsuariosScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Cuentas de Acceso", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) { Icon(Icons.Default.ArrowBack, contentDescription = "Volver") }
-                }
             )
         },
         floatingActionButton = {

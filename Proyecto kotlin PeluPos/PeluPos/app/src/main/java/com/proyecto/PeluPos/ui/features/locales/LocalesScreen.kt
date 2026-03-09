@@ -32,9 +32,7 @@ fun LocalesScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Mis Locales", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = toggleSidebar) { Icon(Icons.Default.Menu, "Menú") }
-                }
+
             )
         },
         floatingActionButton = {

@@ -2,8 +2,6 @@ package com.proyecto.PeluPos.ui.features.ventas
 
 import com.proyecto.PeluPos.models.Cliente
 import com.proyecto.PeluPos.models.Empleado
-import com.proyecto.PeluPos.models.Producto
-import com.proyecto.PeluPos.models.Servicio
 
 sealed interface FacturacionEvent {
     // Crear Factura
