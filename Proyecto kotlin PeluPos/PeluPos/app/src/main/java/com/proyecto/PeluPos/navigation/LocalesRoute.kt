@@ -1,52 +1,71 @@
 package com.proyecto.PeluPos.navigation
 
-import androidx.navigation.NavController
+
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.proyecto.PeluPos.ui.features.locales.CreateLocalScreen
-import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
+import androidx.navigation.toRoute
+import com.proyecto.PeluPos.ui.features.locales.LocalDetailScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalFormScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesEvent
 import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
+import kotlinx.serialization.Serializable
 
+// Rutas Tipadas
+@Serializable
+object LocalesListRoute
 
-fun NavGraphBuilder.locationsGraph(
-    navController: NavController,
-    toggleSidebar: () -> Unit
+@Serializable
+object LocalFormRoute
+@Serializable
+data class LocalDetailRoute(val idLocal: Long)
+
+fun NavGraphBuilder.localesDestination(
+    vm: LocalesViewModel,
+    toggleSidebar: () -> Unit,
+    navigateToForm: () -> Unit,
+    navigateToDetail: (Long) -> Unit,
+    onBack: () -> Unit
 ) {
-    // Lista
-    composable(Screen.Locations.route) {
+    // Lista de Locales
+    composable<LocalesListRoute> {
+        val state by vm.uiState.collectAsStateWithLifecycle()
+
         LocalesScreen(
+            state = state,
+            onEvent = vm::onEvent,
             toggleSidebar = toggleSidebar,
-            navigateToNewLocal = { navController.navigate(Screen.NewLocal.route) },
-            navigateToLocalDetail = { id -> navController.navigate(Screen.EditLocal.createRoute(id)) },
-            navigateToEditLocal = { id -> navController.navigate(Screen.EditLocal.createRoute(id)) }
+            navigateToForm = navigateToForm,
+            navigateToLocalDetail = navigateToDetail
         )
     }
 
-    // Nuevo
-    composable(Screen.NewLocal.route) {
-        CreateLocalScreen(
-            onNavigateBack = { navController.popBackStack() },
-            onSaveSuccess = {
-                // Aquí podrías añadir el local a tu lista temporal si la tuvieras accesible
-                // locals.add(Local(nombre, ...))
+    // Formulario de Locales
+    composable<LocalFormRoute> {
+        val state by vm.uiState.collectAsStateWithLifecycle()
 
-                navController.popBackStack() // Volver a la lista tras guardar
+        LocalFormScreen(
+            state = state,
+            onEvent = vm::onEvent,
+            onNavigateBack = onBack
+        )
+    }
+    composable<LocalDetailRoute> { backStackEntry ->
+
+        val route = backStackEntry.toRoute<LocalDetailRoute>()
+        val state by vm.uiState.collectAsStateWithLifecycle()
+
+        val localEncontrado = state.todosLosLocales.find { it.idLocal == route.idLocal }
+
+        LocalDetailScreen(
+            local = localEncontrado,
+            onBack = onBack,
+            onEditClick = {
+                vm.onEvent(LocalesEvent.PrepararEdicion(route.idLocal))
+                navigateToForm()
             }
-        )
-    }
-
-    // Editar
-    composable(
-        route = Screen.EditLocal.route,
-        arguments = listOf(navArgument("localId") { type = NavType.IntType })
-    ) { backStackEntry ->
-        val id = backStackEntry.arguments?.getInt("localId") ?: 0
-        EditLocalScreen(
-            localId = id,
-            onNavigateBack = { navController.popBackStack() },
-            onSaveSuccess = { navController.popBackStack() }
         )
     }
 }
