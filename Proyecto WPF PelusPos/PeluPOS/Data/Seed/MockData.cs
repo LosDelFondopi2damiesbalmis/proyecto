@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PeluPOS.Models.Entities;
+using PeluPOS.Models.Enums;
 
 namespace PeluPOS.Data.Seed
 {
@@ -30,6 +31,30 @@ namespace PeluPOS.Data.Seed
         new Producto { Id = 4, Nombre = "Refresco Naranja", PrecioCompra = 0.45m, PrecioVenta = 1.80m, Stock = 120 },
         new Producto { Id = 5, Nombre = "Snacks Salados", PrecioCompra = 0.20m, PrecioVenta = 1.20m, Stock = 90 }
     };
+            Usuarios = new()
+            {
+                new Usuario
+                {
+                    Id = 1,
+                    Contrasena = "Admin123!",
+                    Roles = Roles.Administrador,
+                    EmpleadoId = 1
+                },
+                new Usuario
+                {
+                    Id = 2,
+                    Contrasena = "Manager123!",
+                    Roles = Roles.Manager,
+                    EmpleadoId = 2
+                },
+                new Usuario
+                {
+                    Id = 3,
+                    Contrasena = "Empleado123!",
+                    Roles = Roles.Empleado,
+                    EmpleadoId = 3
+                }
+            };
 
             // ======================
             // SERVICIOS
@@ -66,7 +91,7 @@ namespace PeluPOS.Data.Seed
             Email="pedro@local.com",
             Cargo="Barbero",
             LocalId=1,
-            Usuario = new Usuario { Id=1, Contrasena="1234", Roles = Models.Enums.Roles.Empleado },
+            Usuario = Usuarios[0],
             Servicios = { Servicios[0], Servicios[1], Servicios[2] }
         },
         new Empleado
@@ -77,7 +102,7 @@ namespace PeluPOS.Data.Seed
             Email="laura@local.com",
             Cargo="Estilista",
             LocalId=1,
-            Usuario = new Usuario { Id=2, Contrasena="abcd", Roles = Models.Enums.Roles.Manager },
+            Usuario = Usuarios[1],
             Servicios = { Servicios[4], Servicios[3] }
         },
         new Empleado
@@ -88,7 +113,7 @@ namespace PeluPOS.Data.Seed
             Email="carlos@local.com",
             Cargo="Barbero Senior",
             LocalId=2,
-            Usuario = new Usuario { Id=3, Contrasena="9876", Roles = Models.Enums.Roles.Administrador },
+            Usuario = Usuarios[2],
             Servicios = { Servicios[0], Servicios[2], Servicios[3] }
         }
     };

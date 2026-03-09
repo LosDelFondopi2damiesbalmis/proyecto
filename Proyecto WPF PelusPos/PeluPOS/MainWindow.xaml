@@ -4,126 +4,134 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PeluPOS"
+        xmlns:conv="clr-namespace:PeluPOS.Resources.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1200">
+
+    <Window.Resources>
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+    </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <!-- Menú lateral -->
-            <ColumnDefinition Width="230"/>
-            <!-- Contenido -->
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Menú lateral -->
+                <ColumnDefinition Width="230"/>
+                <!-- Contenido -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- NAV LATERAL -->
-        <Border Grid.Column="0" Background="#111827">
-            <DockPanel Margin="10">
-                <!-- Logo / nombre app -->
-                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,20">
-                    <TextBlock Text="PeluPOS"
-                               Foreground="White"
-                               FontSize="22"
-                               FontWeight="Bold"/>
-                    <TextBlock Text="Gestión de peluquerías"
-                               Foreground="#9CA3AF"
-                               FontSize="12"/>
-                </StackPanel>
+            <!-- NAV LATERAL -->
+            <Border x:Name="Sidebar"
+    Grid.Column="0"
+    Background="#111827"
+    Visibility="{Binding ShellState.IsTpvMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                <DockPanel Margin="10">
+                    <!-- Logo / nombre app -->
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,20">
+                        <TextBlock Text="PeluPOS"
+                           Foreground="White"
+                           FontSize="22"
+                           FontWeight="Bold"/>
+                        <TextBlock Text="Gestión de peluquerías"
+                           Foreground="#9CA3AF"
+                           FontSize="12"/>
+                    </StackPanel>
 
-                <!-- Menú -->
-                <StackPanel DockPanel.Dock="Top">
+                    <!-- Menú -->
+                    <StackPanel DockPanel.Dock="Top">
 
-                    <!-- Estilo nav -->
-                    <StackPanel.Resources>
-                        <Style x:Key="NavButton" TargetType="Button">
-                            <Setter Property="Margin" Value="0,4,0,4"/>
-                            <Setter Property="Padding" Value="10,6"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderBrush" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="FontSize" Value="14"/>
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="6">
-                                            <ContentPresenter Margin="8,2"
-                                                              VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#374151"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#1F2933"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Resources>
+                        <!-- Estilo nav -->
+                        <StackPanel.Resources>
+                            <Style x:Key="NavButton" TargetType="Button">
+                                <Setter Property="Margin" Value="0,4,0,4"/>
+                                <Setter Property="Padding" Value="10,6"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="6">
+                                                <ContentPresenter Margin="8,2"
+                                                          VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#374151"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#1F2933"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
 
-                    <!-- Botones de navegación -->
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Dashboard"
-                            Click="Dashboard_Click"/>
+                        <!-- Botones de navegación -->
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Dashboard"
+                        Click="Dashboard_Click"/>
 
-                    <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
+                        <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Clientes"
-                            Click="Clientes_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Clientes"
+                        Click="Clientes_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Servicios"
-                            Click="Servicios_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Servicios"
+                        Click="Servicios_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Productos"
-                            Click="Productos_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Productos"
+                        Click="Productos_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Empleados"
-                            Click="Empleados_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Empleados"
+                        Click="Empleados_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Ventas"
-                            Click="Ventas_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Ventas"
+                        Click="Ventas_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Usuarios"
-                            Click="Usuarios_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Usuarios"
+                        Click="Usuarios_Click"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Locales"
-                            Click="Locales_Click"/>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Locales"
+                        Click="Locales_Click"/>
 
-                    <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
+                        <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
 
-                    <Button Style="{StaticResource NavButton}"
-                            Content="Visión TPV"
-                            Click="Tpv_Click"/>
-                </StackPanel>
+                        <Button Style="{StaticResource NavButton}"
+                        Content="Visión TPV"
+                        Click="Tpv_Click"/>
+                    </StackPanel>
 
-                <!-- Info usuario (abajo) -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,20,0,0">
-                    <Separator Margin="0,0,0,8" Background="#4B5563" Height="1"/>
-                    <TextBlock Text="Usuario: Admin"
-                               Foreground="#9CA3AF"
-                               FontSize="12"/>
-                    <TextBlock Text="Peluquería Central"
-                               Foreground="#9CA3AF"
-                               FontSize="12"/>
-                </StackPanel>
-            </DockPanel>
-        </Border>
+                    <!-- Info usuario (abajo) -->
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,20,0,0">
+                        <Separator Margin="0,0,0,8" Background="#4B5563" Height="1"/>
+                        <TextBlock Text="Usuario: Admin"
+                           Foreground="#9CA3AF"
+                           FontSize="12"/>
+                        <TextBlock Text="Peluquería Central"
+                           Foreground="#9CA3AF"
+                           FontSize="12"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
 
-        <!-- CONTENIDO (PAGES) -->
-        <Border Grid.Column="1" Background="#F3F4F6">
-            <Frame x:Name="MainFrame"
-                   NavigationUIVisibility="Hidden"
-                   Margin="0"/>
-        </Border>
-    </Grid>
+            <!-- CONTENIDO (PAGES) -->
+            <Border Grid.Column="1" Background="#F3F4F6">
+                <Frame x:Name="MainFrame"
+               NavigationUIVisibility="Hidden"
+               Margin="0"/>
+            </Border>
+        </Grid>
 </Window>

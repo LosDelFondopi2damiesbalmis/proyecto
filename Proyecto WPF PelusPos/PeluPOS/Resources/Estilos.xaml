@@ -1,0 +1,114 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!-- Botones globales -->
+    <Style TargetType="Button"
+           BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="Padding" Value="12,6"/>
+    </Style>
+
+    <!-- ========================= -->
+    <!-- TEXTBLOCK -->
+    <!-- ========================= -->
+    <Style TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+    </Style>
+
+    <!-- Título grande -->
+    <Style x:Key="TituloTextBlock"
+           TargetType="TextBlock"
+           BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="6,10,6,10"/>
+    </Style>
+
+
+    <!-- ========================= -->
+    <!-- TEXTBOX -->
+    <!-- ========================= -->
+    <Style TargetType="TextBox"
+           BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="materialDesign:HintAssist.FloatingScale" Value="0.8"/>
+    </Style>
+
+
+    <!-- ========================= -->
+    <!-- LISTBOX -->
+    <!-- ========================= -->
+    <Style TargetType="ListBox"
+           BasedOn="{StaticResource MaterialDesignListBox}">
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <!-- Item moderno -->
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+
+
+    <!-- ========================= -->
+    <!-- DATAGRID -->
+    <!-- ========================= -->
+    <Style TargetType="DataGrid"
+           BasedOn="{StaticResource MaterialDesignDataGrid}">
+        <Setter Property="Margin" Value="8"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="RowHeight" Value="40"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="GridLinesVisibility" Value="None"/>
+        <Setter Property="AlternatingRowBackground"
+                Value="{DynamicResource MaterialDesignPaper}" />
+    </Style>
+
+    <!-- Cabecera DataGrid -->
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
+    <!-- ========================= -->
+    <!-- LISTVIEW -->
+    <!-- ========================= -->
+
+    <Style TargetType="ListView"
+       BasedOn="{StaticResource MaterialDesignListView}">
+        <Setter Property="Margin" Value="8"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+    </Style>
+
+    <!-- Items -->
+    <Style TargetType="ListViewItem">
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+
+    <!-- Contenedor visual de la sidebar -->
+    <Style x:Key="SidebarContainer" TargetType="Border">
+        <Setter Property="Width" Value="260"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+</ResourceDictionary>

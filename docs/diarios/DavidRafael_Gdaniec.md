@@ -8,9 +8,16 @@
 
 ## Índice de meses
   
-- [:calendar:Septiembre 2025](#septiembre-2025)
-- [:calendar:Octubre 2025](#octubre-2025)
-
+- [Diario de trabajo individual](#diario-de-trabajo-individual)
+  - [Índice de meses](#índice-de-meses)
+  - [Septiembre 2025](#septiembre-2025)
+  - [Octubre 2025](#octubre-2025)
+  - [Noviembre 2025](#noviembre-2025)
+  - [Diciembre 2025](#diciembre-2025)
+  - [Enero 2026](#enero-2026)
+  - [Febrero 2026](#febrero-2026)
+  - [Marzo 2026](#marzo-2026)
+  
 ## Septiembre 2025
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
@@ -62,4 +69,14 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 12/02 | 2 | Actualización de la navegación para implementar NavHost y NavGraphBuilder en vez de la navegación que teníamos antes, se pasa la carpeta de locales a ui | 2 horas | - | - | -
-| 23/02 | 2 | Creación de kas pantallas de TPV y de las últimas de empleados | 2 horas | - | - | -
+| 23/02 | 2 | Creación de las pantallas de TPV y de las últimas de empleados | 2 horas | - | - | -
+| 26/02 | 2 | Creación de las pantallas de new cliente y de new servicio, se comienza a implementar los mocks | 2 horas | - | - | -
+
+## Marzo 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+| ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+| 02/03 | 1 | Creación del LoginScreen según está en WPF | 1 hora | - | - | -
+| 03/03 | 2 | Cambio en la estructura de carpetas y creación del primer viewmodel | 1 hora | - | - | -
+| 05/03 | 5 | Creación de las pantallas de usuarios y creada las primeras pantallas funcionales de tpv y ventas con sus eventos y viewmodels | 5 horas | - | - | -
+| 06/03 | 2 | Creación de la lógica del login, creación, visualización y modificación tanto de usuarios como de clientes | 5 horas | - | - | -

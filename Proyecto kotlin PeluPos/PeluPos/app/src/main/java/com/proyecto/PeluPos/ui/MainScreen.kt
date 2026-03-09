@@ -1,6 +1,6 @@
 package com.proyecto.PeluPos.ui
 
-import ServicesScreen
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,85 +24,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.models.Servicio
 
-import com.proyecto.PeluPos.ui.clientes.ClienteScreen
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
-import com.proyecto.PeluPos.ui.locales.CreateLocalScreen
-import com.proyecto.PeluPos.ui.locales.EditLocalScreen
-import com.proyecto.PeluPos.ui.locales.LocalesScreen
-import com.proyecto.PeluPos.ui.navigation.Screen
-import com.proyecto.PeluPos.ui.products.NewProductScreen
-import com.proyecto.PeluPos.ui.products.Product
-import com.proyecto.PeluPos.ui.products.ProductsScreen
+import com.proyecto.PeluPos.navigation.Screen
+import com.proyecto.PeluPos.ui.features.clientes.ClientesScreen
+import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
+
+import com.proyecto.PeluPos.ui.features.tpv.TpvScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
-import com.proyecto.PeluPos.ui.tpv.TpvScreen
+
 
 @Composable
 fun MainScreen() {
     var isSidebarVisible by remember { mutableStateOf(true) }
     val navController = rememberNavController()
-    val products = remember { mutableStateListOf<Product>() }
-
-    // Inicializar con datos de ejemplo
-    if (products.isEmpty()) {
-        products.addAll(
-            listOf(
-                Product(
-                    id = "1",
-                    name = "Champú Reparador Kerastase",
-                    code = "CH-KERA-001",
-                    category = "Champús",
-                    price = 24.99,
-                    stock = 15,
-                    minStock = 5,
-                    supplier = "L'Oréal Professional"
-                ),
-                Product(
-                    id = "2",
-                    name = "Tinte Wella Koleston",
-                    code = "TINT-WELLA-55",
-                    category = "Tintes",
-                    price = 12.50,
-                    stock = 3,
-                    minStock = 10,
-                    supplier = "Wella Professionals"
-                ),
-                Product(
-                    id = "3",
-                    name = "Mascarilla Hidratante",
-                    code = "MASC-HIDRA-02",
-                    category = "Mascarillas",
-                    price = 18.75,
-                    stock = 8,
-                    minStock = 6,
-                    supplier = "Schwarzkopf"
-                ),
-                Product(
-                    id = "4",
-                    name = "Laca Fijación Extra Fuerte",
-                    code = "LACA-EXTRA-01",
-                    category = "Fijadores",
-                    price = 9.99,
-                    stock = 22,
-                    minStock = 8,
-                    supplier = "Taft"
-                ),
-                Product(
-                    id = "5",
-                    name = "Tijeras Profesionales Jaguar",
-                    code = "TIJ-JAG-7",
-                    category = "Herramientas",
-                    price = 89.99,
-                    stock = 2,
-                    minStock = 3,
-                    supplier = "Jaguar"
-                )
-            )
-        )
-    }
-
+    val products = remember { mutableStateListOf<Producto>() }
+    val servicios = remember { mutableStateListOf<Servicio>() }
     PeluPosTheme {
         Row(modifier = Modifier.fillMaxSize()) {
             Sidebar(
@@ -137,99 +78,102 @@ fun MainScreen() {
                 }
 
                 // PRODUCTOS
-                composable(Screen.Products.route) {
-                    ProductsScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToProductDetail = { productId ->
-                            // Aquí puedes implementar la navegación al detalle
-                        },
-                        navigateToNewProduct = {
-                            // ¡ESTA ES LA LÍNEA CLAVE!
-                            navController.navigate(Screen.NewProduct.route)
-                        }
-                    )
-                }
+//                composable(Screen.Products.route) {
+//                    ProductsScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToProductDetail = { productId ->
+//                            // Aquí puedes implementar la navegación al detalle
+//                        },
+//                        navigateToNewProduct = {
+//                            // ¡ESTA ES LA LÍNEA CLAVE!
+//                            navController.navigate(Screen.NewProduct.route)
+//                        }
+//                    )
+//                }
 
                 // NUEVO PRODUCTO
-                composable(Screen.NewProduct.route) {
-                    NewProductScreen(
-                        onBackClick = { navController.popBackStack() },
-                        onSaveProduct = { newProduct ->
-                            // Agregar el nuevo producto a la lista
-                            products.add(newProduct)
-                            // Volver a la pantalla de productos
-                            navController.popBackStack()
-                        }
-                    )
-                }
-                composable(Screen.Services.route) {
-                    ServicesScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToServiceDetail = { serviceId ->
-                        },
-                        navigateToNewService = {
-                            navController.navigate(Screen.Services.route)
-                        }
-                    )
-                }
-                composable(Screen.Clients.route) {
-                    ClienteScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToClienteDetail = { clienteId ->
-                        },
-                        navigateToNewCliente = {
-                            navController.navigate(Screen.Services.route)
-                        }
-                    )
-                }
-                composable(Screen.Locations.route) {
-                    LocalesScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToNewLocal = {
-                            // Usamos la ruta del objeto Screen
-                            navController.navigate(Screen.NewLocal.route)
-                        },
-                        navigateToLocalDetail = { localId ->
-                            navController.navigate(Screen.EditLocal.createRoute(localId))
-                        },
-                        navigateToEditLocal = { localId ->
-                            // Usamos la función helper para pasar el ID
-                            navController.navigate(Screen.EditLocal.createRoute(localId))
-                        }
-                    )
-                }
-
-                // 2. CREAR NUEVO LOCAL
-                composable(Screen.NewLocal.route) {
-                    CreateLocalScreen(
-                        onNavigateBack = { navController.popBackStack() },
-                        onSaveSuccess = { navController.popBackStack() }
-                    )
-                }
-
-                // 3. EDITAR LOCAL (Recibiendo el ID)
-                composable(
-                    route = Screen.EditLocal.route,
-                    arguments = listOf(navArgument("localId") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    // Recuperamos el ID de los argumentos
-                    val id = backStackEntry.arguments?.getInt("localId") ?: 0
-
-                    EditLocalScreen(
-                        localId = id,
-                        onNavigateBack = { navController.popBackStack() },
-                        onSaveSuccess = { navController.popBackStack() }
-                    )
-                }
-                composable(Screen.Tpv.route) {
-                    TpvScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToSales = {
-                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
-                            navController.navigate(Screen.Sales.route)
-                        }
-                    )
-                }
+//                composable(Screen.NewProduct.route) {
+//                    NewProductScreen(
+//                        onBackClick = { navController.popBackStack() },
+//                        onSaveProduct = { newProduct ->
+//                            // Agregar el nuevo producto a la lista
+//                            products.add(newProduct)
+//                            // Volver a la pantalla de productos
+//                            navController.popBackStack()
+//                        }
+//                    )
+//                }
+//                composable(Screen.Services.route) {
+//                    ServicesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToServiceDetail = { serviceId ->
+//                        },
+//                        navigateToNewService = {
+//                            navController.navigate(Screen.Services.route)
+//                        }
+//                    )
+//                }
+//                composable(Screen.Clients.route) {
+//                    ClientesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToClienteDetail = { clienteId ->
+//                        },
+//                        navigateToNewCliente = {
+//                            navController.navigate(Screen.Services.route)
+//                        }
+//                    )
+//                }
+//                composable(Screen.Locations.route) {
+//                    LocalesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToNewLocal = {
+//                            // Usamos la ruta del objeto Screen
+//                            navController.navigate(Screen.NewLocal.route)
+//                        },
+//                        navigateToLocalDetail = { localId ->
+//                            navController.navigate(Screen.EditLocal.createRoute(localId))
+//                        },
+//                        navigateToEditLocal = { localId ->
+//                            // Usamos la función helper para pasar el ID
+//                            navController.navigate(Screen.EditLocal.createRoute(localId))
+//                        }
+//                    )
+//                }
+//
+//                // 2. CREAR NUEVO LOCAL
+//                composable(Screen.NewLocal.route) {
+//                    CreateLocalScreen(
+//                        onNavigateBack = { navController.popBackStack() },
+//                        onSaveSuccess = { navController.popBackStack() }
+//                    )
+//                }
+//
+//                // 3. EDITAR LOCAL (Recibiendo el ID)
+//                composable(
+//                    route = Screen.EditLocal.route,
+//                    arguments = listOf(navArgument("localId") { type = NavType.IntType })
+//                ) { backStackEntry ->
+//                    // Recuperamos el ID de los argumentos
+//                    val id = backStackEntry.arguments?.getInt("localId") ?: 0
+//
+//                    EditLocalScreen(
+//                        localId = id,
+//                        onNavigateBack = { navController.popBackStack() },
+//                        onSaveSuccess = { navController.popBackStack() }
+//                    )
+//                }
+//                composable(Screen.Tpv.route) {
+//                    TpvScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToSales = {
+//                            // Esto cumple con la flecha del diagrama que va a "Muestra todas las Ventas"
+//                            navController.navigate(Screen.Sales.route)
+//                        },
+//                        productosDisponibles = products,
+//                        serviciosDisponibles = servicios,
+//                        navigateToCreateInvoice = { _, _ -> }
+//                    )
+//                }
 //                composable(Screen.Sales.route) {
 //                    VentasScreen(
 //                        toggleSidebar = { /* Lógica opcional */ },

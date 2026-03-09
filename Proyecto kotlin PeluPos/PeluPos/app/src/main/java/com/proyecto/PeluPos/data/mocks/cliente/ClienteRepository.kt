@@ -1,8 +1,11 @@
 package com.proyecto.PeluPos.data.mocks.cliente
 
 import com.proyecto.PeluPos.models.Cliente
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ClienteRepository() {
+@Singleton
+class ClienteRepository @Inject constructor() {
     private val clienteDaoMock: ClienteDaoMock = ClienteDaoMock()
     // Devuelve todos los clientes como objetos reales
     fun getClientes(): List<Cliente> =
