@@ -8,253 +8,175 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.Local
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalesScreen(
+    state: LocalesUiState,
+    onEvent: (LocalesEvent) -> Unit,
     toggleSidebar: () -> Unit,
-    navigateToLocalDetail: (localId: Int) -> Unit,
-    navigateToNewLocal: () -> Unit,
-    navigateToEditLocal: (localId: Int) -> Unit
+    navigateToForm: () -> Unit,
+    navigateToLocalDetail: (Long) -> Unit // 1. <-- AÑADIMOS ESTA FUNCIÓN
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-
-    // DATOS DE PRUEBA (Sin clases externas, usando Triple: ID, Nombre, Dirección)
-    val locales = remember {
-        listOf(
-            Triple(1, "Barbería Centro", "Av. de la Constitución 45, Madrid"),
-            Triple(2, "Sede Norte", "C/ Gran Vía 12, Bilbao"),
-            Triple(3, "Local Estación", "Plaza de la Estación s/n, Valencia"),
-            Triple(4, "Barbería Sur", "Av. Andalucía 88, Sevilla"),
-            Triple(5, "Corner C.Comercial", "C.C. Las Arenas, Planta 2, Barcelona")
-        )
-    }
-
-    // Lógica de filtrado
-    val filteredLocales = locales.filter {
-        it.second.contains(searchQuery, ignoreCase = true) || // Por nombre
-                it.third.contains(searchQuery, ignoreCase = true)     // Por dirección
-    }
-
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-
-        // Cabecera con Botón de CREAR
-        HeaderLocales(
-            searchQuery = searchQuery,
-            onSearchChange = { searchQuery = it },
-            onAddClick = navigateToNewLocal
-        )
-
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mis Locales", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = toggleSidebar) { Icon(Icons.Default.Menu, "Menú") }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                onEvent(LocalesEvent.PrepararNuevoLocal)
+                navigateToForm()
+            }) {
+                Icon(Icons.Default.Add, "Nuevo Local")
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            items(filteredLocales) { local ->
-                // local.first = ID, local.second = Nombre, local.third = Dirección
-                LocalCard(
-                    nombre = local.second,
-                    direccion = local.third,
-                    onClick = { navigateToLocalDetail(local.first) },
-                    onEditClick = { navigateToEditLocal(local.first) }
-                )
+            // Buscador
+            OutlinedTextField(
+                value = state.searchQuery,
+                onValueChange = { onEvent(LocalesEvent.OnSearchQueryChange(it)) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = { Text("Buscar por nombre o dirección...") },
+                leadingIcon = { Icon(Icons.Default.Search, null) },
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true
+            )
+
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(state.localesVisibles) { local ->
+                    LocalCard(
+                        local = local,
+                        onEditClick = {
+                            onEvent(LocalesEvent.PrepararEdicion(local.idLocal))
+                            navigateToForm()
+                        },
+                        onDetailClick = { // 2. <-- PASAMOS EL ID AL HACER CLIC
+                            navigateToLocalDetail(local.idLocal)
+                        }
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalCard(
-    nombre: String,
-    direccion: String,
-    onClick: () -> Unit,
-    onEditClick: () -> Unit
+    local: Local,
+    onEditClick: () -> Unit,
+    onDetailClick: () -> Unit
 ) {
     Card(
-        onClick = onClick,
+        onClick = onDetailClick,
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono del local a la izquierda
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(12.dp),
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Store, // Icono de tienda
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    Icon(Icons.Default.Store, null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Información central (Nombre y dirección)
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = nombre,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(text = local.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = direccion,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Text(text = local.direccion, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Empleados asignados
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.secondary)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    if (local.empleados.isNotEmpty()) {
+                        Text(
+                            text = local.empleados.joinToString(", ") { it.nombre },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    } else {
+                        Text("Sin equipo asignado", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline, fontStyle = FontStyle.Italic)
+                    }
                 }
             }
 
-            // Botón de MODIFICAR a la derecha
-            IconButton(
-                onClick = onEditClick,
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(Icons.Default.Edit, contentDescription = "Modificar Local")
+            IconButton(onClick = onEditClick, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)) {
+                Icon(Icons.Default.Edit, "Modificar Local")
             }
-//            Spacer(modifier = Modifier.height(12.dp))
-//            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-//            Spacer(modifier = Modifier.height(8.dp))
-//
-//            // 2. CAMBIO VISUAL: Mostrar los empleados
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                Icon(
-//                    imageVector = Icons.Default.Person,
-//                    contentDescription = null,
-//                    modifier = Modifier.size(16.dp),
-//                    tint = MaterialTheme.colorScheme.secondary
-//                )
-//                Spacer(modifier = Modifier.width(6.dp))
-//
-//                if (local.empleados.isNotEmpty()) {
-//                    // TRUCO: joinToString convierte la lista ["Juan", "Ana"] en "Juan, Ana"
-//                    Text(
-//                        text = local.empleados.joinToString(", "),
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis
-//                    )
-//                } else {
-//                    Text(
-//                        text = "Sin equipo asignado",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.outline,
-//                        fontStyle = FontStyle.Italic
-//                    )
-//                }
-//            }
         }
-    }
-}
-
-@Composable
-fun HeaderLocales(
-    searchQuery: String,
-    onSearchChange: (String) -> Unit,
-    onAddClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-
-            Text(
-                "Mis Locales",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            // Botón para CREAR NUEVO LOCAL
-            Button(
-                onClick = onAddClick,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("Nuevo Local")
-            }
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Barra de búsqueda
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = onSearchChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Buscar por nombre o dirección...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            shape = RoundedCornerShape(12.dp),
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline
-            )
-        )
     }
 }
 
 // --- PREVIEWS ---
 
-@Preview(showBackground = true, name = "Pantalla Locales")
+private val mockEmpleado1 = Empleado(1L, 600123456L, "a@a.com", "Barbero", "Carlos", null)
+private val mockEmpleado2 = Empleado(2L, 611222333L, "b@b.com", "Estilista", "Elena", null)
+
+private val mockLocales = listOf(
+    Local(
+        1L,
+        "Barbería Centro",
+        "Av. Constitución 45",
+        mutableListOf(mockEmpleado1, mockEmpleado2)
+    ),
+    Local(2L, "Local Norte", "C/ Gran Vía 12", mutableListOf())
+)
+
+@Preview(showBackground = true, device = "id:pixel_5", name = "1. Lista de Locales")
 @Composable
 fun LocalesScreenPreview() {
     MaterialTheme {
         LocalesScreen(
+            state = LocalesUiState(todosLosLocales = mockLocales, localesVisibles = mockLocales),
+            onEvent = {},
             toggleSidebar = {},
-            navigateToLocalDetail = {},
-            navigateToNewLocal = {},
-            navigateToEditLocal = {}
+            navigateToForm = {},
+            navigateToLocalDetail = {}
         )
-    }
-}
-
-@Preview(showBackground = true, name = "Tarjeta Local")
-@Composable
-fun LocalCardPreview() {
-    MaterialTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            LocalCard(
-                nombre = "Barbería Calle Mayor",
-                direccion = "C/ Mayor 10, 1ºB, Madrid",
-                onClick = {},
-                onEditClick = {}
-            )
-        }
     }
 }

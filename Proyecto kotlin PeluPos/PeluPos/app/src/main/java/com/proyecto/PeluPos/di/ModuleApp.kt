@@ -4,6 +4,7 @@ import com.proyecto.PeluPos.data.mocks.CarritoRepository
 import com.proyecto.PeluPos.data.mocks.SessionRepository
 import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
+import com.proyecto.PeluPos.data.mocks.local.LocalRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
 import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
@@ -55,6 +56,11 @@ class ModuleApp {
     @Singleton
     fun provideEmpleadoRepository(): EmpleadoRepository {
         return EmpleadoRepository()
+    }
+    @Provides
+    @Singleton
+    fun provideLocalesRepository(): LocalRepository {
+        return LocalRepository()
     }
 
 

@@ -2,10 +2,10 @@ package com.proyecto.PeluPos.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
+import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
 import com.proyecto.PeluPos.ui.features.tpv.TpvViewModel
 import com.proyecto.PeluPos.ui.features.usuarios.UsuariosViewModel
 import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
@@ -18,9 +18,10 @@ fun NavHost(toggleSidebar: () -> Unit) {
     val sharedViewModel = hiltViewModel<FacturacionViewModel>()
     val vmUsuarios = hiltViewModel<UsuariosViewModel>()
     val vmClientes = hiltViewModel<ClientesViewModel>()
+    val vmLocales = hiltViewModel<LocalesViewModel>()
     NavHost(
         navController = navController,
-        startDestination = ClientesListRoute
+        startDestination = LocalesListRoute
     ) {
         // ==========================================
         // GRAFO 0: LOGIN
@@ -102,8 +103,21 @@ fun NavHost(toggleSidebar: () -> Unit) {
                 navController.popBackStack()
             }
         )
-
+        // ==========================================
+        // GRAFO: 4 GESTIÓN DE LOCALES
+        // ==========================================
+        localesDestination(
+            vm = vmLocales,
+            toggleSidebar = toggleSidebar,
+            navigateToForm = {
+                navController.navigate(LocalFormRoute)
+            },
+            onBack = {
+                navController.popBackStack()
+            },
+            navigateToDetail = { idDelLocal ->
+                navController.navigate(LocalDetailRoute(idLocal = idDelLocal))
+            }
+        )
     }
-
-
 }

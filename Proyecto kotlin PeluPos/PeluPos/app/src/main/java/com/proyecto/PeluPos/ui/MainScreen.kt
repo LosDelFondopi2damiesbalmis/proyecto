@@ -32,8 +32,6 @@ import com.proyecto.PeluPos.ui.composables.DataRow
 import com.proyecto.PeluPos.ui.composables.Sidebar
 import com.proyecto.PeluPos.navigation.Screen
 import com.proyecto.PeluPos.ui.features.clientes.ClientesScreen
-import com.proyecto.PeluPos.ui.features.locales.CreateLocalScreen
-import com.proyecto.PeluPos.ui.features.locales.EditLocalScreen
 import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
 import com.proyecto.PeluPos.ui.features.products.ProductsScreen
 import com.proyecto.PeluPos.ui.features.tpv.TpvScreen
@@ -125,45 +123,45 @@ fun MainScreen() {
 //                        }
 //                    )
 //                }
-                composable(Screen.Locations.route) {
-                    LocalesScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToNewLocal = {
-                            // Usamos la ruta del objeto Screen
-                            navController.navigate(Screen.NewLocal.route)
-                        },
-                        navigateToLocalDetail = { localId ->
-                            navController.navigate(Screen.EditLocal.createRoute(localId))
-                        },
-                        navigateToEditLocal = { localId ->
-                            // Usamos la función helper para pasar el ID
-                            navController.navigate(Screen.EditLocal.createRoute(localId))
-                        }
-                    )
-                }
-
-                // 2. CREAR NUEVO LOCAL
-                composable(Screen.NewLocal.route) {
-                    CreateLocalScreen(
-                        onNavigateBack = { navController.popBackStack() },
-                        onSaveSuccess = { navController.popBackStack() }
-                    )
-                }
-
-                // 3. EDITAR LOCAL (Recibiendo el ID)
-                composable(
-                    route = Screen.EditLocal.route,
-                    arguments = listOf(navArgument("localId") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    // Recuperamos el ID de los argumentos
-                    val id = backStackEntry.arguments?.getInt("localId") ?: 0
-
-                    EditLocalScreen(
-                        localId = id,
-                        onNavigateBack = { navController.popBackStack() },
-                        onSaveSuccess = { navController.popBackStack() }
-                    )
-                }
+//                composable(Screen.Locations.route) {
+//                    LocalesScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToNewLocal = {
+//                            // Usamos la ruta del objeto Screen
+//                            navController.navigate(Screen.NewLocal.route)
+//                        },
+//                        navigateToLocalDetail = { localId ->
+//                            navController.navigate(Screen.EditLocal.createRoute(localId))
+//                        },
+//                        navigateToEditLocal = { localId ->
+//                            // Usamos la función helper para pasar el ID
+//                            navController.navigate(Screen.EditLocal.createRoute(localId))
+//                        }
+//                    )
+//                }
+//
+//                // 2. CREAR NUEVO LOCAL
+//                composable(Screen.NewLocal.route) {
+//                    CreateLocalScreen(
+//                        onNavigateBack = { navController.popBackStack() },
+//                        onSaveSuccess = { navController.popBackStack() }
+//                    )
+//                }
+//
+//                // 3. EDITAR LOCAL (Recibiendo el ID)
+//                composable(
+//                    route = Screen.EditLocal.route,
+//                    arguments = listOf(navArgument("localId") { type = NavType.IntType })
+//                ) { backStackEntry ->
+//                    // Recuperamos el ID de los argumentos
+//                    val id = backStackEntry.arguments?.getInt("localId") ?: 0
+//
+//                    EditLocalScreen(
+//                        localId = id,
+//                        onNavigateBack = { navController.popBackStack() },
+//                        onSaveSuccess = { navController.popBackStack() }
+//                    )
+//                }
 //                composable(Screen.Tpv.route) {
 //                    TpvScreen(
 //                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },

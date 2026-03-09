@@ -1,7 +1,9 @@
 package com.proyecto.PeluPos.data.mocks.local
 
 import com.proyecto.PeluPos.models.Local
+import javax.inject.Singleton
 
+@Singleton
 class LocalRepository() {
     private val localDaoMock: LocalDaoMock = LocalDaoMock()
     fun getLocales(): List<Local> =
