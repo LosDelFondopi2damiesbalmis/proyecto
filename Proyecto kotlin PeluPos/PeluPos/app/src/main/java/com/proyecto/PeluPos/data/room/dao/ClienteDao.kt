@@ -2,12 +2,20 @@ package com.proyecto.PeluPos.data.room.dao
 
 import androidx.room.*
 import com.proyecto.PeluPos.data.room.entity.ClienteEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClienteDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(cliente: ClienteEntity)
-    @Update suspend fun update(cliente: ClienteEntity)
-    @Delete suspend fun delete(cliente: ClienteEntity)
-    @Query("SELECT * FROM clientes") suspend fun getAll(): List<ClienteEntity>
-    @Query("SELECT * FROM clientes WHERE idCliente = :id") suspend fun getById(id: Long): ClienteEntity?
+
+    @Query("SELECT * FROM clientes ORDER BY nombre ASC")
+    fun getAllClientesFlow(): Flow<List<ClienteEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCliente(cliente: ClienteEntity)
+
+    @Update
+    suspend fun updateCliente(cliente: ClienteEntity)
+
+    @Delete
+    suspend fun deleteCliente(cliente: ClienteEntity)
 }

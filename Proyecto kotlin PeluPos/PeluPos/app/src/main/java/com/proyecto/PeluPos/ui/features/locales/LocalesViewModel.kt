@@ -1,41 +1,40 @@
 package com.proyecto.PeluPos.ui.features.locales
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.proyecto.PeluPos.data.room.dao.LocalDao
+import com.proyecto.PeluPos.data.room.entity.toEntity
+import com.proyecto.PeluPos.data.room.entity.toModel
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
-import com.proyecto.PeluPos.data.mocks.local.LocalRepository
 import com.proyecto.PeluPos.models.Local
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LocalesViewModel @Inject constructor(
-    private val localRepository: LocalRepository,       // ¡Tu repo real!
-    private val empleadoRepository: EmpleadoRepository  // ¡Para el selector de equipo!
+    private val localDao: LocalDao,
+    private val empleadoRepository: EmpleadoRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LocalesUiState())
     val uiState: StateFlow<LocalesUiState> = _uiState.asStateFlow()
 
     init {
-        cargarDatos()
-    }
-
-    // --- AQUÍ USAMOS TUS REPOSITORIOS PARA LEER ---
-    private fun cargarDatos() {
-        // Pedimos los datos reales a tus repositorios
-        val localesReales = localRepository.getLocales()
-        val empleadosReales = empleadoRepository.getEmpleados()
-
-        _uiState.update {
-            it.copy(
-                todosLosLocales = localesReales,
-                localesVisibles = filtrarLocales(localesReales, it.searchQuery),
-                empleadosDisponibles = empleadosReales
-            )
+        viewModelScope.launch {
+            localDao.getAllLocalesFlow()
+                .map { lista -> lista.map { it.toModel() } }
+                .collect { listaLocales ->
+                    val empleadosReales = empleadoRepository.getEmpleados()
+                    _uiState.update {
+                        it.copy(
+                            todosLosLocales = listaLocales,
+                            localesVisibles = filtrarLocales(listaLocales, it.searchQuery),
+                            empleadosDisponibles = empleadosReales
+                        )
+                    }
+                }
         }
     }
 
@@ -49,7 +48,7 @@ class LocalesViewModel @Inject constructor(
 
     fun onEvent(event: LocalesEvent) {
         when (event) {
-            LocalesEvent.CargarDatos -> cargarDatos()
+            LocalesEvent.CargarDatos -> {} // Flow ya actualiza automáticamente
 
             is LocalesEvent.OnSearchQueryChange -> {
                 _uiState.update {
@@ -87,6 +86,7 @@ class LocalesViewModel @Inject constructor(
 
             is LocalesEvent.OnNombreChange -> _uiState.update { it.copy(formNombre = event.nombre) }
             is LocalesEvent.OnDireccionChange -> _uiState.update { it.copy(formDireccion = event.direccion) }
+
             is LocalesEvent.OnAddEmpleado -> {
                 val seleccionados = _uiState.value.formEmpleadosSeleccionados.toMutableList()
                 if (!seleccionados.contains(event.empleado)) {
@@ -101,17 +101,11 @@ class LocalesViewModel @Inject constructor(
                 _uiState.update { it.copy(formEmpleadosSeleccionados = seleccionados) }
             }
 
-            is LocalesEvent.GuardarLocal -> guardarLocal()
-            is LocalesEvent.BorrarLocal -> {
-                _uiState.value.editandoLocalId?.let { id ->
-                    localRepository.delete(id)
-                    cargarDatos()
-                }
-            }
+            LocalesEvent.GuardarLocal -> guardarLocal()
+            is LocalesEvent.BorrarLocal -> borrarLocal(event.idLocal)
         }
     }
 
-    // --- AQUÍ USAMOS TU REPOSITORIO PARA GUARDAR ---
     private fun guardarLocal() {
         val state = _uiState.value
         val nuevoLocal = Local(
@@ -121,12 +115,19 @@ class LocalesViewModel @Inject constructor(
             empleados = state.formEmpleadosSeleccionados.toMutableList()
         )
 
-        if (state.editandoLocalId != null) {
-            localRepository.updateLocal(nuevoLocal) // Modificar existente
-        } else {
-            localRepository.insert(nuevoLocal) // Crear nuevo
+        viewModelScope.launch {
+            if (state.editandoLocalId != null) {
+                localDao.updateLocal(nuevoLocal.toEntity())
+            } else {
+                localDao.insertLocal(nuevoLocal.toEntity())
+            }
         }
+    }
 
-        cargarDatos() // ¡Recargamos la lista automáticamente!
+    private fun borrarLocal(idLocal: Long) {
+        viewModelScope.launch {
+            val local = _uiState.value.todosLosLocales.find { it.idLocal == idLocal }
+            local?.let { localDao.deleteLocal(it.toEntity()) }
+        }
     }
 }

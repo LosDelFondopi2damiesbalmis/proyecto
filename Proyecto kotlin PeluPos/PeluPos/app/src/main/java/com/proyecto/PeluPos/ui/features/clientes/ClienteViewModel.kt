@@ -1,36 +1,37 @@
 package com.proyecto.PeluPos.ui.features.clientes
 
 import androidx.lifecycle.ViewModel
-import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
+import androidx.lifecycle.viewModelScope
+import com.proyecto.PeluPos.data.room.dao.ClienteDao
+import com.proyecto.PeluPos.data.room.entity.toModel
+import com.proyecto.PeluPos.data.room.entity.toEntity
 import com.proyecto.PeluPos.models.Cliente
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.filter
 
 @HiltViewModel
 class ClientesViewModel @Inject constructor(
-    private val clienteRepository: ClienteRepository
+    private val clienteDao: ClienteDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ClientesUiState())
     val uiState: StateFlow<ClientesUiState> = _uiState.asStateFlow()
 
     init {
-        cargarDatos()
-    }
-
-    private fun cargarDatos() {
-        val clientes = clienteRepository.getClientes()
-        _uiState.update {
-            it.copy(
-                todosLosClientes = clientes,
-                // Aplicamos el filtro por si recarga la lista mientras hay algo escrito
-                clientesVisibles = filtrarClientes(clientes, it.searchQuery)
-            )
+        // Suscribimos al Flow de Room
+        viewModelScope.launch {
+            clienteDao.getAllClientesFlow()
+                .map { listaEntity -> listaEntity.map { it.toModel() } }
+                .collect { listaClientes ->
+                    _uiState.update {
+                        it.copy(
+                            todosLosClientes = listaClientes,
+                            clientesVisibles = filtrarClientes(listaClientes, it.searchQuery)
+                        )
+                    }
+                }
         }
     }
 
@@ -41,8 +42,7 @@ class ClientesViewModel @Inject constructor(
 
     fun onEvent(event: ClientesEvent) {
         when (event) {
-            ClientesEvent.CargarClientes -> cargarDatos()
-
+            ClientesEvent.CargarClientes -> {} // Flow ya se encarga de actualizar
             is ClientesEvent.OnSearchQueryChange -> {
                 _uiState.update {
                     it.copy(
@@ -51,7 +51,6 @@ class ClientesViewModel @Inject constructor(
                     )
                 }
             }
-
             ClientesEvent.PrepararNuevoCliente -> {
                 _uiState.update {
                     it.copy(
@@ -59,7 +58,6 @@ class ClientesViewModel @Inject constructor(
                     )
                 }
             }
-
             is ClientesEvent.PrepararEdicion -> {
                 val cliente = _uiState.value.todosLosClientes.find { it.idCliente == event.idCliente }
                 cliente?.let { cli ->
@@ -73,7 +71,6 @@ class ClientesViewModel @Inject constructor(
                     }
                 }
             }
-
             is ClientesEvent.OnNombreChange -> _uiState.update { it.copy(formNombre = event.nombre) }
             is ClientesEvent.OnTelefonoChange -> {
                 if (event.telefono.all { it.isDigit() }) {
@@ -81,25 +78,18 @@ class ClientesViewModel @Inject constructor(
                 }
             }
             is ClientesEvent.OnDeudaChange -> _uiState.update { it.copy(formDeuda = event.deuda) }
-
             ClientesEvent.GuardarCliente -> guardarCliente()
             is ClientesEvent.SaldarDeuda -> saldarDeudaCliente(event.idCliente)
         }
     }
+
     private fun saldarDeudaCliente(idCliente: Long) {
-        // 1. Buscamos al cliente en nuestra lista actual
-        val cliente = _uiState.value.todosLosClientes.find { it.idCliente == idCliente }
-
-        if (cliente != null) {
-            // 2. Creamos una copia del cliente pero con la deuda a cero
-            val clienteActualizado = cliente.copy(deuda = 0.0)
-
-            // 3. Lo actualizamos en la base de datos (repositorio)
-            clienteRepository.updateCliente(clienteActualizado)
-
-            // 4. Recargamos la lista.
-            // ¡Esto hará que el 'uiState' cambie y la tarjeta roja desaparezca de golpe!
-            cargarDatos()
+        viewModelScope.launch {
+            val cliente = _uiState.value.todosLosClientes.find { it.idCliente == idCliente }
+            cliente?.let {
+                val actualizado = it.copy(deuda = 0.0)
+                clienteDao.updateCliente(actualizado.toEntity())
+            }
         }
     }
 
@@ -112,11 +102,12 @@ class ClientesViewModel @Inject constructor(
             deuda = state.formDeuda.replace(",", ".").toDoubleOrNull() ?: 0.0
         )
 
-        if (state.editandoClienteId != null) {
-            clienteRepository.updateCliente(nuevoCliente)
-        } else {
-            clienteRepository.insert(nuevoCliente)
+        viewModelScope.launch {
+            if (state.editandoClienteId != null) {
+                clienteDao.updateCliente(nuevoCliente.toEntity())
+            } else {
+                clienteDao.insertCliente(nuevoCliente.toEntity())
+            }
         }
-        cargarDatos()
     }
 }
