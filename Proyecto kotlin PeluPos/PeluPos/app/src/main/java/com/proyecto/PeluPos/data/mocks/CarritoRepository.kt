@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton // Súper importante para que sea el mismo carrito en toda la app
+@Singleton
 class CarritoRepository @Inject constructor() {
 
-    // El repositorio guarda el estado real en memoria
     private val _productosEscogidos = MutableStateFlow<List<Producto>>(emptyList())
     val productosEscogidos: StateFlow<List<Producto>> = _productosEscogidos.asStateFlow()
 

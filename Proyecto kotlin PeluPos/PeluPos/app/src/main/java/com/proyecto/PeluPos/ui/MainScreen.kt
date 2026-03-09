@@ -33,7 +33,7 @@ import com.proyecto.PeluPos.ui.composables.Sidebar
 import com.proyecto.PeluPos.navigation.Screen
 import com.proyecto.PeluPos.ui.features.clientes.ClientesScreen
 import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
-import com.proyecto.PeluPos.ui.features.products.ProductsScreen
+
 import com.proyecto.PeluPos.ui.features.tpv.TpvScreen
 import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 
@@ -78,18 +78,18 @@ fun MainScreen() {
                 }
 
                 // PRODUCTOS
-                composable(Screen.Products.route) {
-                    ProductsScreen(
-                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
-                        navigateToProductDetail = { productId ->
-                            // Aquí puedes implementar la navegación al detalle
-                        },
-                        navigateToNewProduct = {
-                            // ¡ESTA ES LA LÍNEA CLAVE!
-                            navController.navigate(Screen.NewProduct.route)
-                        }
-                    )
-                }
+//                composable(Screen.Products.route) {
+//                    ProductsScreen(
+//                        toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+//                        navigateToProductDetail = { productId ->
+//                            // Aquí puedes implementar la navegación al detalle
+//                        },
+//                        navigateToNewProduct = {
+//                            // ¡ESTA ES LA LÍNEA CLAVE!
+//                            navController.navigate(Screen.NewProduct.route)
+//                        }
+//                    )
+//                }
 
                 // NUEVO PRODUCTO
 //                composable(Screen.NewProduct.route) {

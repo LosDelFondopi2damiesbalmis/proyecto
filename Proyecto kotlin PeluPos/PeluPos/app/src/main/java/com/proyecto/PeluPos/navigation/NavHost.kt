@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
 import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
+import com.proyecto.PeluPos.ui.features.products.ProductosViewModel
 import com.proyecto.PeluPos.ui.features.tpv.TpvViewModel
 import com.proyecto.PeluPos.ui.features.usuarios.UsuariosViewModel
 import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
@@ -19,9 +20,10 @@ fun NavHost(toggleSidebar: () -> Unit) {
     val vmUsuarios = hiltViewModel<UsuariosViewModel>()
     val vmClientes = hiltViewModel<ClientesViewModel>()
     val vmLocales = hiltViewModel<LocalesViewModel>()
+    val vmProductos = hiltViewModel<ProductosViewModel>()
     NavHost(
         navController = navController,
-        startDestination = LocalesListRoute
+        startDestination = ProductosListRoute
     ) {
         // ==========================================
         // GRAFO 0: LOGIN
@@ -117,6 +119,21 @@ fun NavHost(toggleSidebar: () -> Unit) {
             },
             navigateToDetail = { idDelLocal ->
                 navController.navigate(LocalDetailRoute(idLocal = idDelLocal))
+            }
+        )
+        // ==========================================
+        // GRAFO: 5 GESTIÓN DE INVENTARIO / PRODUCTOS
+        // ==========================================
+        productosDestination(
+            vm = vmProductos,
+            toggleSidebar = toggleSidebar,
+            navigateToForm = {
+
+                navController.navigate(ProductoFormRoute)
+            },
+            onBack = {
+
+                navController.popBackStack()
             }
         )
     }
