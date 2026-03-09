@@ -80,3 +80,4 @@
 | 03/03 | 2 | Cambio en la estructura de carpetas y creación del primer viewmodel | 1 hora | - | - | -
 | 05/03 | 5 | Creación de las pantallas de usuarios y creada las primeras pantallas funcionales de tpv y ventas con sus eventos y viewmodels | 5 horas | - | - | -
 | 06/03 | 2 | Creación de la lógica del login, creación, visualización y modificación tanto de usuarios como de clientes | 5 horas | - | - | -
+| 09/03 | 5 | Creación de la funcionalidad de productos, servicios y el dashboard aplicación ya funcional con datos mock toca actualizar a Room | 5 horas | - | - | -
