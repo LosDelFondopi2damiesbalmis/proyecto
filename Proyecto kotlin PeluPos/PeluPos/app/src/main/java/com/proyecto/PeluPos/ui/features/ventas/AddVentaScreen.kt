@@ -1,11 +1,9 @@
 package com.proyecto.PeluPos.ui.features.ventas
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,9 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +20,6 @@ import com.proyecto.PeluPos.models.Cliente
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Producto
 import com.proyecto.PeluPos.models.Servicio
-import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

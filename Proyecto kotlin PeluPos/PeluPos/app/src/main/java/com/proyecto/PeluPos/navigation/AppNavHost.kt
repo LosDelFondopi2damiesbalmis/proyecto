@@ -2,9 +2,11 @@ package com.proyecto.PeluPos.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import com.proyecto.PeluPos.ui.dashboard.DashboardViewModel
 import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
+import com.proyecto.PeluPos.ui.features.empleados.EmpleadosViewModel
 import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
 import com.proyecto.PeluPos.ui.features.products.ProductosViewModel
 import com.proyecto.PeluPos.ui.features.servicios.ServiciosViewModel
@@ -14,8 +16,9 @@ import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
 
 
 @Composable
-fun NavHost(toggleSidebar: () -> Unit) {
-    val navController = rememberNavController()
+fun AppNavHost(toggleSidebar: () -> Unit,
+               navController: NavHostController
+) {
     val vmTpv = hiltViewModel<TpvViewModel>()
     val sharedViewModel = hiltViewModel<FacturacionViewModel>()
     val vmUsuarios = hiltViewModel<UsuariosViewModel>()
@@ -23,10 +26,19 @@ fun NavHost(toggleSidebar: () -> Unit) {
     val vmLocales = hiltViewModel<LocalesViewModel>()
     val vmProductos = hiltViewModel<ProductosViewModel>()
     val vmServicios = hiltViewModel<ServiciosViewModel>()
+    val vmDashboard = hiltViewModel<DashboardViewModel>()
+    val vmEmpleados = hiltViewModel<EmpleadosViewModel>()
     NavHost(
         navController = navController,
-        startDestination = ServiciosListRoute
+        startDestination = LoginRoute
     ) {
+        // ==========================================
+        // GRAFO PRINCIPAL: DASHBOARD
+        // ==========================================
+        dashboardDestination(
+            vm = vmDashboard,
+            toggleSidebar = toggleSidebar
+        )
         // ==========================================
         // GRAFO 0: LOGIN
         // ==========================================
@@ -152,5 +164,22 @@ fun NavHost(toggleSidebar: () -> Unit) {
                 navController.popBackStack()
             }
         )
+        // ==========================================
+        // GRAFO 7: GESTIÓN DE EMPLEADOS
+        // ==========================================
+        empleadosDestination(
+            vm = vmEmpleados,
+            toggleSidebar = toggleSidebar,
+            navigateToForm = {
+                navController.navigate(EmpleadoFormRoute)
+            },
+            navigateToStats = { idEmpleado ->
+                navController.navigate(EmpleadoStatsRoute(idEmpleado = idEmpleado))
+            },
+            onBack = {
+                navController.popBackStack()
+            }
+        )
+
     }
 }

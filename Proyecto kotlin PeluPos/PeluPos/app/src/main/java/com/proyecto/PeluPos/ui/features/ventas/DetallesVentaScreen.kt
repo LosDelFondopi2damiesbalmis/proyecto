@@ -20,23 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Print
-import androidx.compose.material3.*
-import androidx.compose.runtime.remember
-
-import androidx.compose.ui.draw.clip
-
-import androidx.compose.ui.unit.dp
 import com.proyecto.PeluPos.models.Cliente
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Factura

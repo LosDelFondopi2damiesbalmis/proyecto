@@ -1,7 +1,6 @@
 package com.proyecto.PeluPos.ui.features.tpv
 
 import androidx.lifecycle.ViewModel
-import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +12,6 @@ import com.proyecto.PeluPos.models.Servicio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
