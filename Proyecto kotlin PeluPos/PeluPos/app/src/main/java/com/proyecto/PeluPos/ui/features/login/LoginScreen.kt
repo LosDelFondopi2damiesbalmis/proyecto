@@ -26,7 +26,8 @@ fun LoginScreen(
     users: List<Usuario>,
     errorMessage: String? = null,
     onLoginClick: (Usuario?, String) -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    onNoAccountClick: () -> Unit
 ) {
     // Estados equivalentes a tu SelectedItem y al contenido del PasswordBox
     var selectedUser by remember { mutableStateOf<Usuario?>(null) }
@@ -101,6 +102,14 @@ fun LoginScreen(
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp) // Ajuste fino del borde
                     )
+                }
+                if (users.isEmpty()) { // Solo lo mostramos si la lista está vacía (opcional, si quieres que siempre salga, quita este if)
+                    TextButton(
+                        onClick = onNoAccountClick,
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                    ) {
+                        Text("¿Sin cuenta? Configurar sistema inicial", color = MaterialTheme.colorScheme.primary)
+                    }
                 }
 
                 // 3. Mensaje de Error (TextBlock)
@@ -236,7 +245,8 @@ fun LoginScreenPreview() {
             users = usuariosDePrueba,
             errorMessage = null,
             onLoginClick = { _, _ -> },
-            onCancelClick = { }
+            onCancelClick = { },
+            onNoAccountClick = {},
         )
     }
 }

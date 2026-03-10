@@ -3,6 +3,7 @@ package com.proyecto.PeluPos.ui.features.ventas
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
+import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
 import com.proyecto.PeluPos.models.Cliente
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class FacturacionViewModel @Inject constructor(
     private val productoRepository: ProductoRepository,
     private val servicioRepository: ServicioRepository,
-    private val carritoRepository: CarritoRepository
+    private val carritoRepository: CarritoRepository,
+    private val facturaRepository: FacturaRepository
 
 ) : ViewModel() {
 
@@ -114,7 +116,8 @@ class FacturacionViewModel @Inject constructor(
             servicios = currentState.carritoServicios.toMutableList()
         )
 
-        // Al guardar, limpiamos el carrito y actualizamos la lista de facturas
+        facturaRepository.insert(nuevaFactura)
+
         _uiState.update {
             val nuevasFacturas = it.todasLasFacturas + nuevaFactura
             it.copy(

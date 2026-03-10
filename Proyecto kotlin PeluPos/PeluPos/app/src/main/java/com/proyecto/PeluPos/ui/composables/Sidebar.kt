@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Man
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
@@ -44,6 +45,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import com.proyecto.PeluPos.navigation.ClientesListRoute
 import com.proyecto.PeluPos.navigation.DashboardRoute
+import com.proyecto.PeluPos.navigation.EmpleadosListRoute
 import com.proyecto.PeluPos.navigation.LocalesListRoute
 import com.proyecto.PeluPos.navigation.ProductosListRoute
 import com.proyecto.PeluPos.navigation.ServiciosListRoute
@@ -182,6 +184,7 @@ fun Sidebar(
             MenuButton("Productos", ProductosListRoute, Icons.Default.Inventory)
             MenuButton("Usuarios", UsuariosListRoute, Icons.Default.ManageAccounts)
             MenuButton("Locales", LocalesListRoute, Icons.Default.Store)
+            MenuButton("Empleados", EmpleadosListRoute, Icons.Default.Man)
         }
 
         // ==========================================

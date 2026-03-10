@@ -8,7 +8,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.proyecto.PeluPos.ui.features.login.AccessDeniedScreen
+import com.proyecto.PeluPos.ui.features.login.FakePermissionsScreen
 import com.proyecto.PeluPos.ui.features.login.LoginEvent
 import com.proyecto.PeluPos.ui.features.login.LoginScreen
 import com.proyecto.PeluPos.ui.features.login.LoginViewModel
@@ -16,9 +19,14 @@ import com.proyecto.PeluPos.ui.features.login.LoginViewModel
 @Serializable
 object LoginRoute
 
+@Serializable
+object FakePermissionsRoute
+@Serializable
+object AccessDeniedRoute
 fun NavGraphBuilder.loginDestination(
     navigateToHome: () -> Unit,
-    onExitApp: () -> Unit
+    onExitApp: () -> Unit,
+    navController: NavHostController
 ) {
     composable<LoginRoute> {
         val vm = hiltViewModel<LoginViewModel>()
@@ -31,18 +39,47 @@ fun NavGraphBuilder.loginDestination(
             if (state.isLoginSuccessful) {
                 // 1. Mostramos el mensaje de éxito
                 Toast.makeText(context, "¡Sesión iniciada correctamente!", Toast.LENGTH_SHORT).show()
-                // 2. Navegamos al TPV
+
                 navigateToHome()
             }
         }
-
+        LaunchedEffect(Unit) {
+            vm.onEvent(LoginEvent.CargarUsuarios)
+        }
         LoginScreen(
             users = state.usuariosDisponibles,
             errorMessage = state.errorMessage,
             onLoginClick = { usuario, contrasena ->
                 vm.onEvent(LoginEvent.OnLoginClick(usuario, contrasena))
             },
-            onCancelClick = onExitApp
+            onCancelClick = onExitApp,
+            onNoAccountClick = {navController.navigate(FakePermissionsRoute)},
+        )
+    }
+    composable<FakePermissionsRoute> {
+        FakePermissionsScreen(
+            onAcceptClick = {
+                // Si acepta, lo mandamos al formulario de crear usuario!
+                // Suponiendo que tu ruta del formulario de usuario se llama UsuarioFormRoute
+                navController.navigate(UsuarioFormRoute) {
+                    popUpTo(FakePermissionsRoute) { inclusive = true } // Borramos esta pantalla del historial
+                }
+            },
+            onDenyClick = {
+                navController.navigate(AccessDeniedRoute) {
+                    popUpTo(FakePermissionsRoute) { inclusive = true }
+                }
+            }
+        )
+    }
+
+    composable<AccessDeniedRoute> {
+        AccessDeniedScreen(
+            onBackToLoginClick = {
+                navController.navigate(LoginRoute) {
+                    popUpTo(0)
+                }
+            }
         )
     }
 }

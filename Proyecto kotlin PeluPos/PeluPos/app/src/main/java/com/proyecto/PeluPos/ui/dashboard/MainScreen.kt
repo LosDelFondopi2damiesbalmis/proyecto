@@ -5,18 +5,13 @@ package com.proyecto.PeluPos.ui.dashboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.proyecto.PeluPos.navigation.AppNavHost
+import com.proyecto.PeluPos.navigation.DashboardRoute
 import com.proyecto.PeluPos.navigation.LoginRoute
 import com.proyecto.PeluPos.ui.composables.DashboardCard
 import com.proyecto.PeluPos.ui.composables.DataRow
@@ -71,7 +67,9 @@ fun MainScreen() {
                     currentRouteName.contains("Form") ||
                     currentRouteName.contains("Detail") ||
                     currentRouteName.contains("Detalle") ||
-                    currentRouteName.contains("AddSale")
+                    currentRouteName.contains("AddSale") ||
+                    currentRouteName.contains("Permissions") ||
+                    currentRouteName.contains("Denied")
 
 
             if (!hideSidebar) {
@@ -82,6 +80,10 @@ fun MainScreen() {
                     usuarioRol = dashboardState.rolUsuarioLogeado,
                     onToggleSidebar = { isSidebarVisible = !isSidebarVisible },
                     onNavigationItemClick = { ruta ->
+                        if(ruta == DashboardRoute)
+                        {
+                            vmDashboard.cargarDatos()
+                        }
                         navController.navigate(ruta) {
                             popUpTo(navController.graph.startDestinationId) { saveState = true }
                             launchSingleTop = true
@@ -112,7 +114,7 @@ fun MainScreen() {
 
 @Composable
 fun DashboardPage(
-    state: DashboardUiState, // ¡Recibe los datos reales del ViewModel!
+    state: DashboardUiState,
     toggleSidebar: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -192,25 +194,6 @@ fun DashboardPage(
                     }
                 }
             }
-        }
-    }
-}
-
-// =======================================================
-// COMPONENTES DE APOYO PARA EL DISEÑO DE LAS TARJETAS
-// =======================================================
-
-@Composable
-fun DashboardCard(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.height(12.dp))
-            content()
         }
     }
 }
