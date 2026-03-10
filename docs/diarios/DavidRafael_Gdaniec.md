@@ -81,4 +81,4 @@
 | 05/03 | 5 | Creación de las pantallas de usuarios y creada las primeras pantallas funcionales de tpv y ventas con sus eventos y viewmodels | 5 horas | - | - | -
 | 06/03 | 2 | Creación de la lógica del login, creación, visualización y modificación tanto de usuarios como de clientes | 5 horas | - | - | -
 | 09/03 | 5 | Creación de la funcionalidad de productos, servicios y el dashboard aplicación ya funcional con datos mock toca actualizar a Room | 5 horas | - | - | -
-| 10/03 | 5 | Eliminación de la navegación antigua y composables sin uso, creación de una pág para pedir permisos y actualización del dashboard con datos | 5 horas | - | - | -
+| 10/03 | 2 | Eliminación de la navegación antigua y composables sin uso, creación de una pág para pedir permisos y actualización del dashboard con datos | 2 horas | - | - | -
