@@ -1,7 +1,9 @@
 package com.proyecto.PeluPos.data.mocks.factura
 
 import com.proyecto.PeluPos.models.Factura
+import javax.inject.Singleton
 
+@Singleton
 class FacturaRepository() {
     private val facturaDaoMock: FacturaDaoMock = FacturaDaoMock()
     fun getFacturas(): List<Factura> =

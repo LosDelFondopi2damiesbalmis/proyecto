@@ -14,7 +14,9 @@ class SessionRepository @Inject constructor() {
     private val _usuarioActual = MutableStateFlow<Usuario?>(null)
     val usuarioActual: StateFlow<Usuario?> = _usuarioActual.asStateFlow()
 
-    // Llama a esto cuando el login sea correcto
+    fun getUsuarioActual(): Usuario? {
+        return usuarioActual.value
+    }
     fun iniciarSesion(usuario: Usuario) {
         _usuarioActual.value = usuario
     }

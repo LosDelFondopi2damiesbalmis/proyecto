@@ -1,6 +1,8 @@
 package com.proyecto.PeluPos.navigation
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,6 +21,8 @@ import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
 fun AppNavHost(toggleSidebar: () -> Unit,
                navController: NavHostController
 ) {
+    val context = LocalContext.current
+    val activity = context as? Activity
     val vmTpv = hiltViewModel<TpvViewModel>()
     val sharedViewModel = hiltViewModel<FacturacionViewModel>()
     val vmUsuarios = hiltViewModel<UsuariosViewModel>()
@@ -45,13 +49,14 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         loginDestination(
             navigateToHome = {
 
-                navController.navigate(TpvHomeRoute) {
+                navController.navigate(DashboardRoute) {
                     popUpTo(LoginRoute) { inclusive = true }
                 }
             },
             onExitApp = {
-
-            }
+                activity?.finish()
+            },
+            navController = navController,
         )
 
         // ==========================================

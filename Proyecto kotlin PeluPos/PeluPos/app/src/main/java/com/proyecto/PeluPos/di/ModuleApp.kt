@@ -4,6 +4,7 @@ import com.proyecto.PeluPos.data.mocks.CarritoRepository
 import com.proyecto.PeluPos.data.mocks.SessionRepository
 import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
+import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
 import com.proyecto.PeluPos.data.mocks.local.LocalRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
@@ -61,6 +62,11 @@ class ModuleApp {
     @Singleton
     fun provideLocalesRepository(): LocalRepository {
         return LocalRepository()
+    }
+    @Provides
+    @Singleton
+    fun provideFacturasRepository(): FacturaRepository {
+        return FacturaRepository()
     }
 
 
