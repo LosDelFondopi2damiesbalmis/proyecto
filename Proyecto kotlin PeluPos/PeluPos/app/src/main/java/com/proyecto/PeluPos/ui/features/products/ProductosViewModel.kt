@@ -1,18 +1,22 @@
 package com.proyecto.PeluPos.ui.features.products
 
 import androidx.lifecycle.ViewModel
-import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
+import androidx.lifecycle.viewModelScope
+import com.proyecto.PeluPos.data.room.dao.ProductoDao
+import com.proyecto.PeluPos.data.mappers.toEntity
+import com.proyecto.PeluPos.data.mappers.toModel
 import com.proyecto.PeluPos.models.Producto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductosViewModel @Inject constructor(
-    private val productoRepository: ProductoRepository
+    private val productoDao: ProductoDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductosUiState())
@@ -23,12 +27,15 @@ class ProductosViewModel @Inject constructor(
     }
 
     private fun cargarDatos() {
-        val productos = productoRepository.getProductos()
-        _uiState.update {
-            it.copy(
-                todosLosProductos = productos,
-                productosVisibles = filtrarProductos(productos, it.searchQuery)
-            )
+        viewModelScope.launch {
+            val productosEntity = productoDao.getAll()
+            val productos: List<Producto> = productosEntity.map { it.toModel() }
+            _uiState.update {
+                it.copy(
+                    todosLosProductos = productos,
+                    productosVisibles = filtrarProductos(productos, it.searchQuery)
+                )
+            }
         }
     }
 
@@ -51,7 +58,13 @@ class ProductosViewModel @Inject constructor(
 
             ProductosEvent.PrepararNuevoProducto -> {
                 _uiState.update {
-                    it.copy(editandoProductoId = null, formNombre = "", formPrecioCompra = "", formPrecioVenta = "", formStock = "")
+                    it.copy(
+                        editandoProductoId = null,
+                        formNombre = "",
+                        formPrecioCompra = "",
+                        formPrecioVenta = "",
+                        formStock = ""
+                    )
                 }
             }
 
@@ -87,25 +100,33 @@ class ProductosViewModel @Inject constructor(
     private fun guardarProducto() {
         val state = _uiState.value
         val nuevoProducto = Producto(
-            idProducto = state.editandoProductoId ?: System.currentTimeMillis(),
+            idProducto = state.editandoProductoId ?: 0L,
             nombre = state.formNombre,
             precioCompra = state.formPrecioCompra.replace(",", ".").toDoubleOrNull() ?: 0.0,
             precioVenta = state.formPrecioVenta.replace(",", ".").toDoubleOrNull() ?: 0.0,
             stock = state.formStock.toIntOrNull() ?: 0
         )
 
-        if (state.editandoProductoId != null) {
-            productoRepository.updateProducto(nuevoProducto)
-        } else {
-            productoRepository.insert(nuevoProducto)
+        viewModelScope.launch {
+            if (state.editandoProductoId != null && state.editandoProductoId != 0L) {
+                productoDao.update(nuevoProducto.toEntity())
+            } else {
+                productoDao.insert(nuevoProducto.toEntity())
+            }
+            cargarDatos()
         }
-        cargarDatos()
     }
 
     private fun borrarProducto() {
-        _uiState.value.editandoProductoId?.let { id ->
-            productoRepository.delete(id)
-            cargarDatos()
+        val state = _uiState.value
+        state.editandoProductoId?.let { id ->
+            val producto = state.todosLosProductos.find { it.idProducto == id }
+            producto?.let {
+                viewModelScope.launch {
+                    productoDao.delete(it.toEntity())
+                    cargarDatos()
+                }
+            }
         }
     }
 }

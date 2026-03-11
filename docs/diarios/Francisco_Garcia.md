@@ -59,13 +59,13 @@
 
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 |------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
-|26/02| - | - | - | - | - | -
+|09/03| 1 | Documentación y ROOM |2 horas | Problemas de merge | AI | No siempre el problema es del código
+|10/03| - | - | - | - | - | -
+|11/03| 1 | Modificar viewmodels para aplicar ROOM y Hilt + FLOW | 2 horas | He tenido que modificar los events porque no coincidian los nombres con las entity y mappers | Modificar | -
+|12/03| - | - | - | - | - | -
+|13/03| - | - | - | - | - | -
+|14/03| - | - | - | - | - | -
+|15/03| - | - | - | - | - | -
 
 ## Abril 2026
 

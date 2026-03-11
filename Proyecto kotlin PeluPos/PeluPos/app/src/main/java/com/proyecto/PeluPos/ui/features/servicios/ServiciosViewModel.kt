@@ -1,18 +1,24 @@
 package com.proyecto.PeluPos.ui.features.servicios
+
 import androidx.lifecycle.ViewModel
-import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
-import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
+import androidx.lifecycle.viewModelScope
+import com.proyecto.PeluPos.data.mappers.toEntity
+import com.proyecto.PeluPos.data.mappers.toModel
+import com.proyecto.PeluPos.data.room.dao.EmpleadoDao
+import com.proyecto.PeluPos.data.room.dao.ServicioDao
 import com.proyecto.PeluPos.models.Servicio
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class ServiciosViewModel @Inject constructor(
-    private val servicioRepository: ServicioRepository,
-    private val empleadoRepository: EmpleadoRepository // Necesario para el desplegable
+    private val servicioDao: ServicioDao,
+    private val empleadoDao: EmpleadoDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ServiciosUiState())
@@ -23,15 +29,25 @@ class ServiciosViewModel @Inject constructor(
     }
 
     private fun cargarDatos() {
-        val servicios = servicioRepository.getServicios()
-        val empleados = empleadoRepository.getEmpleados()
+        viewModelScope.launch {
+            // Obtener todos los servicios y mapear a modelos
+            val serviciosEntity = servicioDao.getAll()
+            val servicios: List<Servicio> = serviciosEntity.mapNotNull { servicioEntity ->
+                val empleadoEntity = empleadoDao.getById(servicioEntity.empleadoId)
+                val empleado = empleadoEntity?.toModel()
+                empleado?.let { e -> servicioEntity.toModel(e) }
+            }
 
-        _uiState.update {
-            it.copy(
-                todosLosServicios = servicios,
-                serviciosVisibles = filtrarServicios(servicios, it.searchQuery),
-                empleadosDisponibles = empleados
-            )
+            // Obtener todos los empleados para el desplegable
+            val empleados = empleadoDao.getAll().map { it.toModel() }
+
+            _uiState.update {
+                it.copy(
+                    todosLosServicios = servicios,
+                    serviciosVisibles = filtrarServicios(servicios, it.searchQuery),
+                    empleadosDisponibles = empleados
+                )
+            }
         }
     }
 
@@ -57,7 +73,13 @@ class ServiciosViewModel @Inject constructor(
 
             ServiciosEvent.PrepararNuevoServicio -> {
                 _uiState.update {
-                    it.copy(editandoServicioId = null, formNombre = "", formPrecio = "", formDescripcion = "", formEmpleadoSeleccionado = null)
+                    it.copy(
+                        editandoServicioId = null,
+                        formNombre = "",
+                        formPrecio = "",
+                        formDescripcion = "",
+                        formEmpleadoSeleccionado = null
+                    )
                 }
             }
 
@@ -91,25 +113,33 @@ class ServiciosViewModel @Inject constructor(
         val empleado = state.formEmpleadoSeleccionado ?: return
 
         val nuevoServicio = Servicio(
-            idServicio = state.editandoServicioId ?: System.currentTimeMillis(),
+            idServicio = state.editandoServicioId ?: 0L,
             nombre = state.formNombre,
             precio = state.formPrecio.replace(",", ".").toDoubleOrNull() ?: 0.0,
             descripcion = state.formDescripcion,
             empleado = empleado
         )
 
-        if (state.editandoServicioId != null) {
-            servicioRepository.updateServicio(nuevoServicio)
-        } else {
-            servicioRepository.insert(nuevoServicio)
+        viewModelScope.launch {
+            if (state.editandoServicioId != null && state.editandoServicioId != 0L) {
+                servicioDao.update(nuevoServicio.toEntity())
+            } else {
+                servicioDao.insert(nuevoServicio.toEntity())
+            }
+            cargarDatos()
         }
-        cargarDatos()
     }
 
     private fun borrarServicio() {
-        _uiState.value.editandoServicioId?.let { id ->
-            servicioRepository.delete(id)
-            cargarDatos()
+        val state = _uiState.value
+        state.editandoServicioId?.let { id ->
+            val servicio = state.todosLosServicios.find { it.idServicio == id }
+            servicio?.let {
+                viewModelScope.launch {
+                    servicioDao.delete(it.toEntity())
+                    cargarDatos()
+                }
+            }
         }
     }
 }

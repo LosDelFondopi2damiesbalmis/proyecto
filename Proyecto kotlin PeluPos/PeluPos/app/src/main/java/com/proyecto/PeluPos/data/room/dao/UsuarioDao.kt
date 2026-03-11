@@ -10,4 +10,6 @@ interface UsuarioDao {
     @Delete suspend fun delete(usuario: UsuarioEntity)
     @Query("SELECT * FROM usuarios") suspend fun getAll(): List<UsuarioEntity>
     @Query("SELECT * FROM usuarios WHERE idUsuario = :id") suspend fun getById(id: Long): UsuarioEntity?
+    @Query("SELECT * FROM usuarios")
+    fun getAllFlow(): kotlinx.coroutines.flow.Flow<List<UsuarioEntity>>
 }
