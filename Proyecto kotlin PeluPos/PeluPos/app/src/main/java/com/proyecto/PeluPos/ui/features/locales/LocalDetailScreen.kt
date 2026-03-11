@@ -21,7 +21,7 @@ import com.proyecto.PeluPos.models.Local
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalDetailScreen(
-    local: Local?, // Recibimos el objeto completo
+    local: Local?,
     onBack: () -> Unit,
     onEditClick: () -> Unit
 ) {

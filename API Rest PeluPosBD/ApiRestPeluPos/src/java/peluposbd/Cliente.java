@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,10 +22,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 
-/**
- *
- * @author alumno
- */
 @Entity
 @Table(name = "cliente")
 @NamedQueries({
@@ -52,6 +49,7 @@ public class Cliente implements Serializable {
     @Column(name = "telefono")
     private BigInteger telefono;
     @OneToMany(mappedBy = "idCliente")
+    @JsonbTransient
     private Collection<Factura> facturaCollection;
 
     public Cliente() {

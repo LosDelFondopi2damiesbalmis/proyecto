@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -39,6 +40,7 @@ public class FacturaServicio implements Serializable {
     private BigDecimal precioCobrado;
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonbTransient
     private Factura factura;
     @JoinColumn(name = "id_servicio", referencedColumnName = "id_servicio", insertable = false, updatable = false)
     @ManyToOne(optional = false)
