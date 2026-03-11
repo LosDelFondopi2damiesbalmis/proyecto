@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,13 +60,17 @@ public class Empleado implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(mappedBy = "idEmpleado")
+    @JsonbTransient
     private Collection<Factura> facturaCollection;
     @OneToMany(mappedBy = "idEmpleado")
+    @JsonbTransient
     private Collection<Servicio> servicioCollection;
     @JoinColumn(name = "id_local", referencedColumnName = "id_local")
     @ManyToOne
+    @JsonbTransient
     private Local idLocal;
     @OneToOne(mappedBy = "idEmpleado")
+    @JsonbTransient
     private Usuario usuario;
 
     public Empleado() {

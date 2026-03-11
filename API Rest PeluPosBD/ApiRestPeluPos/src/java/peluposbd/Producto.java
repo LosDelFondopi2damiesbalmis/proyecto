@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -61,6 +62,7 @@ public class Producto implements Serializable {
     @Column(name = "stock")
     private int stock;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto")
+    @JsonbTransient
     private Collection<FacturaProducto> facturaProductoCollection;
 
     public Producto() {

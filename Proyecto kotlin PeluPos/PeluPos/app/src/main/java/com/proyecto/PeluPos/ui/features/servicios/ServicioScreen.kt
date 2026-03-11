@@ -57,7 +57,6 @@ fun ServiciosScreen(
             TopAppBar(
                 title = { Text("Catálogo de Servicios", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = toggleSidebar) { Icon(Icons.Default.Menu, "Menú") }
                 }
             )
         }
