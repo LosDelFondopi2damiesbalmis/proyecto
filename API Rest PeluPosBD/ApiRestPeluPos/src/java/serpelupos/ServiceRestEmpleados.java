@@ -197,7 +197,6 @@ public class ServiceRestEmpleados {
                 empleadoFound.setCargo(empleado.getCargo());
                 empleadoFound.setNombre(empleado.getNombre());
                 empleadoFound.setEmail(empleado.getEmail());
-                empleadoFound.setFacturaCollection(empleado.getFacturaCollection());
 
                 // Grabar los cambios
                 dao.edit(empleadoFound);

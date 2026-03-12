@@ -125,7 +125,6 @@ public class ServiceRestProductos {
                 productoFound.setStock(producto.getStock());
                 productoFound.setPrecioCompra(producto.getPrecioCompra());
                 productoFound.setPrecioVenta(producto.getPrecioVenta());
-                productoFound.setFacturaProductoCollection(producto.getFacturaProductoCollection());
 
                 // Grabar los cambios
                 dao.edit(productoFound);
@@ -167,7 +166,7 @@ public class ServiceRestProductos {
             } else {
                 dao.destroy(id);
                 statusResul = Response.Status.OK;
-                mensaje.put("mensaje", "Cliente con id " + id + " eliminado");
+                mensaje.put("mensaje", "Producto con id " + id + " eliminado");
                 response = Response
                         .status(statusResul)
                         .entity(mensaje)

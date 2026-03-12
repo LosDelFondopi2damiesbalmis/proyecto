@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "648eb18d-58e1-4aca-8485-f7a057f5934e",
+		"name": "Empleados",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET todos empleados",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/empleados",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"empleados"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET resumen ventas empleado",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/empleados/ventas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"empleados",
+						"ventas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Empleado",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Pedro Sánchez\",\r\n  \"cargo\": \"Barbero\",\r\n  \"email\": \"pedro@pelupos.com\",\r\n  \"telefono\": 600112233,\r\n  \"idLocal\": {\r\n    \"idLocal\": 1\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/empleados",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"empleados"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Empleado",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idEmpleado\": 5,\r\n  \"nombre\": \"Pedro Sánchez\",\r\n  \"cargo\": \"Barbero Senior\",\r\n  \"email\": \"pedro@pelupos.com\",\r\n  \"telefono\": 600999999,\r\n  \"idLocal\": {\r\n    \"idLocal\": 1\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/empleados",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"empleados"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Empleado",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/empleados/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"empleados",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

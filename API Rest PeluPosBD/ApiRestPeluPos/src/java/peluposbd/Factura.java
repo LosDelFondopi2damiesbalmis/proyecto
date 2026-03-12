@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -55,8 +57,8 @@ public class Factura implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fecha;
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime fecha;
     @Column(name = "pendiente")
     private Boolean pendiente;
     @Size(max = 50)
@@ -80,7 +82,7 @@ public class Factura implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public Factura(Long idFactura, BigDecimal monto, Date fecha) {
+    public Factura(Long idFactura, BigDecimal monto, LocalDateTime fecha) {
         this.idFactura = idFactura;
         this.monto = monto;
         this.fecha = fecha;
@@ -102,11 +104,11 @@ public class Factura implements Serializable {
         this.monto = monto;
     }
 
-    public Date getFecha() {
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

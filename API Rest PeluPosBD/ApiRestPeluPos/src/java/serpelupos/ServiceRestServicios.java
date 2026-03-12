@@ -121,7 +121,6 @@ public class ServiceRestServicios {
                 servicioFound.setNombre(servicio.getNombre());
                 servicioFound.setDescripcion(servicio.getDescripcion());
                 servicioFound.setPrecio(servicio.getPrecio());
-                servicioFound.setFacturaServicioCollection(servicio.getFacturaServicioCollection());
                 servicioFound.setIdEmpleado(servicio.getIdEmpleado());
 
                 // Grabar los cambios

@@ -162,7 +162,6 @@ public class ServiceRestClientes {
                 clienteFound.setNombre(cliente.getNombre());
                 clienteFound.setDeuda(cliente.getDeuda());
                 clienteFound.setTelefono(cliente.getTelefono());
-                clienteFound.setFacturaCollection(cliente.getFacturaCollection());
 
                 // Grabar los cambios
                 dao.edit(clienteFound);
