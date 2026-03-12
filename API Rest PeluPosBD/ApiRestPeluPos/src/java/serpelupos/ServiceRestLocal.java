@@ -198,7 +198,6 @@ public class ServiceRestLocal {
                 // Actualizar campos del objeto encontrado
                 localFound.setNombre(local.getNombre());
                 localFound.setDireccion(local.getDireccion());
-                localFound.setEmpleadoCollection(local.getEmpleadoCollection());
 
                 // Grabar los cambios
                 dao.edit(localFound);

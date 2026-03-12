@@ -130,8 +130,12 @@ public class ServiceRestFacturas {
                         .build();
             }
         } catch (Exception ex) {
-            statusResul = Response.Status.BAD_REQUEST;
-            mensaje.put("mensaje", "Error al procesar la petición");
+            ex.printStackTrace(); 
+            
+            statusResul = Response.Status.INTERNAL_SERVER_ERROR; 
+            // Y mandamos el mensaje real del fallo a Postman:
+            mensaje.put("mensaje", "Error real: " + ex.getMessage()); 
+            
             response = Response
                     .status(statusResul)
                     .entity(mensaje)
@@ -165,8 +169,6 @@ public class ServiceRestFacturas {
                 facturaFound.setPendiente(factura.getPendiente());
                 facturaFound.setTipoPago(factura.getTipoPago());
                 facturaFound.setMonto(factura.getMonto());
-                facturaFound.setFacturaProductoCollection(factura.getFacturaProductoCollection());
-                facturaFound.setFacturaServicioCollection(factura.getFacturaServicioCollection());
 
                 // Grabar los cambios
                 dao.edit(facturaFound);
@@ -178,8 +180,12 @@ public class ServiceRestFacturas {
                         .build();
             }
         } catch (Exception ex) {
-            statusResul = Response.Status.BAD_REQUEST;
-            mensaje.put("mensaje", "Error al procesar la petición");
+            ex.printStackTrace(); 
+            
+            statusResul = Response.Status.INTERNAL_SERVER_ERROR; 
+            // Y mandamos el mensaje real del fallo a Postman:
+            mensaje.put("mensaje", "Error real: " + ex.getMessage()); 
+            
             response = Response
                     .status(statusResul)
                     .entity(mensaje)

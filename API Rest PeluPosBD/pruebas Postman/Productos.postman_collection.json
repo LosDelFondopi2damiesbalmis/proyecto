@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "f3a4fe61-a846-4648-a0f5-6cd8dea96cc1",
+		"name": "Productos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET todos productos",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Producto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Gomina Extra Fuerte\",\r\n  \"precioCompra\": 4.50,\r\n  \"precioVenta\": 12.00,\r\n  \"stock\": 50\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Producto",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idProducto\": 3,\r\n  \"nombre\": \"Gomina Extra Fuerte\",\r\n  \"precioCompra\": 4.50,\r\n  \"precioVenta\": 13.50,\r\n  \"stock\": 48\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Producto",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/productos/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"productos",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

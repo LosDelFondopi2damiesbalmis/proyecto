@@ -1,0 +1,179 @@
+{
+	"info": {
+		"_postman_id": "c2e106ee-ceaf-4c74-a3bb-4794262f09f4",
+		"name": "Locales",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET todos locales",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/locales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"locales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET un local",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/locales/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"locales",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Local",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Barbería El Ensanche\",\r\n  \"direccion\": \"Calle Colón 25, Valencia\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/locales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"locales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Local",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idLocal\": 5,\r\n  \"nombre\": \"Barbería El Ensanche - Reformada\",\r\n  \"direccion\": \"Calle Colón 25, Valencia\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/locales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"locales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Local",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/locales/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"locales",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

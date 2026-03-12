@@ -1,0 +1,179 @@
+{
+	"info": {
+		"_postman_id": "de501895-96f0-4596-8ae6-d4406d6d341e",
+		"name": "Facturas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET todas facturas",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/facturas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"facturas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET una factura",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/facturas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"facturas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST factura",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"monto\": 60.50,\r\n  \"fecha\": \"2026-03-12T10:30:00\",\r\n  \"pendiente\": false,\r\n  \"tipoPago\": \"Tarjeta\",\r\n  \"idCliente\": { \"idCliente\": 1 },\r\n  \"idEmpleado\": { \"idEmpleado\": 1 }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/facturas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"facturas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT factura",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idFactura\": 1, \r\n  \"monto\": 100.50,\r\n  \"fecha\": \"2026-03-12T10:30:00\",\r\n  \"pendiente\": false,\r\n  \"tipoPago\": \"Tarjeta\",\r\n  \"idCliente\": { \"idCliente\": 1 },\r\n  \"idEmpleado\": { \"idEmpleado\": 1 }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/facturas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"facturas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Factura",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/pelupos/servicio/facturas/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pelupos",
+						"servicio",
+						"facturas",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
