@@ -84,3 +84,4 @@
 | 10/03 | 2 | Eliminación de la navegación antigua y composables sin uso, creación de una pág para pedir permisos y actualización del dashboard con datos, creación de la base de datos para api rest | 2 horas | - | - | -
 | 11/03 | 4,5 | Se ha comprobado la base de datos con Vicente y se ha creado la API Rest con JPA, se ha comprado todos los GET de todas las clases a falta de crear el POSTMAN para probar los POST, PUT Y DELETE | 4 horas y media | - | - | -
 | 12/03 | 3 | Arreglo de errores en la API y creación de pruebas de postman para el POST, PUT y DELETE de todas las clases, pendiente de confirmación para añadir seguridad | 3 horas | - | - | -
+| 13/03 | 1 | Se ha creado un único Postman para pruebas para mayor organización y se ha confirmado la funcionalidad con Vicente | 1 hora | - | - | -
