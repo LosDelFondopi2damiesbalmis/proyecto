@@ -1,0 +1,1136 @@
+{
+	"info": {
+		"_postman_id": "1c48dd26-a3e2-4292-99aa-77873a123761",
+		"name": "PeluPos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "GET todos productos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/productos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Producto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Gomina Extra Fuerte\",\r\n  \"precioCompra\": 4.50,\r\n  \"precioVenta\": 12.00,\r\n  \"stock\": 50\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/productos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Producto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idProducto\": 3,\r\n  \"nombre\": \"Gomina Extra Fuerte\",\r\n  \"precioCompra\": 4.50,\r\n  \"precioVenta\": 13.50,\r\n  \"stock\": 48\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/productos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Producto",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/productos/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"productos",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "GET todos clientes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/clientes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET un cliente",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/clientes/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"clientes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST de cliente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Laura Martínez\",\r\n  \"deuda\": 0.0,\r\n  \"telefono\": 600999888\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/clientes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT de cliente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idCliente\": 3,\r\n  \"nombre\": \"Laura Martínez\",\r\n  \"deuda\": 15.50,\r\n  \"telefono\": 600999888\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/clientes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE de cliente",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/clientes/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"clientes",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Empleados",
+			"item": [
+				{
+					"name": "GET todos empleados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/empleados",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"empleados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET resumen ventas empleado",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/empleados/ventas/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"empleados",
+								"ventas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Empleado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Pedro Sánchez\",\r\n  \"cargo\": \"Barbero\",\r\n  \"email\": \"pedro@pelupos.com\",\r\n  \"telefono\": 600112233,\r\n  \"idLocal\": {\r\n    \"idLocal\": 1\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/empleados",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"empleados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Empleado",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idEmpleado\": 5,\r\n  \"nombre\": \"Pedro Sánchez\",\r\n  \"cargo\": \"Barbero Senior\",\r\n  \"email\": \"pedro@pelupos.com\",\r\n  \"telefono\": 600999999,\r\n  \"idLocal\": {\r\n    \"idLocal\": 1\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/empleados",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"empleados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Empleado",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/empleados/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"empleados",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Facturas",
+			"item": [
+				{
+					"name": "GET todas facturas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/facturas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"facturas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET una factura",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/facturas/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"facturas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST factura",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"monto\": 60.50,\r\n  \"fecha\": \"2026-03-12T10:30:00\",\r\n  \"pendiente\": false,\r\n  \"tipoPago\": \"Tarjeta\",\r\n  \"idCliente\": { \"idCliente\": 1 },\r\n  \"idEmpleado\": { \"idEmpleado\": 1 }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/facturas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"facturas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT factura",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idFactura\": 1, \r\n  \"monto\": 100.50,\r\n  \"fecha\": \"2026-03-12T10:30:00\",\r\n  \"pendiente\": false,\r\n  \"tipoPago\": \"Tarjeta\",\r\n  \"idCliente\": { \"idCliente\": 1 },\r\n  \"idEmpleado\": { \"idEmpleado\": 1 }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/facturas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"facturas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Factura",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/facturas/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"facturas",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Locales",
+			"item": [
+				{
+					"name": "GET todos locales",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/locales",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"locales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET un local",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/locales/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"locales",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Local",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Barbería El Ensanche\",\r\n  \"direccion\": \"Calle Colón 25, Valencia\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/locales",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"locales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Local",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idLocal\": 5,\r\n  \"nombre\": \"Barbería El Ensanche - Reformada\",\r\n  \"direccion\": \"Calle Colón 25, Valencia\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/locales",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"locales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Local",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/locales/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"locales",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Servicios",
+			"item": [
+				{
+					"name": "GET todos servicios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/servicios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"servicios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST servicios",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Mechas Balayage\",\r\n  \"precio\": 45.50,\r\n  \"descripcion\": \"Decoloración parcial con técnica balayage\",\r\n  \"idEmpleado\": {\r\n    \"idEmpleado\": 1\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/servicios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"servicios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT servicios",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idServicio\": 3,\r\n  \"nombre\": \"Mechas Balayage\",\r\n  \"precio\": 50.00,\r\n  \"descripcion\": \"Decoloración parcial con técnica balayage (incluye matiz)\",\r\n  \"idEmpleado\": {\r\n    \"idEmpleado\": 1\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/servicios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"servicios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE servicios",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/servicios/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"servicios",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "GET todos usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/usuarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"usuario\": \"pedro\",\r\n  \"contrasena\": \"123456\",\r\n  \"idEmpleado\": {\r\n    \"idEmpleado\": 5\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/usuarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idUsuario\": 5,\r\n  \"usuario\": \"pedro\",\r\n  \"contrasena\": \"654321\",\r\n  \"idEmpleado\": {\r\n    \"idEmpleado\": 2\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/usuarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept-Encoding",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/pelupos/servicio/usuarios/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pelupos",
+								"servicio",
+								"usuarios",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
