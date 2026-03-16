@@ -7,6 +7,8 @@ package peluposbd;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -51,6 +53,9 @@ public class Usuario implements Serializable {
     @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
     @OneToOne
     private Empleado idEmpleado;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol_usuario")
+    private RolUsuario rolUsuario;
 
     public Usuario() {
     }
