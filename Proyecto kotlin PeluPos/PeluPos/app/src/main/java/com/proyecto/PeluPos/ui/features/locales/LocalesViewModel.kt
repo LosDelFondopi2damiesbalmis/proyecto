@@ -26,9 +26,7 @@ class LocalesViewModel @Inject constructor(
             localDao.getAllLocalesFlow()
                 .map { lista -> lista.map { it.toModel() } }
                 .collect { listaLocales ->
-
                     val empleadosReales = empleadoRepository.getEmpleados()
-
                     _uiState.update {
                         it.copy(
                             todosLosLocales = listaLocales,
@@ -74,10 +72,8 @@ class LocalesViewModel @Inject constructor(
             }
 
             is LocalesEvent.PrepararEdicion -> {
-
                 val local = _uiState.value.todosLosLocales
                     .find { it.idLocal == event.idLocal }
-
                 local?.let { loc ->
                     _uiState.update {
                         it.copy(
@@ -97,75 +93,50 @@ class LocalesViewModel @Inject constructor(
                 _uiState.update { it.copy(formDireccion = event.direccion) }
 
             is LocalesEvent.OnAddEmpleado -> {
-
-                val seleccionados =
-                    _uiState.value.formEmpleadosSeleccionados.toMutableList()
-
+                val seleccionados = _uiState.value.formEmpleadosSeleccionados.toMutableList()
                 if (!seleccionados.contains(event.empleado)) {
                     seleccionados.add(event.empleado)
-
-                    _uiState.update {
-                        it.copy(formEmpleadosSeleccionados = seleccionados)
-                    }
+                    _uiState.update { it.copy(formEmpleadosSeleccionados = seleccionados) }
                 }
             }
 
             is LocalesEvent.OnRemoveEmpleado -> {
-
-                val seleccionados =
-                    _uiState.value.formEmpleadosSeleccionados.toMutableList()
-
+                val seleccionados = _uiState.value.formEmpleadosSeleccionados.toMutableList()
                 seleccionados.remove(event.empleado)
-
-                _uiState.update {
-                    it.copy(formEmpleadosSeleccionados = seleccionados)
-                }
+                _uiState.update { it.copy(formEmpleadosSeleccionados = seleccionados) }
             }
 
             LocalesEvent.GuardarLocal -> guardarLocal()
 
-            is LocalesEvent.BorrarLocal ->
-                borrarLocal(event.idLocal)
-        }
+            LocalesEvent.BorrarLocal -> {
+                _uiState.value.editandoLocalId?.let { id ->
+                    borrarLocal(id)
+                }
+            }
+        } // <-- Cierre del 'when'
     }
 
     private fun guardarLocal() {
-
         val state = _uiState.value
-
         val nuevoLocal = Local(
             idLocal = state.editandoLocalId ?: 0L,
             nombre = state.formNombre,
             direccion = state.formDireccion,
             empleados = state.formEmpleadosSeleccionados.toMutableList()
         )
-
         viewModelScope.launch {
-
             if (state.editandoLocalId != null) {
-
                 localDao.updateLocal(nuevoLocal.toEntity())
-
             } else {
-
                 localDao.insertLocal(nuevoLocal.toEntity())
-
             }
         }
     }
 
     private fun borrarLocal(idLocal: Long) {
-
         viewModelScope.launch {
-
-            val local = _uiState.value.todosLosLocales
-                .find { it.idLocal == idLocal }
-
-            local?.let {
-
-                localDao.deleteLocal(it.toEntity())
-
-            }
+            val local = _uiState.value.todosLosLocales.find { it.idLocal == idLocal }
+            local?.let { localDao.deleteLocal(it.toEntity()) }
         }
     }
 }

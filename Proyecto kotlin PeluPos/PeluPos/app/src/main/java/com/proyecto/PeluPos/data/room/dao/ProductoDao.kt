@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.data.room.dao
 
 import androidx.room.*
 import com.proyecto.PeluPos.data.room.entity.ProductoEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductoDao {
@@ -9,4 +10,6 @@ interface ProductoDao {
     @Update suspend fun update(producto: ProductoEntity)
     @Delete suspend fun delete(producto: ProductoEntity)
     @Query("SELECT * FROM productos") suspend fun getAll(): List<ProductoEntity>
+    @Query("SELECT * FROM productos")
+    fun getAllFlow(): Flow<List<ProductoEntity>>
 }

@@ -2,91 +2,137 @@ package com.proyecto.PeluPos.ui.features.ventas
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.proyecto.PeluPos.data.mappers.toEntity
+import com.proyecto.PeluPos.data.mappers.toModel
+import com.proyecto.PeluPos.data.room.dao.*
+import com.proyecto.PeluPos.data.room.entity.*
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
-import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
-import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
-import com.proyecto.PeluPos.models.Cliente
-import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Factura
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class FacturacionViewModel @Inject constructor(
-    private val productoRepository: ProductoRepository,
-    private val servicioRepository: ServicioRepository,
+    private val productoDao: ProductoDao,
+    private val servicioDao: ServicioDao,
+    private val clienteDao: ClienteDao,
+    private val empleadoDao: EmpleadoDao,
+    private val facturaDao: FacturaDao,
     private val carritoRepository: CarritoRepository
-
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FacturacionUiState())
     val uiState: StateFlow<FacturacionUiState> = _uiState.asStateFlow()
 
     init {
-        cargarDatosIniciales()
+        observarDatos()
         observarCarrito()
     }
 
-    private fun cargarDatosIniciales() {
+    // ---------------------------------------------------------
+    // ROOM REACTIVO TOTAL
+    // ---------------------------------------------------------
+    private fun observarDatos() {
         viewModelScope.launch {
-            // 1. Cargamos de tus repositorios inyectados
-            val productos = productoRepository.getProductos()
-            val servicios = servicioRepository.getServicios()
+            combine(
+                productoDao.getAllFlow(),
+                servicioDao.getAllFlow(),
+                clienteDao.getAllClientesFlow(),
+                empleadoDao.getAllFlow(),
+                facturaDao.getAllFlow()
+            ) { productosE: List<ProductoEntity>,
+                serviciosE: List<ServicioEntity>,
+                clientesE: List<ClienteEntity>,
+                empleadosE: List<EmpleadoEntity>,
+                facturasE: List<FacturaEntity> ->
 
-            // 2. Simulamos la carga de empleados y clientes (aquí usarías sus repositorios)
-            val empleadosFalsos = listOf(
-                Empleado(1L, telefono = 6565454,"carlos@pe.com", "Peluquero", nombre = "Carlos"),
-                Empleado(2L, 643843, "elena@pe.com", "Estilista", nombre = "Elena" )
-            )
-            val clientesFalsos = listOf(
-                Cliente(1L, "Juan Pérez", 5.5, 655000111),
-                Cliente(2L, "María López", 6.3, 655000222)
-            )
+                // Mapear productos
+                val productos = productosE.map { it.toModel() }
 
-            // 3. Actualizamos el estado con los catálogos listos
-            _uiState.update {
-                it.copy(
-                    productosDisponibles = productos, // Si lo añades a tu UiState
-                    serviciosDisponibles = servicios, // Si lo añades a tu UiState
-                    empleadosDisponibles = empleadosFalsos,
-                    clientesDisponibles = clientesFalsos
+                // Mapear empleados primero para los servicios y facturas
+                val empleados = empleadosE.map { it.toModel() }
+
+                // Mapear servicios, buscando su empleado correspondiente
+                val servicios = serviciosE.mapNotNull { entity ->
+                    val empleado = empleados.find { it.idEmpleado == entity.empleadoId }
+                    empleado?.let { entity.toModel(it) } // solo si existe
+                }
+
+                // Mapear clientes
+                val clientes = clientesE.map { it.toModel() }
+
+                // Mapear facturas, buscando cliente y empleado correspondientes
+                val facturas = facturasE.mapNotNull { entity ->
+                    val cliente = clientes.find { it.idCliente == entity.clienteId }
+                    val empleado = empleados.find { it.idEmpleado == entity.empleadoId }
+                    if (cliente != null && empleado != null) {
+                        entity.toModel(cliente, empleado)
+                    } else null
+                }
+
+                // Creamos el estado parcial
+                FacturacionUiState(
+                    productosDisponibles = productos,
+                    serviciosDisponibles = servicios,
+                    empleadosDisponibles = empleados,
+                    clientesDisponibles = clientes,
+                    todasLasFacturas = facturas,
+                    facturasVisibles = facturas
                 )
+            }.collect { nuevoState ->
+                _uiState.update {
+                    it.copy(
+                        productosDisponibles = nuevoState.productosDisponibles,
+                        serviciosDisponibles = nuevoState.serviciosDisponibles,
+                        empleadosDisponibles = nuevoState.empleadosDisponibles,
+                        clientesDisponibles = nuevoState.clientesDisponibles,
+                        todasLasFacturas = nuevoState.todasLasFacturas,
+                        facturasVisibles = nuevoState.facturasVisibles
+                    )
+                }
             }
         }
     }
+
+    // ---------------------------------------------------------
+    // CARRITO (Flow en memoria)
+    // ---------------------------------------------------------
     private fun observarCarrito() {
         viewModelScope.launch {
-            // Cada vez que el CarritoRepository cambie, actualizamos el UiState
-            carritoRepository.productosEscogidos.collect { listaProductos ->
-                _uiState.update { it.copy(carritoProductos = listaProductos) }
+            carritoRepository.productosEscogidos.collect { lista ->
+                _uiState.update { it.copy(carritoProductos = lista) }
             }
         }
+
         viewModelScope.launch {
-            carritoRepository.serviciosEscogidos.collect { listaServicios ->
-                _uiState.update { it.copy(carritoServicios = listaServicios) }
+            carritoRepository.serviciosEscogidos.collect { lista ->
+                _uiState.update { it.copy(carritoServicios = lista) }
             }
         }
     }
 
+    // ---------------------------------------------------------
+    // EVENTOS
+    // ---------------------------------------------------------
     fun onEvent(event: FacturacionEvent) {
         when (event) {
+            is FacturacionEvent.OnEmpleadoSeleccionado ->
+                _uiState.update { it.copy(empleadoSeleccionado = event.empleado) }
 
-            // --- CREAR FACTURA ---
-            is FacturacionEvent.OnEmpleadoSeleccionado -> _uiState.update { it.copy(empleadoSeleccionado = event.empleado) }
-            is FacturacionEvent.OnClienteSeleccionado -> _uiState.update { it.copy(clienteSeleccionado = event.cliente) }
-            is FacturacionEvent.OnTipoPagoSeleccionado -> _uiState.update { it.copy(tipoPago = event.tipoPago) }
+            is FacturacionEvent.OnClienteSeleccionado ->
+                _uiState.update { it.copy(clienteSeleccionado = event.cliente) }
+
+            is FacturacionEvent.OnTipoPagoSeleccionado ->
+                _uiState.update { it.copy(tipoPago = event.tipoPago) }
+
             FacturacionEvent.OnGuardarFactura -> {
                 guardarFactura()
                 carritoRepository.vaciarCarrito()
             }
 
-            // --- HISTORIAL ---
             is FacturacionEvent.OnSearchQueryChange -> {
                 _uiState.update { it.copy(searchQuery = event.query) }
                 filtrarFacturas(event.query)
@@ -94,48 +140,46 @@ class FacturacionViewModel @Inject constructor(
         }
     }
 
+    // ---------------------------------------------------------
+    // GUARDAR FACTURA
+    // ---------------------------------------------------------
     private fun guardarFactura() {
-        val currentState = _uiState.value
-        val empleado = currentState.empleadoSeleccionado ?: return
-        val cliente = currentState.clienteSeleccionado ?: return
+        val state = _uiState.value
+        val empleado = state.empleadoSeleccionado ?: return
+        val cliente = state.clienteSeleccionado ?: return
 
-        val montoTotal = currentState.carritoProductos.sumOf { it.precioVenta } +
-                currentState.carritoServicios.sumOf { it.precio }
+        val montoTotal = state.carritoProductos.sumOf { it.precioVenta } +
+                state.carritoServicios.sumOf { it.precio }
 
         val nuevaFactura = Factura(
             idFactura = System.currentTimeMillis(),
             monto = montoTotal,
             fecha = Date(),
             pendiente = false,
-            tipoPago = currentState.tipoPago,
+            tipoPago = state.tipoPago,
             cliente = cliente,
             empleado = empleado,
-            productos = currentState.carritoProductos.toMutableList(),
-            servicios = currentState.carritoServicios.toMutableList()
+            productos = state.carritoProductos.toMutableList(),
+            servicios = state.carritoServicios.toMutableList()
         )
 
-        // Al guardar, limpiamos el carrito y actualizamos la lista de facturas
-        _uiState.update {
-            val nuevasFacturas = it.todasLasFacturas + nuevaFactura
-            it.copy(
-                todasLasFacturas = nuevasFacturas,
-                facturasVisibles = nuevasFacturas,
-                carritoProductos = emptyList(),
-                carritoServicios = emptyList(),
-                empleadoSeleccionado = null,
-                clienteSeleccionado = null
-            )
+        viewModelScope.launch {
+            facturaDao.insert(nuevaFactura.toEntity())
+            // Flow lo actualizará automáticamente
         }
     }
 
+    // ---------------------------------------------------------
+    // FILTRO HISTORIAL
+    // ---------------------------------------------------------
     private fun filtrarFacturas(query: String) {
-        val currentState = _uiState.value
+        val state = _uiState.value
         if (query.isBlank()) {
-            _uiState.update { it.copy(facturasVisibles = it.todasLasFacturas) }
+            _uiState.update { it.copy(facturasVisibles = state.todasLasFacturas) }
         } else {
-            val filtradas = currentState.todasLasFacturas.filter { factura ->
-                factura.empleado.nombre.contains(query, ignoreCase = true) ||
-                        factura.cliente.nombre.contains(query, ignoreCase = true)
+            val filtradas = state.todasLasFacturas.filter {
+                it.empleado.nombre.contains(query, true) ||
+                        it.cliente.nombre.contains(query, true)
             }
             _uiState.update { it.copy(facturasVisibles = filtradas) }
         }
