@@ -121,6 +121,7 @@ public class ServiceRestUsuario {
                 usuarioFound.setUsuario(usuario.getUsuario());
                 usuarioFound.setContrasena(usuario.getContrasena());
                 usuarioFound.setIdEmpleado(usuario.getIdEmpleado());
+                usuarioFound.setRolUsuario(usuario.getRolUsuario());
 
                 // Grabar los cambios
                 dao.edit(usuarioFound);

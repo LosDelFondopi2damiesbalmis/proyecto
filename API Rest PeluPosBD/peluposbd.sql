@@ -101,3 +101,6 @@ CREATE TABLE Factura_Servicio (
     FOREIGN KEY (id_factura) REFERENCES Factura(id_factura) ON DELETE CASCADE,
     FOREIGN KEY (id_servicio) REFERENCES Servicio(id_servicio) ON DELETE CASCADE
 );
+CREATE TABLE token_verificado (
+    token VARCHAR(512) PRIMARY KEY
+);
