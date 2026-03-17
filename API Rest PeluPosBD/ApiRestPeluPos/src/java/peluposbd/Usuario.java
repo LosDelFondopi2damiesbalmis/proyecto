@@ -70,6 +70,14 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
+    public RolUsuario getRolUsuario() {
+        return rolUsuario;
+    }
+
+    public void setRolUsuario(RolUsuario rolUsuario) {
+        this.rolUsuario = rolUsuario;
+    }
+
     public Long getIdUsuario() {
         return idUsuario;
     }

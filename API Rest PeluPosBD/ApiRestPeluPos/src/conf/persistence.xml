@@ -11,6 +11,7 @@
     <class>peluposbd.Cliente</class>
     <class>peluposbd.Servicio</class>
     <class>peluposbd.Local</class>
+    <class>peluposbd.TokenVerificado</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/peluposbd?zeroDateTimeBehavior=CONVERT_TO_NULL?autoReconnect=true&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull"/>

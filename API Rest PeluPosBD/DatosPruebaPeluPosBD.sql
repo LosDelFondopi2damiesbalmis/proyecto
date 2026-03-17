@@ -10,7 +10,9 @@ INSERT INTO Local (nombre, direccion) VALUES
 INSERT INTO Empleado (nombre, cargo, email, telefono, id_local) VALUES 
 ('Ana García', 'Gerente', 'ana@pelupos.com', 600111222, 1),      -- Trabaja en Sede Central (1)
 ('Marcos López', 'Estilista', 'marcos@pelupos.com', 600333444, 1), -- Trabaja en Sede Central (1)
-('Lucía Fernández', 'Barbera', 'lucia@pelupos.com', 600555666, 2), -- Trabaja en Barbería Norte (2)
+('Lucía Fernández', 'Barbera', 'lucia@pelupos.com', 600555666, 2),
+('Antonio Valls', 'Barbera', 'lucia@pelupos.com', 600555666, 2),
+('David Marín', 'Barbera', 'lucia@pelupos.com', 600555666, 2), 
 ('Carlos Ruiz', 'Estilista', 'carlos@pelupos.com', 600777888, 3);  -- Trabaja en Salón Sur (3)
 
 -- ==========================================
@@ -74,18 +76,6 @@ INSERT INTO Usuario (usuario, contrasena, id_empleado) VALUES
 ('lucia', '123456', 3),      -- Cuenta para Lucía Fernández (Barbera Norte)
 ('carlos', '123456', 4);     -- Cuenta para Carlos Ruiz (Salón Sur)
 -- 1. Apagamos la vigilancia de relaciones
-SET FOREIGN_KEY_CHECKS = 0;
-
--- 2. Vaciamos TODAS las tablas y reiniciamos los IDs a 1
-TRUNCATE TABLE Factura_Producto;
-TRUNCATE TABLE Factura_Servicio;
-TRUNCATE TABLE Factura;
-TRUNCATE TABLE Usuario;
-TRUNCATE TABLE Servicio;
-TRUNCATE TABLE Empleado;
-TRUNCATE TABLE Local;
-TRUNCATE TABLE Cliente;
-TRUNCATE TABLE Producto;
-
--- 3. Volvemos a encender la vigilancia (¡Súper importante!)
-SET FOREIGN_KEY_CHECKS = 1;
+INSERT INTO usuario (usuario, contrasena, id_empleado, rol_usuario) 
+VALUES ('luciaPedoPis', '123456', 5, 'ADMINISTRADOR'),
+	   ('Franco', '123456', 6, 'MANAGER');
