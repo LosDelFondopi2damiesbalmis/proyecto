@@ -6,36 +6,43 @@ using System.Threading.Tasks;
 using PeluPOS.Models.Entities;
 using PeluPOS.Models.Enums;
 
-namespace PeluPOS.Services
+namespace PeluPOS.Services;
+
+public static class SessionService
 {
-    public static class SessionService
+    public static event Action? SessionChanged;
+    public static event Action? LoginRequired;
+
+    public static string? JwtToken { get; private set; }
+    public static long? CurrentUserId { get; private set; }
+    public static string? CurrentUsername { get; private set; }
+    public static Roles? CurrentRole { get; private set; }
+    public static long? CurrentEmpleadoId { get; private set; }
+
+    public static bool IsLoggedIn => !string.IsNullOrWhiteSpace(JwtToken);
+
+    public static bool CanSeeSidebar =>
+        CurrentRole == Roles.Administrador || CurrentRole == Roles.Manager;
+
+    public static void Login(string token, long userId, string username, Roles role, long? empleadoId)
     {
-        public static event Action? SessionChanged;
-        public static event Action? LoginRequired;
+        JwtToken = token;
+        CurrentUserId = userId;
+        CurrentUsername = username;
+        CurrentRole = role;
+        CurrentEmpleadoId = empleadoId;
+        SessionChanged?.Invoke();
+    }
 
-        public static Usuario? CurrentUser { get; private set; }
-        public static Empleado? CurrentEmpleado { get; private set; }
+    public static void Logout()
+    {
+        JwtToken = null;
+        CurrentUserId = null;
+        CurrentUsername = null;
+        CurrentRole = null;
+        CurrentEmpleadoId = null;
 
-        public static bool IsLoggedIn => CurrentUser != null;
-
-        public static bool CanSeeSidebar =>
-            CurrentUser?.Roles == Roles.Administrador ||
-            CurrentUser?.Roles == Roles.Manager;
-
-        public static void Login(Usuario user, Empleado empleado)
-        {
-            CurrentUser = user;
-            CurrentEmpleado = empleado;
-            SessionChanged?.Invoke();
-        }
-
-        public static void Logout()
-        {
-            CurrentUser = null;
-            CurrentEmpleado = null;
-
-            SessionChanged?.Invoke();
-            LoginRequired?.Invoke(); // 👈 DISPARA login
-        }
+        SessionChanged?.Invoke();
+        LoginRequired?.Invoke();
     }
 }

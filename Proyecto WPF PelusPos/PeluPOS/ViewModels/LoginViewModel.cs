@@ -7,22 +7,25 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PeluPOS.Data.Seed;
 using PeluPOS.Models.Entities;
+using PeluPOS.Models.ApiDtos.Usuarios;
 
-namespace PeluPOS.Services
+namespace PeluPOS.ViewModels.Login
 {
     public partial class LoginViewModel : ObservableObject
     {
-        [ObservableProperty]
-        public ObservableCollection<Empleado> users;
+        public ObservableCollection<UsuarioDto> Usuarios { get; } = new();
 
         [ObservableProperty]
-        private Empleado? selectedUser;
-        [ObservableProperty]
-        private string? error;
+        private UsuarioDto? usuarioSeleccionado;
 
-        public LoginViewModel()
+        [ObservableProperty]
+        private string error = string.Empty;
+
+        public bool PuedeEntrar => UsuarioSeleccionado != null;
+
+        partial void OnUsuarioSeleccionadoChanged(UsuarioDto? value)
         {
-            Users = new ObservableCollection<Empleado>(MockData.Empleados);
+            OnPropertyChanged(nameof(PuedeEntrar));
         }
     }
 }
