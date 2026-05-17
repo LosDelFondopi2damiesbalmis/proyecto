@@ -17,6 +17,7 @@
   - [Enero 2026](#enero-2026)
   - [Febrero 2026](#febrero-2026)
   - [Marzo 2026](#marzo-2026)
+  - [Mayo 2026](#mayo-2026)
   
 ## Septiembre 2025
 
@@ -86,3 +87,9 @@
 | 12/03 | 3 | Arreglo de errores en la API y creación de pruebas de postman para el POST, PUT y DELETE de todas las clases, pendiente de confirmación para añadir seguridad | 3 horas | - | - | -
 | 13/03 | 1 | Se ha creado un único Postman para pruebas para mayor organización y se ha confirmado la funcionalidad con Vicente | 1 hora | - | - | -
 | 17/03 | 3 | Añadido la seguridad en la API Rest y creación de la tabla de tokens verificados, el lunes se añadió los roles al usuario que le faltaba | 3 horas | - | - | -
+
+## Mayo 2026
+
+| Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
+| ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
+| 17/05 | 4 | Se ha empezado la creación del retrofit y se está creando un servidor virtual para la API | 4 horas | - | - | -
