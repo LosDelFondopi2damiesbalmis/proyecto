@@ -1,28 +1,41 @@
 package com.proyecto.PeluPos.data.mocks
 
-import com.proyecto.PeluPos.models.Usuario
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.proyecto.PeluPos.data.services.autentication.AuthServiceImplementation
+import com.proyecto.PeluPos.models.LoginRequest
+import com.proyecto.PeluPos.models.LoginResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
+import javax.inject.Singleton // <-- ¡Súper importante este import!
 
-@Singleton
-class SessionRepository @Inject constructor() {
+@Singleton // 1. ¡OJO! Añadimos @Singleton aquí para que la sesión sea ÚNICA en toda la app
+class SessionRepository @Inject constructor(
+    private val authService: AuthServiceImplementation
+) {
+    // 2. Esta variable guardará los datos de la sesión en la memoria del móvil
+    private var usuarioActual: LoginResponse? = null
 
+    suspend fun login(usuario: String, contrasena: String): LoginResponse = withContext(Dispatchers.IO) {
+        val request = LoginRequest(usuario = usuario, contrasena = contrasena)
 
-    private val _usuarioActual = MutableStateFlow<Usuario?>(null)
-    val usuarioActual: StateFlow<Usuario?> = _usuarioActual.asStateFlow()
+        // Hacemos la llamada a la API
+        val response = authService.login(request)
 
-    fun getUsuarioActual(): Usuario? {
-        return usuarioActual.value
+        // 3. Si el login es correcto y nos llega el token, lo guardamos en la memoria
+        if (!response.jwtToken.isNullOrEmpty()) {
+            usuarioActual = response
+        }
+
+        response
     }
-    fun iniciarSesion(usuario: Usuario) {
-        _usuarioActual.value = usuario
+
+    // 4. EL MÉTODO QUE TE FALTABA: Devuelve el usuario logueado actualmente
+    fun getUsuarioActual(): LoginResponse? {
+        return usuarioActual
     }
 
-    // Llama a esto cuando le den al botón de "Cerrar sesión"
+    // 5. Un extra que te vendrá genial para cuando pongas el botón de "Cerrar Sesión"
     fun cerrarSesion() {
-        _usuarioActual.value = null
+        usuarioActual = null
     }
 }
