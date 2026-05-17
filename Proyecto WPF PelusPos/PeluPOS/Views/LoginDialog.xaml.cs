@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services;
+using PeluPOS.Models.ApiDtos.Auth;
+using PeluPOS.Services.Api;
+using PeluPOS.ViewModels.Login;
 
 namespace PeluPOS.Views
 {
@@ -21,49 +24,63 @@ namespace PeluPOS.Views
     /// </summary>
     public partial class LoginDialog : Window
     {
-        private readonly IAuthService _auth;
-        public LoginViewModel VM { get; }
+        private readonly AuthApiService _authApiService;
+        public LoginViewModel ViewModel { get; }
 
-        public Usuario? SelectedUser => VM.SelectedUser.Usuario;
-        public string Password => PasswordBox.Password;
-
-        public LoginDialog(LoginViewModel vm, IAuthService auth)
+        public LoginDialog(LoginViewModel vm, AuthApiService authApiService)
         {
             InitializeComponent();
-            VM = vm;
-            _auth = auth;
-            DataContext = VM;
+            ViewModel = vm;
+            _authApiService = authApiService;
+            DataContext = ViewModel;
         }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e)
+        public LoginResponseDto? LoginResult { get; private set; }
+
+        private void Salir_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
         }
 
-        private async void Ok_Click(object sender, RoutedEventArgs e)
+        private async void Entrar_Click(object sender, RoutedEventArgs e)
         {
-            VM.Error = null;
+            ViewModel.Error = string.Empty;
 
-            if (VM.SelectedUser == null)
+            if (ViewModel.UsuarioSeleccionado == null)
             {
-                VM.Error = "Selecciona un usuario.";
+                ViewModel.Error = "Selecciona un usuario.";
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(Password))
+            var password = PasswordBox.Password?.Trim();
+            if (string.IsNullOrWhiteSpace(password))
             {
-                VM.Error = "Introduce la contraseña.";
+                ViewModel.Error = "Introduce la contraseña.";
                 return;
             }
 
-            var ok = await _auth.ValidatePasswordAsync(VM.SelectedUser.Usuario, Password);
-            if (!ok)
+            var request = new LoginRequestDto
             {
-                VM.Error = "Contraseña incorrecta.";
+                usuario = ViewModel.UsuarioSeleccionado.usuario,
+                contrasena = password
+            };
+
+            var response = await _authApiService.LoginAsync(request);
+
+            if (response == null)
+            {
+                ViewModel.Error = "No se pudo conectar con la API.";
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(response.jwtToken))
+            {
+                ViewModel.Error = response.mensaje ?? "Credenciales incorrectas.";
+                return;
+            }
+
+            LoginResult = response;
             DialogResult = true;
             Close();
         }

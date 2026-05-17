@@ -27,15 +27,20 @@ namespace PeluPOS
     public partial class MainWindow : Window
     {
         private readonly IAuthService _auth = new AuthService();
+        private readonly ApiClient _apiClient = new ApiClient("AQUI_TU_BASE_URL");
+        private readonly AuthApiService _authApiService;
+        private readonly UsuarioApiService _usuarioApiService;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            _authApiService = new AuthApiService(_apiClient);
+            _usuarioApiService = new UsuarioApiService(_apiClient);
+
             SessionService.SessionChanged += ApplySidebarVisibility;
             SessionService.LoginRequired += async () =>
             {
-                // OJO: esto puede venir desde otro hilo (TPV), por eso Dispatcher.
                 await Dispatcher.InvokeAsync(async () =>
                 {
                     var ok = await ShowLoginAsync();
@@ -63,37 +68,45 @@ namespace PeluPOS
                 MainFrame.Navigate(new TpvPage());
             };
         }
-        public async Task<bool> ShowLoginAsync()
+        private async Task<bool> ShowLoginAsync()
         {
             while (!SessionService.IsLoggedIn)
             {
-                var users = await _auth.GetUsersAsync();
+                var usuarios = await _usuarioApiService.GetUsuariosAsync();
 
-                var vm = new LoginViewModel();
-                foreach (var u in users)
-                    vm.Users.Add(u.Empleado);
+                var vm = new PeluPOS.ViewModels.Login.LoginViewModel();
+                foreach (var u in usuarios)
+                    vm.Usuarios.Add(u);
 
-                vm.SelectedUser = vm.Users.FirstOrDefault();
+                vm.UsuarioSeleccionado = vm.Usuarios.FirstOrDefault();
 
-                var dlg = new LoginDialog(vm, _auth)
+                var dlg = new PeluPOS.Views.Login.LoginDialog(vm, _authApiService)
                 {
                     Owner = this
                 };
 
-                if (dlg.ShowDialog() != true)
-                    return false; // cancelado
+                if (dlg.ShowDialog() != true || dlg.LoginResult == null)
+                    return false;
 
-                var user = dlg.SelectedUser!;
-                var empleado = await _auth.ResolveEmpleadoAsync(user);
+                var result = dlg.LoginResult;
 
-                if (empleado == null)
-                {
-                    MessageBox.Show("No se pudo asociar empleado.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
-                }
+                _apiClient.SetBearerToken(result.jwtToken);
 
-                SessionService.Login(user, empleado);
+                var role = RoleMapper.Parse(result.rolUsuario!);
+
+                long userId = long.Parse(result.idUsuario!);
+                long? empleadoId = null;
+
+                if (!string.IsNullOrWhiteSpace(result.idEmpleado))
+                    empleadoId = long.Parse(result.idEmpleado);
+
+                SessionService.Login(
+                    result.jwtToken!,
+                    userId,
+                    empleadoId,
+                    result.usuario ?? vm.UsuarioSeleccionado!.usuario,
+                    role
+                );
             }
 
             return true;

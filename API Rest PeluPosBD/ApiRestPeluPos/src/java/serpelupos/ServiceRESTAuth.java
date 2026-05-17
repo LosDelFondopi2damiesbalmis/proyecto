@@ -60,6 +60,13 @@ public class ServiceRESTAuth {
             } else {
                 String token = JwtUtil.generarToken(usuarioEncontrado.getIdUsuario().toString(), usuarioEncontrado.getRolUsuario().name());
                 mensaje.put("jwtToken", token);
+                mensaje.put("idUsuario", usuarioEncontrado.getIdUsuario().toString());
+                mensaje.put("usuario", usuarioEncontrado.getUsuario());
+                mensaje.put("rolUsuario", usuarioEncontrado.getRolUsuario().name());
+
+                if (usuarioEncontrado.getIdEmpleado() != null) {
+                    mensaje.put("idEmpleado", usuarioEncontrado.getIdEmpleado().getIdEmpleado().toString());
+                }
                 statusResul = Response.Status.OK;
             }
         } catch (Exception ex) {
