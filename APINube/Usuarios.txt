@@ -1,0 +1,3 @@
+azureuser
+MySQL us: uremoto pass: pruebas us: root pass: pelupos
+Tomcat: us: tomcat pass: 1234
