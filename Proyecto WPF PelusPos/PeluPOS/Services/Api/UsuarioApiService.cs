@@ -3,7 +3,7 @@ using PeluPOS.Models.ApiDtos.Usuarios;
 
 namespace PeluPOS.Services.Api;
 
-public class UsuarioApiService
+public class UsuarioApiService : IUsuarioApiService
 {
     private readonly ApiClient _apiClient;
 

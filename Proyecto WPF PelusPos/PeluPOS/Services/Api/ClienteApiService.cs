@@ -4,7 +4,7 @@ using PeluPOS.Models.ApiDtos.Common;
 
 namespace PeluPOS.Services.Api
 {
-    public class ClienteApiService
+public class ClienteApiService : IClienteApiService
     {
         private readonly ApiClient _apiClient;
 

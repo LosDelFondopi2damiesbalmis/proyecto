@@ -46,10 +46,13 @@ CREATE TABLE Usuario (
     id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
     usuario VARCHAR(50) UNIQUE NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
-    id_empleado BIGINT UNIQUE, -- UNIQUE porque un empleado suele tener solo 1 usuario
-    FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado) ON DELETE CASCADE
+    rol_usuario VARCHAR(20) NOT NULL DEFAULT 'EMPLEADO'
+        CHECK (rol_usuario IN ('ADMINISTRADOR', 'MANAGER', 'EMPLEADO')),
+    id_empleado BIGINT UNIQUE,
+    FOREIGN KEY (id_empleado)
+        REFERENCES Empleado(id_empleado)
+        ON DELETE CASCADE
 );
-ALTER TABLE usuario ADD COLUMN rol_usuario VARCHAR(20) NOT NULL DEFAULT 'EMPLEADO';
 
 CREATE TABLE Servicio (
     id_servicio BIGINT AUTO_INCREMENT PRIMARY KEY,

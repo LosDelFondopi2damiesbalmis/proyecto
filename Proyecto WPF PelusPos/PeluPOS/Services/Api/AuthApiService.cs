@@ -3,7 +3,7 @@ using PeluPOS.Models.ApiDtos.Auth;
 
 namespace PeluPOS.Services.Api;
 
-public class AuthApiService
+public class AuthApiService : IAuthApiService
 {
     private readonly ApiClient _apiClient;
 

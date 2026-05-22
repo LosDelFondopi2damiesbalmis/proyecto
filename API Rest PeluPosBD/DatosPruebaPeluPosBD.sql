@@ -77,5 +77,5 @@ INSERT INTO Usuario (usuario, contrasena, id_empleado) VALUES
 ('carlos', '123456', 4);     -- Cuenta para Carlos Ruiz (Salón Sur)
 -- 1. Apagamos la vigilancia de relaciones
 INSERT INTO usuario (usuario, contrasena, id_empleado, rol_usuario) 
-VALUES ('luciaPedoPis', '123456', 5, 'ADMINISTRADOR'),
+VALUES ('luciaAdmin', '123456', 5, 'ADMINISTRADOR'),
 	   ('Franco', '123456', 6, 'MANAGER');

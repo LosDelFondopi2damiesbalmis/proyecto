@@ -4,7 +4,7 @@ using PeluPOS.Models.ApiDtos.Servicios;
 
 namespace PeluPOS.Services.Api
 {
-    public class ServicioApiService
+    public class ServicioApiService : IServicioApiService
     {
         private readonly ApiClient _apiClient;
 

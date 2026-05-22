@@ -4,7 +4,7 @@ using PeluPOS.Models.ApiDtos.Facturas;
 
 namespace PeluPOS.Services.Api
 {
-    public class FacturaApiService
+    public class FacturaApiService : IFacturaApiService
     {
         private readonly ApiClient _apiClient;
 

@@ -1,15 +1,7 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PeluPOS.Models.Enums;
+﻿using System.Windows;
 using PeluPOS.Services;
+using PeluPOS.Services.Api;
+using PeluPOS.ViewModels.Login;
 using PeluPOS.Views;
 using PeluPOS.Views.EmpleadosPage;
 using PeluPOS.Views.Locales;
@@ -74,13 +66,13 @@ namespace PeluPOS
             {
                 var usuarios = await _usuarioApiService.GetUsuariosAsync();
 
-                var vm = new PeluPOS.ViewModels.Login.LoginViewModel();
+                var vm = new LoginViewModel();
                 foreach (var u in usuarios)
                     vm.Usuarios.Add(u);
 
                 vm.UsuarioSeleccionado = vm.Usuarios.FirstOrDefault();
 
-                var dlg = new PeluPOS.Views.Login.LoginDialog(vm, _authApiService)
+                var dlg = new LoginDialog(vm, _authApiService)
                 {
                     Owner = this
                 };

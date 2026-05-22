@@ -4,7 +4,7 @@ using PeluPOS.Models.ApiDtos.Locales;
 
 namespace PeluPOS.Services.Api
 {
-    public class LocalApiService
+    public class LocalApiService : ILocalApiService
     {
         private readonly ApiClient _apiClient;
 
