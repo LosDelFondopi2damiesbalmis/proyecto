@@ -1,24 +1,60 @@
 package com.proyecto.PeluPos.data.mocks.empleado
 
+import com.proyecto.PeluPos.data.services.empleados.EmpleadoService
 import com.proyecto.PeluPos.models.Empleado
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class EmpleadoRepository @Inject constructor() {
-    private val empleadoDaoMock: EmpleadoDaoMock = EmpleadoDaoMock()
-    fun getEmpleados(): List<Empleado> =
-        empleadoDaoMock.getAll().toEmpleados()
+class EmpleadoRepository @Inject constructor(
+    private val empleadoService: EmpleadoService
+) {
 
-    fun getEmpleado(id: Long): Empleado? =
-        empleadoDaoMock.get(id)?.toEmpleado()
+    // 1. Obtener la lista completa de empleados
+    suspend fun getEmpleados(): List<Empleado> {
+        val response = empleadoService.getEmpleados()
+        if (response.isSuccessful) {
+            return response.body() ?: emptyList()
+        } else {
+            throw Exception("Error de servidor al obtener empleados: ${response.code()}")
+        }
+    }
 
-    fun insert(empleado: Empleado): Boolean =
-        empleadoDaoMock.insert(empleado.toEmpleadoMock())
+    // 2. Obtener un empleado por ID
+    suspend fun getEmpleadoById(id: Long): Empleado? {
+        val response = empleadoService.getEmpleado(id)
+        if (response.isSuccessful) {
+            return response.body()
+        } else {
+            throw Exception("Error al buscar el empleado: ${response.code()}")
+        }
+    }
 
-    fun updateEmpleado(empleado: Empleado): Boolean =
-        empleadoDaoMock.update(empleado.toEmpleadoMock())
+    // 3. Crear empleado
+    suspend fun createEmpleado(empleado: Empleado): Empleado {
+        val response = empleadoService.createEmpleado(empleado)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            throw Exception("No se pudo crear el empleado en el servidor")
+        }
+    }
 
-    fun delete(id: Long): Boolean =
-        empleadoDaoMock.delete(id)
+    // 4. Actualizar empleado
+    suspend fun updateEmpleado(id: Long, empleado: Empleado): Empleado {
+        val response = empleadoService.updateEmpleado(id, empleado)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            throw Exception("No se pudo actualizar el empleado")
+        }
+    }
+
+    // 5. Borrar empleado
+    suspend fun deleteEmpleado(id: Long) {
+        val response = empleadoService.deleteEmpleado(id)
+        if (!response.isSuccessful) {
+            throw Exception("No se pudo borrar el empleado")
+        }
+    }
 }

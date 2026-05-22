@@ -6,7 +6,6 @@ import com.proyecto.PeluPos.models.LoginResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Excepción personalizada tal y como pide tu PDF
 class ApiServicesException(mensaje: String) : Exception(mensaje)
 
 @Singleton

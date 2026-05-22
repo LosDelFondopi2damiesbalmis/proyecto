@@ -1,4 +1,7 @@
 package com.proyecto.PeluPos.models
+
+import com.google.gson.annotations.SerializedName
+
 enum class RolUsuario {
     ADMINISTRADOR,
     MANAGER,
@@ -8,6 +11,7 @@ data class Usuario(
     val idUsuario: Long,
     var usuario: String,
     var contrasena: String,
+    @SerializedName("idEmpleado")
     val empleado: Empleado,
     val rolUsuario: RolUsuario
 )

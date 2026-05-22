@@ -1,6 +1,7 @@
 package com.proyecto.PeluPos.ui.features.locales
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.local.LocalRepository
 import com.proyecto.PeluPos.models.Local
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,16 +28,25 @@ class LocalesViewModel @Inject constructor(
 
     // --- AQUÍ USAMOS TUS REPOSITORIOS PARA LEER ---
     private fun cargarDatos() {
-        // Pedimos los datos reales a tus repositorios
-        val localesReales = localRepository.getLocales()
-        val empleadosReales = empleadoRepository.getEmpleados()
+        // 🚀 Abrimos la corrutina para poder usar funciones "suspend"
+        viewModelScope.launch {
+            try {
+                // Pedimos los datos reales a tus repositorios
+                val localesReales = localRepository.getLocales()
+                val empleadosReales = empleadoRepository.getEmpleados() // ¡Aquí ya no se quejará!
 
-        _uiState.update {
-            it.copy(
-                todosLosLocales = localesReales,
-                localesVisibles = filtrarLocales(localesReales, it.searchQuery),
-                empleadosDisponibles = empleadosReales
-            )
+                _uiState.update {
+                    it.copy(
+                        todosLosLocales = localesReales,
+                        // Asumo que le pasas los parámetros correctos a filtrarLocales
+                        localesVisibles = filtrarLocales(lista = localesReales, query = it.searchQuery ?: ""),
+                        empleadosDisponibles = empleadosReales
+                    )
+                }
+            } catch (e: Exception) {
+                // Si Tomcat está apagado o falla, lo atrapamos aquí para que no explote
+                println("Error al cargar los datos: ${e.message}")
+            }
         }
     }
 

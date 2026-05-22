@@ -23,8 +23,8 @@ public class AuthFilter implements ContainerRequestFilter {
         String method = requestContext.getMethod();
 
         // Permitir acceso sin autenticación a los endpoints de auth
-        if (path.startsWith("auth")) {
-            return;
+        if (path.startsWith("auth") || (path.startsWith("usuarios") && "GET".equalsIgnoreCase(method))) {
+            return; // Sale del filtro y permite la petición sin pedir Token
         }
 
         String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);

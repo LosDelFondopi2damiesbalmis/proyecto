@@ -13,7 +13,12 @@ data class EmpleadosUiState(
     val formCargo: String = "",
     val formEmail: String = "",
     val formTelefono: String = "",
-    val formLocalSeleccionado: Local? = null
+    val formLocalSeleccionado: Local? = null,
+
+    // NUEVO: Banderas de control para Retrofit y la UI
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 ) {
     val isFormValid: Boolean
         get() = formNombre.isNotBlank() && formCargo.isNotBlank()

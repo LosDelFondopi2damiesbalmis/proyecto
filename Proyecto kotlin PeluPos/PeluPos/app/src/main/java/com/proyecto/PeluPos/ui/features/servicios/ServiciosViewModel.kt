@@ -1,5 +1,6 @@
 package com.proyecto.PeluPos.ui.features.servicios
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
 import com.proyecto.PeluPos.models.Servicio
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 @HiltViewModel
 class ServiciosViewModel @Inject constructor(
@@ -23,15 +25,25 @@ class ServiciosViewModel @Inject constructor(
     }
 
     private fun cargarDatos() {
-        val servicios = servicioRepository.getServicios()
-        val empleados = empleadoRepository.getEmpleados()
+        // 🚀 Abrimos la corrutina para ir a internet en segundo plano
+        viewModelScope.launch {
+            try {
+                // Pedimos los datos reales a los repositorios (las líneas rojas desaparecerán)
+                val servicios = servicioRepository.getServicios()
+                val empleados = empleadoRepository.getEmpleados()
 
-        _uiState.update {
-            it.copy(
-                todosLosServicios = servicios,
-                serviciosVisibles = filtrarServicios(servicios, it.searchQuery),
-                empleadosDisponibles = empleados
-            )
+                // Actualizamos la interfaz cuando los datos ya han llegado
+                _uiState.update {
+                    it.copy(
+                        todosLosServicios = servicios,
+                        serviciosVisibles = filtrarServicios(servicios, it.searchQuery),
+                        empleadosDisponibles = empleados
+                    )
+                }
+            } catch (e: Exception) {
+                // Si Tomcat falla o no hay conexión, evitamos que la app explote
+                println("🚨 Error al cargar servicios o empleados: ${e.message}")
+            }
         }
     }
 

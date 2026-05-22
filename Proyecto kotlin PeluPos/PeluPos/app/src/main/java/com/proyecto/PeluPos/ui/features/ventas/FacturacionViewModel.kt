@@ -38,7 +38,7 @@ class FacturacionViewModel @Inject constructor(
     private fun cargarDatosIniciales() {
         viewModelScope.launch {
             // 1. Cargamos de tus repositorios inyectados
-            val productos = productoRepository.getProductos()
+            val productos = productoRepository.obtenerProductos()
             val servicios = servicioRepository.getServicios()
 
             // 2. Simulamos la carga de empleados y clientes (aquí usarías sus repositorios)
