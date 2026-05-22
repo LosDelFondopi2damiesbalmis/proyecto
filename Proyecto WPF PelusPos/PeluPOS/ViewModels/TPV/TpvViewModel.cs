@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PeluPOS.Models.Entities;
-using PeluPOS.Services;
+using PeluPOS.Services.TPV;
 
 namespace PeluPOS.ViewModels.TPV
 {

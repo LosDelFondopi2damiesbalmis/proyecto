@@ -1,7 +1,7 @@
-﻿using PeluPOS.Models.Entities;
+using PeluPOS.Models.Entities;
 using PeluPOS.Services.Api;
 
-namespace PeluPOS.Services
+namespace PeluPOS.Services.TPV
 {
     public class CatalogService : ICatalogService
     {

@@ -1,4 +1,4 @@
-﻿using PeluPOS.Models.ApiDtos.Clientes;
+using PeluPOS.Models.ApiDtos.Clientes;
 using PeluPOS.Models.ApiDtos.Empleados;
 using PeluPOS.Models.ApiDtos.Facturas;
 using PeluPOS.Models.ApiDtos.Productos;
@@ -6,7 +6,7 @@ using PeluPOS.Models.ApiDtos.Servicios;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services.Api;
 
-namespace PeluPOS.Services
+namespace PeluPOS.Services.TPV
 {
     public class TpvVentaService : ITpvVentaService
     {
@@ -29,10 +29,10 @@ namespace PeluPOS.Services
 
             var dto = new FacturaDto
             {
-                monto     = lineas.Sum(l => l.Cantidad * l.PrecioUnitario),
-                fecha     = DateTime.Now,
-                pendiente = pendiente,
-                tipoPago  = tipoPago,
+                monto      = lineas.Sum(l => l.Cantidad * l.PrecioUnitario),
+                fecha      = DateTime.Now,
+                pendiente  = pendiente,
+                tipoPago   = tipoPago,
                 idEmpleado = new EmpleadoDto { idEmpleado = empleadoId },
                 idCliente  = cliente != null ? new ClienteDto { idCliente = cliente.Id } : null
             };
@@ -63,7 +63,6 @@ namespace PeluPOS.Services
 
             await _facturaApi.CreateAsync(dto);
 
-            // Construimos la entidad local con los datos que conocemos
             var factura = new Factura
             {
                 Id        = 0,

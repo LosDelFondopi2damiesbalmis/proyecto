@@ -1,6 +1,6 @@
-﻿using PeluPOS.Models.Entities;
+using PeluPOS.Models.Entities;
 
-namespace PeluPOS.Services
+namespace PeluPOS.Services.TPV
 {
     public interface ITpvVentaService
     {

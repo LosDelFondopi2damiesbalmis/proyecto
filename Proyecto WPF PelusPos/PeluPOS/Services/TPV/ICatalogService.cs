@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PeluPOS.Models.Entities;
 
-namespace PeluPOS.Services
+namespace PeluPOS.Services.TPV
 {
     public interface ICatalogService
     {
