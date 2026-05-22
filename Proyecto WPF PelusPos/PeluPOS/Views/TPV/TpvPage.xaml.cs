@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PeluPOS.Services;
 using PeluPOS.ViewModels.TPV;
 
@@ -22,19 +10,17 @@ namespace PeluPOS.Views.TPV
     /// </summary>
     public partial class TpvPage : Page
     {
-        private readonly IAuthService _auth = new AuthService();
-
         public TpvViewModel ViewModel { get; }
         public string ActiveUserLabel =>
-            SessionService.CurrentEmpleado != null
-                ? $"{SessionService.CurrentEmpleado.Nombre}"
+            SessionService.CurrentEmpleadoId != null
+                ? $"Empleado #{SessionService.CurrentEmpleadoId}"
                 : "Sin sesión";
 
         public TpvPage()
         {
             InitializeComponent();
 
-            ViewModel = new TpvViewModel(new CatalogService(), new TpvVentaService());
+            ViewModel = new TpvViewModel(AppServices.Catalog, AppServices.TpvVenta);
             DataContext = ViewModel;
 
             SessionService.SessionChanged += () =>
@@ -84,13 +70,7 @@ namespace PeluPOS.Views.TPV
 
         private async void Cobrar_Click(object sender, RoutedEventArgs e)
         {
-            if (SessionService.CurrentEmpleado == null)
-            {
-                ViewModel.Error = "No hay empleado activo.";
-                return;
-            }
-
-            await ViewModel.CobrarAsync(SessionService.CurrentEmpleado);
+            await ViewModel.CobrarAsync(SessionService.CurrentEmpleadoId);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using PeluPOS.Services;
 using PeluPOS.ViewModels;
 
@@ -13,10 +12,7 @@ namespace PeluPOS.Views
         {
             InitializeComponent();
 
-            // TODO: si más adelante usas un contenedor de dependencias (DI),
-            // crea el servicio allí y resuélvelo en vez de instanciarlo a mano.
-            IClienteService clienteService = new ClienteService();
-            ViewModel = new ClientesViewModel(clienteService);
+            ViewModel = new ClientesViewModel(AppServices.Clientes);
 
             DataContext = ViewModel;
 
@@ -29,4 +25,3 @@ namespace PeluPOS.Views
         }
     }
 }
-

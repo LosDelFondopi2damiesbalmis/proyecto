@@ -1,93 +1,103 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
+﻿using PeluPOS.Models.ApiDtos.Servicios;
 using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services.Servicios
 {
     public class ServicioService : IServicioService
     {
-        public Task<IReadOnlyList<Servicio>> GetAllAsync() => Task.FromResult((IReadOnlyList<Servicio>)MockData.Servicios);
+        private readonly IServicioApiService _servicioApi;
+        private readonly IFacturaApiService  _facturaApi;
 
-        public Task<Servicio> AddAsync(string nombre, decimal precio, string descripcion)
+        public ServicioService(
+            IServicioApiService servicioApi,
+            IFacturaApiService  facturaApi)
         {
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.", nameof(nombre));
-            if (precio < 0)
-                throw new ArgumentException("El precio no puede ser negativo.", nameof(precio));
+            _servicioApi = servicioApi;
+            _facturaApi  = facturaApi;
+        }
 
-            var newId = MockData.Servicios.Any() ? MockData.Servicios.Max(s => s.Id) + 1 : 1;
+        // ── helpers ────────────────────────────────────────────────────────
+        private static Servicio ToEntity(ServicioDto d) => new Servicio
+        {
+            Id          = d.idServicio,
+            Nombre      = d.nombre,
+            Precio      = d.precio,
+            Descripcion = d.descripcion ?? string.Empty
+        };
 
-            var servicio = new Servicio
+        // ── CRUD ───────────────────────────────────────────────────────────
+        public async Task<IReadOnlyList<Servicio>> GetAllAsync()
+        {
+            var dtos = await _servicioApi.GetAllAsync();
+            return dtos.Select(ToEntity).ToList();
+        }
+
+        public async Task<Servicio> AddAsync(string nombre, decimal precio, string descripcion)
+        {
+            var dto = new ServicioDto
             {
-                Id = newId,
-                Nombre = nombre.Trim(),
-                Precio = precio,
-                Descripcion = (descripcion ?? string.Empty).Trim()
+                nombre      = nombre,
+                precio      = precio,
+                descripcion = descripcion
             };
-
-            MockData.Servicios.Add(servicio);
-            return Task.FromResult(servicio);
+            await _servicioApi.CreateAsync(dto);
+            var all = await _servicioApi.GetAllAsync();
+            var created = all.Last(s => s.nombre == nombre);
+            return ToEntity(created);
         }
 
-        public Task UpdateAsync(long id, string nombre, decimal precio, string descripcion)
+        public async Task UpdateAsync(long id, string nombre, decimal precio, string descripcion)
         {
-            var s = MockData.Servicios.FirstOrDefault(x => x.Id == id)
-                    ?? throw new InvalidOperationException("Servicio no encontrado.");
-
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.", nameof(nombre));
-            if (precio < 0)
-                throw new ArgumentException("El precio no puede ser negativo.", nameof(precio));
-
-            s.Nombre = nombre.Trim();
-            s.Precio = precio;
-            s.Descripcion = (descripcion ?? string.Empty).Trim();
-
-            return Task.CompletedTask;
+            var dto = new ServicioDto
+            {
+                idServicio  = id,
+                nombre      = nombre,
+                precio      = precio,
+                descripcion = descripcion
+            };
+            await _servicioApi.UpdateAsync(dto);
         }
 
-        public Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id)
         {
-            var s = MockData.Servicios.FirstOrDefault(x => x.Id == id);
-            if (s != null) MockData.Servicios.Remove(s);
-            return Task.CompletedTask;
+            await _servicioApi.DeleteAsync(id);
         }
 
-        public Task<IReadOnlyList<Factura>> GetFacturasByServicioAsync(long servicioId)
+        // ── queries ────────────────────────────────────────────────────────
+        public async Task<IReadOnlyList<Factura>> GetFacturasByServicioAsync(long servicioId)
         {
-            var facturas = MockData.Facturas
-                .Where(f => f.Lineas.Any(l => l.Servicio?.Id == servicioId))
-                .OrderByDescending(f => f.Fecha)
+            var facturas = await _facturaApi.GetAllAsync();
+            return facturas
+                .Where(f => f.facturaServicioCollection?
+                    .Any(fs => fs.facturaServicioPK?.idServicio == servicioId) == true)
+                .Select(f => new Factura
+                {
+                    Id         = f.idFactura,
+                    Monto      = f.monto,
+                    Fecha      = f.fecha,
+                    Pendiente  = f.pendiente  ?? false,
+                    TipoPago   = f.tipoPago   ?? string.Empty,
+                    EmpleadoId = f.idEmpleado?.idEmpleado ?? 0L,
+                    ClienteId  = f.idCliente?.idCliente   ?? 0L
+                })
                 .ToList();
-
-            return Task.FromResult((IReadOnlyList<Factura>)facturas);
         }
-        public Task<IReadOnlyList<Servicio>> GetServiciosRelacionadosAsync(long servicioId)
-        {
-            // Facturas donde aparece este servicio
-            var facturas = MockData.Facturas
-                .Where(f => f.Lineas.Any(l => l.ServicioId == servicioId))
-                .ToList();
 
-            // Todos los ServicioId de esas facturas (distintos), excluyendo el servicio actual
-            var ids = facturas
-                .SelectMany(f => f.Lineas)
-                .Where(l => l.ServicioId.HasValue)
-                .Select(l => l.ServicioId!.Value)
-                .Distinct()
+        public async Task<IReadOnlyList<Servicio>> GetServiciosRelacionadosAsync(long servicioId)
+        {
+            var facturas = await _facturaApi.GetAllAsync();
+            var relatedIds = facturas
+                .Where(f => f.facturaServicioCollection?
+                    .Any(fs => fs.facturaServicioPK?.idServicio == servicioId) == true)
+                .SelectMany(f => f.facturaServicioCollection!
+                    .Select(fs => fs.facturaServicioPK!.idServicio))
                 .Where(id => id != servicioId)
+                .Distinct()
                 .ToHashSet();
 
-            var relacionados = MockData.Servicios
-                .Where(s => ids.Contains(s.Id))
-                .OrderBy(s => s.Nombre)
-                .ToList();
-
-            return Task.FromResult((IReadOnlyList<Servicio>)relacionados);
+            var all = await _servicioApi.GetAllAsync();
+            return all.Where(s => relatedIds.Contains(s.idServicio)).Select(ToEntity).ToList();
         }
     }
 }

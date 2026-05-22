@@ -1,30 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
-using PeluPOS.Models.Entities;
+﻿using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services
 {
     public class EmpleadosStatsService : IEmpleadoStatsService
     {
-        public Task<string> GetEmpleadoNombreAsync(long empleadoId)
+        private readonly IEmpleadoApiService _empleadoApi;
+        private readonly IFacturaApiService  _facturaApi;
+
+        public EmpleadosStatsService(
+            IEmpleadoApiService empleadoApi,
+            IFacturaApiService  facturaApi)
         {
-            var nombre = MockData.Empleados.FirstOrDefault(e => e.Id == empleadoId)?.Nombre ?? "Empleado";
-            return Task.FromResult(nombre);
+            _empleadoApi = empleadoApi;
+            _facturaApi  = facturaApi;
         }
 
-        public Task<IReadOnlyList<Factura>> GetFacturasByEmpleadoAsync(long empleadoId)
+        public async Task<string> GetEmpleadoNombreAsync(long empleadoId)
         {
-            var facturas = MockData.Facturas
-                .Where(f => f.Empleado?.Id == empleadoId)
-                .OrderByDescending(f => f.Fecha)
+            var all = await _empleadoApi.GetAllAsync();
+            return all.FirstOrDefault(e => e.idEmpleado == empleadoId)?.nombre ?? string.Empty;
+        }
+
+        public async Task<IReadOnlyList<Factura>> GetFacturasByEmpleadoAsync(long empleadoId)
+        {
+            var all = await _facturaApi.GetAllAsync();
+            return all
+                .Where(f => f.idEmpleado?.idEmpleado == empleadoId)
+                .Select(f => new Factura
+                {
+                    Id         = f.idFactura,
+                    Monto      = f.monto,
+                    Fecha      = f.fecha,
+                    Pendiente  = f.pendiente  ?? false,
+                    TipoPago   = f.tipoPago   ?? string.Empty,
+                    EmpleadoId = f.idEmpleado?.idEmpleado ?? 0L,
+                    ClienteId  = f.idCliente?.idCliente   ?? 0L
+                })
                 .ToList();
-
-            return Task.FromResult((IReadOnlyList<Factura>)facturas);
         }
-
     }
 }

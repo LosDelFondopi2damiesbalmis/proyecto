@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Models.Entities;
+﻿using PeluPOS.Models.Entities;
 
 namespace PeluPOS.Services
 {
     public interface ITpvVentaService
     {
         Task<Factura> CrearFacturaAsync(
-            Empleado empleado,
+            long empleadoId,
             Cliente? cliente,
             string tipoPago,
             bool pendiente,

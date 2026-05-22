@@ -1,36 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
+﻿using PeluPOS.Models.ApiDtos.Locales;
 using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services.Locales
 {
     public class LocalService : ILocalService
     {
-        private List<Local> Locales = MockData.Locales;
-        public Task<IReadOnlyList<Local>> GetAllAsync() => Task.FromResult((IReadOnlyList<Local>)Locales);
+        private readonly ILocalApiService _api;
 
-        public Task<Local> AddAsync(string nombre, string direccion)
+        public LocalService(ILocalApiService api)
         {
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre del local es obligatorio.", nameof(nombre));
-
-            var newId = MockData.Locales.Any() ? MockData.Locales.Max(l => l.Id) + 1 : 1;
-
-            var local = new Local
-            {
-                Id = newId,
-                Nombre = nombre.Trim(),
-                Direccion = (direccion ?? string.Empty).Trim(),
-                Empleados = [] // relación inicial vacía
-            };
-
-            MockData.Locales.Add(local);
-
-            return Task.FromResult(local);
+            _api = api;
         }
+
+        public async Task<IReadOnlyList<Local>> GetAllAsync()
+        {
+            var dtos = await _api.GetAllAsync();
+            return dtos.Select(d => ToEntity(d)).ToList();
+        }
+
+        public async Task<Local> AddAsync(string nombre, string direccion)
+        {
+            var dto = new LocalDto { nombre = nombre, direccion = direccion };
+            await _api.CreateAsync(dto);
+
+            // Devolvemos el último creado recargando la lista
+            var all = await _api.GetAllAsync();
+            return ToEntity(all.Last());
+        }
+
+        private static Local ToEntity(LocalDto d) => new Local
+        {
+            Id = d.idLocal,
+            Nombre = d.nombre ?? "",
+            Direccion = d.direccion ?? ""
+        };
     }
 }

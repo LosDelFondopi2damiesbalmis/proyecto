@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using PeluPOS.Services;
-using PeluPOS.Services.Api;
 using PeluPOS.ViewModels.Login;
 using PeluPOS.Views;
 using PeluPOS.Views.EmpleadosPage;
@@ -18,17 +17,9 @@ namespace PeluPOS
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IAuthService _auth = new AuthService();
-        private readonly ApiClient _apiClient = new ApiClient("AQUI_TU_BASE_URL");
-        private readonly AuthApiService _authApiService;
-        private readonly UsuarioApiService _usuarioApiService;
-
         public MainWindow()
         {
             InitializeComponent();
-
-            _authApiService = new AuthApiService(_apiClient);
-            _usuarioApiService = new UsuarioApiService(_apiClient);
 
             SessionService.SessionChanged += ApplySidebarVisibility;
             SessionService.LoginRequired += async () =>
@@ -60,11 +51,12 @@ namespace PeluPOS
                 MainFrame.Navigate(new TpvPage());
             };
         }
+
         private async Task<bool> ShowLoginAsync()
         {
             while (!SessionService.IsLoggedIn)
             {
-                var usuarios = await _usuarioApiService.GetUsuariosAsync();
+                var usuarios = await AppServices.UsuarioApi.GetUsuariosAsync();
 
                 var vm = new LoginViewModel();
                 foreach (var u in usuarios)
@@ -72,7 +64,7 @@ namespace PeluPOS
 
                 vm.UsuarioSeleccionado = vm.Usuarios.FirstOrDefault();
 
-                var dlg = new LoginDialog(vm, _authApiService)
+                var dlg = new LoginDialog(vm, AppServices.AuthApi)
                 {
                     Owner = this
                 };
@@ -82,7 +74,8 @@ namespace PeluPOS
 
                 var result = dlg.LoginResult;
 
-                _apiClient.SetBearerToken(result.jwtToken);
+                // Propagar el token JWT a todos los servicios de API
+                AppServices.ApiClient.SetBearerToken(result.jwtToken);
 
                 var role = RoleMapper.Parse(result.rolUsuario!);
 
@@ -95,9 +88,9 @@ namespace PeluPOS
                 SessionService.Login(
                     result.jwtToken!,
                     userId,
-                    empleadoId,
                     result.usuario ?? vm.UsuarioSeleccionado!.usuario,
-                    role
+                    role,
+                    empleadoId
                 );
             }
 

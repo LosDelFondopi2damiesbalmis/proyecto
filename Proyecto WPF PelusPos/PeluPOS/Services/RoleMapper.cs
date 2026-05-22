@@ -1,4 +1,4 @@
-using PeluPOS.Models;
+using PeluPOS.Models.Enums;
 
 namespace PeluPOS.Services
 {

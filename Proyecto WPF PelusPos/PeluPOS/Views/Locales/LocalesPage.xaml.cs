@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PeluPOS.Services.Locales;
+using PeluPOS.Services;
 using PeluPOS.ViewModels;
 using PeluPOS.ViewModels.LocalPage;
 
@@ -29,9 +17,7 @@ namespace PeluPOS.Views.Locales
         {
             InitializeComponent();
 
-            // TODO: si usas DI, resuélvelo desde el contenedor.
-            var localService = new LocalService();
-            ViewModel = new LocalesViewModel(localService);
+            ViewModel = new LocalesViewModel(AppServices.Locales);
 
             DataContext = ViewModel;
 

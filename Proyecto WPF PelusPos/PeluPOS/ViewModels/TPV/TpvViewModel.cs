@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PeluPOS.Data.Seed;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PeluPOS.ViewModels.TPV
 {
@@ -23,7 +16,6 @@ namespace PeluPOS.ViewModels.TPV
 
         [ObservableProperty] private bool modoProductos = true;
         [ObservableProperty] private string? busqueda;
-        [ObservableProperty] private Empleado empleadoSeleccionado;
 
         // Cobro
         [ObservableProperty] private string tipoPago = "Efectivo";
@@ -47,7 +39,7 @@ namespace PeluPOS.ViewModels.TPV
         {
             _catalog = catalog;
             _venta = venta;
-            Clientes = new ObservableCollection<Cliente>(MockData.Clientes);
+            Clientes = new ObservableCollection<Cliente>();
         }
 
         public decimal Total => Ticket.Sum(t => t.Subtotal);
@@ -55,7 +47,7 @@ namespace PeluPOS.ViewModels.TPV
         public async Task LoadAsync()
         {
             await CargarItemsAsync();
-            await CargarClienteMostradorSiExiste();
+            await CargarClientesAsync();
         }
 
         partial void OnModoProductosChanged(bool value)
@@ -96,10 +88,15 @@ namespace PeluPOS.ViewModels.TPV
             }
         }
 
-        private async Task CargarClienteMostradorSiExiste()
+        private async Task CargarClientesAsync()
         {
-            var clientes = await _catalog.GetClientesAsync();
-            ClienteSeleccionado = clientes.FirstOrDefault(c => c.Nombre.Contains("Mostrador", StringComparison.OrdinalIgnoreCase));
+            var lista = await _catalog.GetClientesAsync();
+            Clientes.Clear();
+            foreach (var c in lista)
+                Clientes.Add(c);
+
+            ClienteSeleccionado = Clientes.FirstOrDefault(c =>
+                c.Nombre.Contains("Mostrador", StringComparison.OrdinalIgnoreCase));
         }
 
         [RelayCommand]
@@ -160,11 +157,11 @@ namespace PeluPOS.ViewModels.TPV
         }
 
         [RelayCommand]
-        public async Task CobrarAsync(Empleado empleadoActivo)
+        public async Task CobrarAsync(long? empleadoId)
         {
             Error = null;
 
-            if (empleadoActivo == null)
+            if (empleadoId == null || empleadoId <= 0)
             {
                 Error = "No hay empleado activo. Inicia sesión.";
                 return;
@@ -181,7 +178,7 @@ namespace PeluPOS.ViewModels.TPV
             try
             {
                 await _venta.CrearFacturaAsync(
-                    empleadoActivo,
+                    empleadoId.Value,
                     ClienteSeleccionado,
                     TipoPago,
                     Pendiente,

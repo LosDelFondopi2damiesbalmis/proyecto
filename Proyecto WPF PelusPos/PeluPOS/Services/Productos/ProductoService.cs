@@ -1,87 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
+﻿using PeluPOS.Models.ApiDtos.Productos;
 using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services.Productos
 {
     public class ProductoService : IProductoService
     {
-        public Task<IReadOnlyList<Producto>> GetAllAsync() => Task.FromResult((IReadOnlyList<Producto>)MockData.Productos);
+        private readonly IProductoApiService _productoApi;
+        private readonly IFacturaApiService  _facturaApi;
 
-        public Task<Producto> AddAsync(string nombre, decimal precioCompra, decimal precioVenta, long stock)
+        public ProductoService(IProductoApiService productoApi, IFacturaApiService facturaApi)
         {
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.", nameof(nombre));
-            if (precioCompra < 0 || precioVenta < 0)
-                throw new ArgumentException("Los precios no pueden ser negativos.");
-            if (stock < 0)
-                throw new ArgumentException("El stock no puede ser negativo.", nameof(stock));
+            _productoApi = productoApi;
+            _facturaApi  = facturaApi;
+        }
 
-            var newId = MockData.Productos.Any() ? MockData.Productos.Max(p => p.Id) + 1 : 1;
+        public async Task<IReadOnlyList<Producto>> GetAllAsync()
+        {
+            var dtos = await _productoApi.GetAllAsync();
+            return dtos.Select(ToEntity).ToList();
+        }
 
-            var producto = new Producto
+        public async Task<Producto> AddAsync(string nombre, decimal precioCompra, decimal precioVenta, long stock)
+        {
+            var dto = new ProductoDto
             {
-                Id = newId,
-                Nombre = nombre.Trim(),
-                PrecioCompra = precioCompra,
-                PrecioVenta = precioVenta,
-                Stock = stock
+                nombre       = nombre,
+                precioCompra = precioCompra,
+                precioVenta  = precioVenta,
+                stock        = (int)stock
             };
+            await _productoApi.CreateAsync(dto);
 
-            MockData.Productos.Add(producto);
-            return Task.FromResult(producto);
+            // Retrieve the newly created product by matching name
+            var all = await _productoApi.GetAllAsync();
+            var created = all.LastOrDefault(p => p.nombre == nombre)
+                          ?? all.Last();
+            return ToEntity(created);
         }
 
-        public Task UpdateAsync(long id, string nombre, decimal precioCompra, decimal precioVenta)
+        public async Task UpdateAsync(long id, string nombre, decimal precioCompra, decimal precioVenta)
         {
-            var p = MockData.Productos.FirstOrDefault(x => x.Id == id)
-                    ?? throw new InvalidOperationException("Producto no encontrado.");
-
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.", nameof(nombre));
-            if (precioCompra < 0 || precioVenta < 0)
-                throw new ArgumentException("Los precios no pueden ser negativos.");
-
-            p.Nombre = nombre.Trim();
-            p.PrecioCompra = precioCompra;
-            p.PrecioVenta = precioVenta;
-
-            return Task.CompletedTask;
+            var dto = new ProductoDto
+            {
+                idProducto   = id,
+                nombre       = nombre,
+                precioCompra = precioCompra,
+                precioVenta  = precioVenta
+            };
+            await _productoApi.UpdateAsync(dto);
         }
 
-        public Task UpdateStockAsync(long id, long newStock)
+        public async Task UpdateStockAsync(long id, long newStock)
         {
-            var p = MockData.Productos.FirstOrDefault(x => x.Id == id)
-                    ?? throw new InvalidOperationException("Producto no encontrado.");
+            var all = await _productoApi.GetAllAsync();
+            var existing = all.FirstOrDefault(p => p.idProducto == id);
+            if (existing is null) return;
 
-            if (newStock < 0)
-                throw new ArgumentException("El stock no puede ser negativo.", nameof(newStock));
-
-            p.Stock = newStock;
-            return Task.CompletedTask;
+            existing.stock = (int)newStock;
+            await _productoApi.UpdateAsync(existing);
         }
 
-        public Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id)
         {
-            var p = MockData.Productos.FirstOrDefault(x => x.Id == id);
-            if (p != null) MockData.Productos.Remove(p);
-            return Task.CompletedTask;
+            await _productoApi.DeleteAsync(id);
         }
 
-        public Task<IReadOnlyList<Factura>> GetFacturasByProductoAsync(long productoId)
+        public async Task<IReadOnlyList<Factura>> GetFacturasByProductoAsync(long productoId)
         {
-            // Importante: en tu mock sueles setear LineaFactura.Producto = Productos[x]
-            // por eso filtramos por l.Producto?.Id (más robusto que ProductoId)
-            var facturas = MockData.Facturas
-                .Where(f => f.Lineas.Any(l => l.Producto?.Id == productoId))
-                .OrderByDescending(f => f.Fecha)
+            var all = await _facturaApi.GetAllAsync();
+            return all
+                .Where(f => f.facturaProductoCollection
+                    .Any(fp => fp.facturaProductoPK?.idProducto == productoId))
+                .Select(f => new Factura
+                {
+                    Id         = f.idFactura,
+                    Monto      = f.monto,
+                    Fecha      = f.fecha,
+                    Pendiente  = f.pendiente ?? false,
+                    TipoPago   = f.tipoPago  ?? string.Empty,
+                    ClienteId  = f.idCliente?.idCliente  ?? 0,
+                    EmpleadoId = f.idEmpleado?.idEmpleado ?? 0
+                })
                 .ToList();
-
-            return Task.FromResult((IReadOnlyList<Factura>)facturas);
         }
+
+        private static Producto ToEntity(ProductoDto d) => new Producto
+        {
+            Id           = d.idProducto,
+            Nombre       = d.nombre       ?? string.Empty,
+            PrecioCompra = d.precioCompra,
+            PrecioVenta  = d.precioVenta,
+            Stock        = d.stock
+        };
     }
 }

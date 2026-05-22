@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PeluPOS.Models.ApiDtos.Common;
+using PeluPOS.Models.ApiDtos.Productos;
 using PeluPOS.Models.Entities;
 
 namespace PeluPOS.Services.Productos

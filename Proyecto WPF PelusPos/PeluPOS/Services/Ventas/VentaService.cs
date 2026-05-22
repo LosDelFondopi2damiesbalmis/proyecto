@@ -1,36 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
-using PeluPOS.Models.Entities;
+﻿using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services.Ventas
 {
-    public class MockVentaService : IVentaService
+    public class VentaService : IVentaService
     {
-        public Task<IReadOnlyList<Factura>> GetAllAsync()
-        {
-            var facturas = MockData.Facturas
-                .OrderByDescending(f => f.Fecha)
-                .ToList();
+        private readonly IFacturaApiService _facturaApi;
 
-            return Task.FromResult((IReadOnlyList<Factura>)facturas);
+        public VentaService(IFacturaApiService facturaApi)
+        {
+            _facturaApi = facturaApi;
         }
 
-        public Task UpdatePagoAsync(long facturaId, string tipoPago, bool pendiente)
+        public async Task<IReadOnlyList<Factura>> GetAllAsync()
         {
-            var f = MockData.Facturas.FirstOrDefault(x => x.Id == facturaId)
-                    ?? throw new InvalidOperationException("Factura no encontrada.");
+            var dtos = await _facturaApi.GetAllAsync();
+            return dtos.Select(f => new Factura
+            {
+                Id         = f.idFactura,
+                Monto      = f.monto,
+                Fecha      = f.fecha,
+                Pendiente  = f.pendiente  ?? false,
+                TipoPago   = f.tipoPago   ?? string.Empty,
+                EmpleadoId = f.idEmpleado?.idEmpleado ?? 0L,
+                ClienteId  = f.idCliente?.idCliente   ?? 0L
+            }).ToList();
+        }
 
-            if (string.IsNullOrWhiteSpace(tipoPago))
-                throw new ArgumentException("TipoPago es obligatorio.", nameof(tipoPago));
+        public async Task UpdatePagoAsync(long facturaId, string tipoPago, bool pendiente)
+        {
+            var dto = await _facturaApi.GetByIdAsync(facturaId);
+            if (dto is null) return;
 
-            f.TipoPago = tipoPago.Trim();
-            f.Pendiente = pendiente;
-
-            return Task.CompletedTask;
+            dto.tipoPago  = tipoPago;
+            dto.pendiente = pendiente;
+            await _facturaApi.UpdateAsync(dto);
         }
     }
 }

@@ -1,160 +1,132 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using PeluPOS.Data.Seed;
+using PeluPOS.Models.ApiDtos.Empleados;
 using PeluPOS.Models.Entities;
+using PeluPOS.Services.Api;
 
 namespace PeluPOS.Services
 {
     public class EmpleadoService : IEmpleadoService
     {
+        private readonly IEmpleadoApiService _empleadoApi;
+        private readonly ILocalApiService    _localApi;
+        private readonly IFacturaApiService  _facturaApi;
 
-        public Task<IReadOnlyList<Empleado>> GetAllAsync()
+        public EmpleadoService(
+            IEmpleadoApiService empleadoApi,
+            ILocalApiService    localApi,
+            IFacturaApiService  facturaApi)
         {
-            return Task.FromResult(
-                (IReadOnlyList<Empleado>)MockData.Empleados.ToList()
-            );
+            _empleadoApi = empleadoApi;
+            _localApi    = localApi;
+            _facturaApi  = facturaApi;
         }
 
-        public Task<Empleado?> GetByIdAsync(long empleadoId)
-        {
-            var empleado = MockData.Empleados
-                .FirstOrDefault(e => e.Id == empleadoId);
+        // ── mappers ──────────────────────────────────────────────────────────
 
-            return Task.FromResult(empleado);
+        private static Empleado MapEmpleado(EmpleadoDto dto) => new Empleado
+        {
+            Id       = dto.idEmpleado,
+            Nombre   = dto.nombre,
+            Cargo    = dto.cargo    ?? string.Empty,
+            Email    = dto.email    ?? string.Empty,
+            Telefono = dto.telefono ?? 0L
+        };
+
+        private static Factura MapFactura(Models.ApiDtos.Facturas.FacturaDto dto) => new Factura
+        {
+            Id         = dto.idFactura,
+            Monto      = dto.monto,
+            Fecha      = dto.fecha,
+            Pendiente  = dto.pendiente  ?? false,
+            TipoPago   = dto.tipoPago   ?? string.Empty,
+            EmpleadoId = dto.idEmpleado?.idEmpleado ?? 0L,
+            ClienteId  = dto.idCliente?.idCliente   ?? 0L
+        };
+
+        // ── IEmpleadoService ─────────────────────────────────────────────────
+
+        public async Task<IReadOnlyList<Empleado>> GetAllAsync()
+        {
+            var dtos = await _empleadoApi.GetAllAsync();
+            return dtos.Select(MapEmpleado).ToList();
         }
 
-        public Task<IReadOnlyList<Local>> GetLocalesAsync()
+        public async Task<Empleado?> GetByIdAsync(long empleadoId)
         {
-            return Task.FromResult(
-                (IReadOnlyList<Local>)MockData.Locales.ToList()
-            );
+            var all = await _empleadoApi.GetAllAsync();
+            var dto = all.FirstOrDefault(e => e.idEmpleado == empleadoId);
+            return dto is null ? null : MapEmpleado(dto);
         }
 
-        public Task<IReadOnlyList<Factura>> GetFacturasByEmpleadoAsync(long empleadoId)
+        public async Task<IReadOnlyList<Local>> GetLocalesAsync()
         {
-            var facturas = MockData.Facturas
-                .Where(f => f.Empleado?.Id == empleadoId)
-                .OrderByDescending(f => f.Fecha)
-                .ToList();
-
-            return Task.FromResult(
-                (IReadOnlyList<Factura>)facturas
-            );
+            var dtos = await _localApi.GetAllAsync();
+            return dtos.Select(d => new Local
+            {
+                Id     = d.idLocal,
+                Nombre = d.nombre
+            }).ToList();
         }
 
-
-        public Task<Empleado> CreateAsync(
+        public async Task<Empleado> CreateAsync(
             string nombre,
-            long telefono,
+            long   telefono,
             string email,
             string cargo,
-            long localId,
+            long   localId,
             string password)
         {
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.");
-
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("El email es obligatorio.");
-
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentException("La contraseña es obligatoria.");
-
-            var local = MockData.Locales
-                .FirstOrDefault(l => l.Id == localId)
-                ?? throw new InvalidOperationException("Local no encontrado.");
-
-            var newId = MockData.Empleados.Any()
-                ? MockData.Empleados.Max(e => e.Id) + 1
-                : 1;
-
-            var empleado = new Empleado
+            var dto = new EmpleadoDto
             {
-                Id = newId,
-                Nombre = nombre.Trim(),
-                Telefono = telefono,
-                Email = email.Trim(),
-                Cargo = cargo?.Trim() ?? string.Empty,
-
-                LocalId = local.Id,
-                Local = local,
-
-                Usuario = new Usuario
-                {
-                    Id = newId,
-                    EmpleadoId = newId,
-                    Contrasena = password
-                },
-
-                Facturas = new List<Factura>(),
-                Servicios = new List<Servicio>()
+                nombre   = nombre,
+                cargo    = cargo,
+                email    = email,
+                telefono = telefono
             };
+            await _empleadoApi.CreateAsync(dto);
 
-            MockData.Empleados.Add(empleado);
-            local.Empleados.Add(empleado);
+            // Reload to get the newly assigned id
+            var all = await _empleadoApi.GetAllAsync();
+            var created = all
+                .Where(e => e.nombre == nombre && e.email == email)
+                .OrderByDescending(e => e.idEmpleado)
+                .FirstOrDefault();
 
-            return Task.FromResult(empleado);
+            return created is not null ? MapEmpleado(created) : MapEmpleado(dto);
         }
 
-        public Task UpdateAsync(
-            long empleadoId,
+        public async Task UpdateAsync(
+            long   empleadoId,
             string nombre,
-            long telefono,
+            long   telefono,
             string email,
             string cargo,
-            long localId)
+            long   localId)
         {
-            var empleado = MockData.Empleados
-                .FirstOrDefault(e => e.Id == empleadoId)
-                ?? throw new InvalidOperationException("Empleado no encontrado.");
-
-            if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre es obligatorio.");
-
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("El email es obligatorio.");
-
-            var nuevoLocal = MockData.Locales
-                .FirstOrDefault(l => l.Id == localId)
-                ?? throw new InvalidOperationException("Local no encontrado.");
-
-            if (empleado.Local != null && empleado.Local.Id != nuevoLocal.Id)
+            var dto = new EmpleadoDto
             {
-                empleado.Local.Empleados.Remove(empleado);
-            }
-
-            empleado.Nombre = nombre.Trim();
-            empleado.Telefono = telefono;
-            empleado.Email = email.Trim();
-            empleado.Cargo = cargo?.Trim() ?? string.Empty;
-
-            empleado.LocalId = nuevoLocal.Id;
-            empleado.Local = nuevoLocal;
-
-            if (!nuevoLocal.Empleados.Contains(empleado))
-                nuevoLocal.Empleados.Add(empleado);
-
-            return Task.CompletedTask;
+                idEmpleado = empleadoId,
+                nombre     = nombre,
+                cargo      = cargo,
+                email      = email,
+                telefono   = telefono
+            };
+            await _empleadoApi.UpdateAsync(dto);
         }
 
-        public Task DeleteAsync(long empleadoId)
+        public async Task DeleteAsync(long empleadoId)
         {
-            var empleado = MockData.Empleados
-                .FirstOrDefault(e => e.Id == empleadoId);
+            await _empleadoApi.DeleteAsync(empleadoId);
+        }
 
-            if (empleado == null)
-                return Task.CompletedTask;
-
-            // Quitarlo del local
-            empleado.Local?.Empleados.Remove(empleado);
-
-            // Nota: NO borramos facturas (histórico)
-            MockData.Empleados.Remove(empleado);
-
-            return Task.CompletedTask;
+        public async Task<IReadOnlyList<Factura>> GetFacturasByEmpleadoAsync(long empleadoId)
+        {
+            var all = await _facturaApi.GetAllAsync();
+            return all
+                .Where(f => f.idEmpleado?.idEmpleado == empleadoId)
+                .Select(MapFactura)
+                .ToList();
         }
     }
 }

@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PeluPOS.Services.Servicios;
+﻿using System.Windows.Controls;
+using PeluPOS.Services;
 using PeluPOS.ViewModels.ServicioPage;
 
 namespace PeluPOS.Views.Servicios
@@ -30,7 +17,7 @@ namespace PeluPOS.Views.Servicios
             InitializeComponent();
 
             _servicioId = servicioId;
-            ViewModel = new FacturasServicioViewModel(new ServicioService());
+            ViewModel = new FacturasServicioViewModel(AppServices.Servicios);
             DataContext = ViewModel;
 
             Loaded += async (_, __) => await ViewModel.LoadAsync(_servicioId);
