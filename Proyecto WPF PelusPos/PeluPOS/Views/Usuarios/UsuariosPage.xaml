@@ -142,7 +142,7 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="2*"/>
-                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+                        <DataGridTextColumn Header="Empleado" Binding="{Binding Empleado}" Width="2*"/>
                         <DataGridTextColumn Header="Rol" Binding="{Binding Rol}" Width="*"/>
 
                         <!-- Estado con “chip” -->
