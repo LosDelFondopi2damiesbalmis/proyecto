@@ -93,3 +93,4 @@
 | Fecha | Sesión | Tareas realizadas | Tiempo | Problemas encontrados | Soluciones Aplicadas | Reflexión/Aprendizaje
 | ------------ | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------
 | 17/05 | 4 | Se ha empezado la creación del retrofit y se está creando un servidor virtual para la API | 4 horas | - | - | -
+| 22/05 | 4 | Se está añadiendo el retrofit a los viewmodels y creando los distintos servicios para conectar kotlin con la API | 4 horas | - | - | -
