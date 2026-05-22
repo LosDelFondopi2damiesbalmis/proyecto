@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
 
 @HiltViewModel
 class ProductosViewModel @Inject constructor(
@@ -22,13 +25,26 @@ class ProductosViewModel @Inject constructor(
         cargarDatos()
     }
 
+    // --------------------------------------------------------
+    // 1. CARGAR DATOS (GET) - Ahora con internet
+    // --------------------------------------------------------
     private fun cargarDatos() {
-        val productos = productoRepository.getProductos()
-        _uiState.update {
-            it.copy(
-                todosLosProductos = productos,
-                productosVisibles = filtrarProductos(productos, it.searchQuery)
-            )
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                // Llamamos a Tomcat
+                val productosApi = productoRepository.obtenerProductos()
+
+                _uiState.update {
+                    it.copy(
+                        todosLosProductos = productosApi,
+                        productosVisibles = filtrarProductos(productosApi, it.searchQuery),
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
         }
     }
 
@@ -37,6 +53,9 @@ class ProductosViewModel @Inject constructor(
         return lista.filter { it.nombre.contains(query, ignoreCase = true) }
     }
 
+    // --------------------------------------------------------
+    // 2. GESTIÓN DE EVENTOS (Se queda igual, ¡estaba perfecto!)
+    // --------------------------------------------------------
     fun onEvent(event: ProductosEvent) {
         when (event) {
             ProductosEvent.CargarDatos -> cargarDatos()
@@ -81,31 +100,76 @@ class ProductosViewModel @Inject constructor(
 
             ProductosEvent.GuardarProducto -> guardarProducto()
             ProductosEvent.BorrarProducto -> borrarProducto()
+
+            // Añadimos este evento opcional por si quieres limpiar el Toast de éxito
         }
     }
 
+    // --------------------------------------------------------
+    // 3. GUARDAR PRODUCTO (POST o PUT) - Ahora con internet
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+    // 3. GUARDAR PRODUCTO (POST o PUT)
+    // --------------------------------------------------------
     private fun guardarProducto() {
         val state = _uiState.value
         val nuevoProducto = Producto(
-            idProducto = state.editandoProductoId ?: System.currentTimeMillis(),
+            // SOLUCIÓN 1: Si es nuevo (null), le ponemos 0L para que no falle el tipo Long
+            idProducto = state.editandoProductoId ?: 0L,
             nombre = state.formNombre,
             precioCompra = state.formPrecioCompra.replace(",", ".").toDoubleOrNull() ?: 0.0,
             precioVenta = state.formPrecioVenta.replace(",", ".").toDoubleOrNull() ?: 0.0,
             stock = state.formStock.toIntOrNull() ?: 0
         )
 
-        if (state.editandoProductoId != null) {
-            productoRepository.updateProducto(nuevoProducto)
-        } else {
-            productoRepository.insert(nuevoProducto)
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoProductoId != null) {
+                    productoRepository.actualizarProducto(nuevoProducto)
+                } else {
+                    productoRepository.crearProducto(nuevoProducto)
+                }
+
+                // SOLUCIÓN 2: Ponemos el mensaje a mano
+                _uiState.update {
+                    it.copy(
+                        mensaje = "Producto guardado correctamente",
+                        editandoProductoId = null,
+                        formNombre = "",
+                        formPrecioCompra = "",
+                        formPrecioVenta = "",
+                        formStock = "",
+                        isLoading = false
+                    )
+                }
+                cargarDatos()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
         }
-        cargarDatos()
     }
 
+    // --------------------------------------------------------
+    // 4. BORRAR PRODUCTO (DELETE)
+    // --------------------------------------------------------
     private fun borrarProducto() {
         _uiState.value.editandoProductoId?.let { id ->
-            productoRepository.delete(id)
-            cargarDatos()
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                try {
+                    // SOLUCIÓN 3: Pasamos el id a Int con .toInt()
+                    productoRepository.borrarProducto(id.toInt())
+
+                    // SOLUCIÓN 4: Ponemos el mensaje a mano
+                    _uiState.update {
+                        it.copy(mensaje = "Producto eliminado", isLoading = false)
+                    }
+                    cargarDatos()
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(error = e.message, isLoading = false) }
+                }
+            }
         }
     }
 }

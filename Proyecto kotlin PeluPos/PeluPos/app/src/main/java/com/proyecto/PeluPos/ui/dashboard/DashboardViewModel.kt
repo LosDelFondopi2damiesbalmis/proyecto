@@ -19,11 +19,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val sessionRepository: SessionRepository, // Para el usuario logeado
-    private val empleadoRepository: EmpleadoRepository, // Para contar empleados
-    private val localRepository: LocalRepository,       // Para contar locales
-    private val productoRepository: ProductoRepository, // Para el stock
-    private val facturaRepository: FacturaRepository    // Para las últimas ventas (ajusta el nombre si usas otro)
+    private val sessionRepository: SessionRepository,
+    private val empleadoRepository: EmpleadoRepository,
+    private val localRepository: LocalRepository,
+    private val productoRepository: ProductoRepository,
+    private val facturaRepository: FacturaRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -36,17 +36,17 @@ class DashboardViewModel @Inject constructor(
     fun cargarDatos() {
         viewModelScope.launch {
             try {
-                // 1. Cargamos el usuario
+
                 val usuarioActual = sessionRepository.getUsuarioActual()
-                val nombre = usuarioActual?.empleado?.nombre ?: "Admin"
-                val rol = usuarioActual?.rolUsuario?.name ?: "Sin Rol"
+                val nombre = usuarioActual?.usuario ?: "Admin"
+                val rol = usuarioActual?.rolUsuario ?: "Sin Rol"
 
                 // 2. Cargamos contadores
                 val empleados = empleadoRepository.getEmpleados().size
                 val locales = localRepository.getLocales().size
 
-                // 3. Cargamos productos
-                val bajoStock = productoRepository.getProductos()
+                // 3. CORREGIDO: Usamos obtenerProductos() que es como lo llamamos en el repo
+                val bajoStock = productoRepository.obtenerProductos()
                     .filter { it.stock < 5 }
                     .take(4)
 
@@ -58,7 +58,7 @@ class DashboardViewModel @Inject constructor(
                 val ventasFormateadas = facturasReales.map { factura ->
                     Triple(
                         "Hoy",
-                        factura.cliente?.nombre ?: "Anónimo", // <-- Cuidado aquí si cliente es null
+                        factura.cliente?.nombre ?: "Anónimo",
                         "${factura.monto} €"
                     )
                 }
@@ -75,7 +75,6 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                // Si algo falla, lo imprimimos en el Logcat (la consola de Android Studio)
                 println("🚨 ERROR EN EL DASHBOARD: ${e.message}")
                 e.printStackTrace()
             }

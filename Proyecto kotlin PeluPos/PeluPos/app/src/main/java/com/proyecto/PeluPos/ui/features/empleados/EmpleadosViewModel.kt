@@ -11,10 +11,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+
+import androidx.lifecycle.viewModelScope
+
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+
 @HiltViewModel
 class EmpleadosViewModel @Inject constructor(
     private val empleadoRepository: EmpleadoRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository // Asumo que este también tendrá corrutinas o BD local
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EmpleadosUiState())
@@ -25,11 +33,29 @@ class EmpleadosViewModel @Inject constructor(
     }
 
     private fun cargarDatos() {
-        _uiState.update {
-            it.copy(
-                empleados = empleadoRepository.getEmpleados(),
-                localesDisponibles = localRepository.getLocales()
-            )
+        // 🚀 Usamos viewModelScope.launch porque ir a internet requiere corrutinas
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val listaEmpleados = empleadoRepository.getEmpleados()
+                // Si tu localRepository también viaja a internet, ponle un 'suspend' y llámalo aquí igual
+                val listaLocales = localRepository.getLocales()
+
+                _uiState.update {
+                    it.copy(
+                        empleados = listaEmpleados,
+                        localesDisponibles = listaLocales,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Error al cargar datos: ${e.message}"
+                    )
+                }
+            }
         }
     }
 
@@ -38,7 +64,18 @@ class EmpleadosViewModel @Inject constructor(
             EmpleadosEvent.CargarDatos -> cargarDatos()
 
             EmpleadosEvent.PrepararNuevoEmpleado -> {
-                _uiState.update { it.copy(editandoEmpleadoId = null, formNombre = "", formCargo = "", formEmail = "", formTelefono = "", formLocalSeleccionado = null) }
+                _uiState.update {
+                    it.copy(
+                        editandoEmpleadoId = null,
+                        formNombre = "",
+                        formCargo = "",
+                        formEmail = "",
+                        formTelefono = "",
+                        formLocalSeleccionado = null,
+                        mensaje = null,
+                        error = null
+                    )
+                }
             }
 
             is EmpleadosEvent.PrepararEdicion -> {
@@ -47,11 +84,13 @@ class EmpleadosViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             editandoEmpleadoId = emp.idEmpleado,
-                            formNombre = emp.nombre,
-                            formCargo = emp.cargo,
-                            formEmail = emp.email,
-                            formTelefono = emp.telefono.toString().replace("0", ""), // Manejo básico
-                            formLocalSeleccionado = emp.local
+                            formNombre = emp.nombre ?: "",
+                            formCargo = emp.cargo ?: "",
+                            formEmail = emp.email ?: "",
+                            formTelefono = emp.telefono?.toString() ?: "",
+                            formLocalSeleccionado = emp.local,
+                            mensaje = null,
+                            error = null
                         )
                     }
                 }
@@ -70,8 +109,11 @@ class EmpleadosViewModel @Inject constructor(
 
     private fun guardarEmpleado() {
         val state = _uiState.value
-        val nuevoEmpleado = Empleado(
-            idEmpleado = state.editandoEmpleadoId ?: System.currentTimeMillis(),
+
+        // Creamos el objeto empleado mapeando los campos del formulario
+        val empleadoDatos = Empleado(
+            // Al crear pasamos 0L (o null si tu modelo en Kotlin lo permite) para que MySQL autoincremente
+            idEmpleado = state.editandoEmpleadoId ?: 0L,
             telefono = state.formTelefono.toLongOrNull() ?: 0L,
             email = state.formEmail,
             cargo = state.formCargo,
@@ -79,18 +121,49 @@ class EmpleadosViewModel @Inject constructor(
             local = state.formLocalSeleccionado
         )
 
-        if (state.editandoEmpleadoId != null) {
-            empleadoRepository.updateEmpleado(nuevoEmpleado)
-        } else {
-            empleadoRepository.insert(nuevoEmpleado)
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoEmpleadoId != null) {
+                    // 🔄 ACTUALIZAR: Mandamos el ID de la ruta y los datos nuevos al PUT de Retrofit
+                    empleadoRepository.updateEmpleado(state.editandoEmpleadoId, empleadoDatos)
+                    _uiState.update { it.copy(mensaje = "Empleado actualizado con éxito") }
+                } else {
+                    // ➕ CREAR: Mandamos los datos al POST de Retrofit
+                    empleadoRepository.createEmpleado(empleadoDatos)
+                    _uiState.update { it.copy(mensaje = "Empleado guardado con éxito") }
+                }
+
+                // Limpiamos el formulario y refrescamos la lista con lo que hay en Tomcat
+                cargarDatos()
+                onEvent(EmpleadosEvent.PrepararNuevoEmpleado)
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Error al guardar: ${e.message}")
+                }
+            }
         }
-        cargarDatos()
     }
 
     private fun borrarEmpleado() {
-        _uiState.value.editandoEmpleadoId?.let { id ->
-            empleadoRepository.delete(id)
-            cargarDatos()
+        val id = _uiState.value.editandoEmpleadoId
+        if (id != null) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                try {
+                    // ❌ BORRAR: Llamamos al DELETE pasándole el ID
+                    empleadoRepository.deleteEmpleado(id)
+                    _uiState.update { it.copy(mensaje = "Empleado eliminado con éxito") }
+
+                    cargarDatos()
+                    onEvent(EmpleadosEvent.PrepararNuevoEmpleado)
+                } catch (e: Exception) {
+                    _uiState.update {
+                        it.copy(isLoading = false, error = "Error al borrar: ${e.message}")
+                    }
+                }
+            }
         }
     }
 }

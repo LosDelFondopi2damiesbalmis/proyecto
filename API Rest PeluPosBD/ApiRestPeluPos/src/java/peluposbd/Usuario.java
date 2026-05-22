@@ -4,6 +4,7 @@
  */
 package peluposbd;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,8 +53,10 @@ public class Usuario implements Serializable {
     private String contrasena;
     @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
     @OneToOne
+    
     private Empleado idEmpleado;
     @Enumerated(EnumType.STRING)
+    
     @Column(name = "rol_usuario")
     private RolUsuario rolUsuario;
 
