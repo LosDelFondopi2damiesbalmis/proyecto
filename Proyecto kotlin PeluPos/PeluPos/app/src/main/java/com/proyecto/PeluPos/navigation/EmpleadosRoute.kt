@@ -1,6 +1,7 @@
 package com.proyecto.PeluPos.navigation
 
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -21,7 +22,6 @@ object EmpleadoFormRoute
 data class EmpleadoStatsRoute(val idEmpleado: Long)
 
 fun NavGraphBuilder.empleadosDestination(
-    vm: EmpleadosViewModel,
     toggleSidebar: () -> Unit,
     navigateToForm: () -> Unit,
     navigateToStats: (Long) -> Unit,
@@ -31,6 +31,7 @@ fun NavGraphBuilder.empleadosDestination(
     // 1. LISTA DE EMPLEADOS
     // ==========================================
     composable<EmpleadosListRoute> {
+        val vm = hiltViewModel<EmpleadosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         EmpleadosScreen(
@@ -47,6 +48,7 @@ fun NavGraphBuilder.empleadosDestination(
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
     composable<EmpleadoFormRoute> {
+        val vm = hiltViewModel<EmpleadosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         EmpleadoFormScreen(

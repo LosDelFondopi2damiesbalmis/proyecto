@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.navigation
 
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -23,7 +24,6 @@ object ClienteFormRoute
 data class ClienteDetailRoute(val idCliente: Long)
 
 fun NavGraphBuilder.clientesDestination(
-    vm: ClientesViewModel,
     toggleSidebar: () -> Unit,
     navigateToForm: () -> Unit,
     navigateToDetail: (Long) -> Unit,
@@ -33,6 +33,7 @@ fun NavGraphBuilder.clientesDestination(
     // 1. LISTA DE CLIENTES
     // ==========================================
     composable<ClientesListRoute> {
+        val vm = hiltViewModel<ClientesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ClientesScreen(
@@ -48,6 +49,7 @@ fun NavGraphBuilder.clientesDestination(
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
     composable<ClienteFormRoute> {
+        val vm = hiltViewModel<ClientesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ClienteFormScreen(
@@ -62,7 +64,7 @@ fun NavGraphBuilder.clientesDestination(
     composable<ClienteDetailRoute> { backStackEntry ->
         // 1. Extraemos el ID tipado de la ruta
         val route = backStackEntry.toRoute<ClienteDetailRoute>()
-
+        val vm = hiltViewModel<ClientesViewModel>()
         // 2. Recolectamos el estado global del ViewModel de clientes
         val state by vm.uiState.collectAsStateWithLifecycle()
 

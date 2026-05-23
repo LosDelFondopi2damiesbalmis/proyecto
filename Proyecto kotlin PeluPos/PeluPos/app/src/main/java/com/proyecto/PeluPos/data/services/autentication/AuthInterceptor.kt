@@ -7,25 +7,20 @@ import javax.inject.Inject
 import dagger.Lazy // 👈 ¡Súper importante este import!
 
 class AuthInterceptor @Inject constructor(
-    // 👈 Cambiamos a Lazy para romper el bucle infinito de Hilt
+    // Mantenemos el Lazy/Provider para evitar el bucle infinito
     private val sessionRepositoryProvider: Lazy<SessionRepository>
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val requestOriginal = chain.request()
 
-        // 1. Extraemos el repositorio real usando .get()
+        // 1. Extraemos el repositorio real
         val sessionRepository = sessionRepositoryProvider.get()
 
-        // 2. Obtenemos el token (Tu lógica original)
-        var token = sessionRepository.getUsuarioActual()?.jwtToken
+        // 2. Obtenemos el token REAL de la sesión
+        val token = sessionRepository.getUsuarioActual()?.jwtToken
 
-        if (token.isNullOrEmpty()) {
-            // Token de prueba hardcodeado
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzE2NDAwMDAwLCJleHAiOjE4OTM0NTYwMDB9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        }
-
-        // Si hay token, lo metemos en la cabecera de la petición
+        // 3. Si hay un token guardado, lo inyectamos. Si no, mandamos la petición limpia.
         val requestModificado = if (!token.isNullOrEmpty()) {
             requestOriginal.newBuilder()
                 .header("Authorization", "Bearer $token")
