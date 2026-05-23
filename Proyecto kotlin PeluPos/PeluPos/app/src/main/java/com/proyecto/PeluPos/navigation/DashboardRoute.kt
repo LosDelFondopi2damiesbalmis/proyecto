@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.navigation
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -14,10 +15,10 @@ import kotlinx.serialization.Serializable
 object DashboardRoute
 
 fun NavGraphBuilder.dashboardDestination(
-    vm: DashboardViewModel,
     toggleSidebar: () -> Unit
 ) {
     composable<DashboardRoute> {
+        val vm = hiltViewModel<DashboardViewModel>()
         // Recopilamos el estado
         val state by vm.uiState.collectAsStateWithLifecycle()
 

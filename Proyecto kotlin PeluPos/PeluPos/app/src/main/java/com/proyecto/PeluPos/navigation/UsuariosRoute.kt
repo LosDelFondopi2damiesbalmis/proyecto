@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.navigation
 
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -16,14 +17,15 @@ object UsuariosListRoute
 object UsuarioFormRoute
 
 fun NavGraphBuilder.usuariosDestination(
-    vm: UsuariosViewModel,
     navigateToForm: () -> Unit,
     onBack: () -> Unit // Esta es la función clave para volver atrás
 ) {
     // ==========================================
     // 1. LISTA DE USUARIOS
     // ==========================================
+
     composable<UsuariosListRoute> {
+        val vm = hiltViewModel<UsuariosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         UsuariosScreen(
@@ -41,6 +43,7 @@ fun NavGraphBuilder.usuariosDestination(
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
     composable<UsuarioFormRoute> {
+        val vm = hiltViewModel<UsuariosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         UsuarioFormScreen(

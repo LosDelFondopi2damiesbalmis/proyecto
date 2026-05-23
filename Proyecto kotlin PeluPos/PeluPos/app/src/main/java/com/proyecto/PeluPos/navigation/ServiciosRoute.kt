@@ -3,6 +3,7 @@ package com.proyecto.PeluPos.navigation
 import ServiciosScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -17,7 +18,6 @@ object ServicioFormRoute
 
 
 fun NavGraphBuilder.serviciosDestination(
-    vm: ServiciosViewModel,
     toggleSidebar: () -> Unit,
     navigateToForm: () -> Unit,
     onBack: () -> Unit
@@ -26,6 +26,7 @@ fun NavGraphBuilder.serviciosDestination(
     // 1. LISTA DE SERVICIOS
     // ==========================================
     composable<ServiciosListRoute> {
+        val vm = hiltViewModel<ServiciosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ServiciosScreen(
@@ -40,6 +41,7 @@ fun NavGraphBuilder.serviciosDestination(
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
     composable<ServicioFormRoute> {
+        val vm = hiltViewModel<ServiciosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ServicioFormScreen(

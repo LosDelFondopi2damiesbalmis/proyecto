@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.proyecto.PeluPos.ui.features.products.ProductoFormScreen
 import com.proyecto.PeluPos.ui.features.products.ProductosScreen
@@ -18,7 +19,6 @@ object ProductoFormRoute
 
 
 fun NavGraphBuilder.productosDestination(
-    vm: ProductosViewModel,
     toggleSidebar: () -> Unit,
     navigateToForm: () -> Unit,
     onBack: () -> Unit
@@ -27,6 +27,7 @@ fun NavGraphBuilder.productosDestination(
     // 1. LISTA DE PRODUCTOS
     // ==========================================
     composable<ProductosListRoute> {
+        val vm = hiltViewModel<ProductosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ProductosScreen(
@@ -41,6 +42,7 @@ fun NavGraphBuilder.productosDestination(
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
     composable<ProductoFormRoute> {
+        val vm = hiltViewModel<ProductosViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ProductoFormScreen(

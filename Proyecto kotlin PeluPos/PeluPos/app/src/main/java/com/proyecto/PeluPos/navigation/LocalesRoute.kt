@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.navigation
 
 
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -23,7 +24,6 @@ object LocalFormRoute
 data class LocalDetailRoute(val idLocal: Long)
 
 fun NavGraphBuilder.localesDestination(
-    vm: LocalesViewModel,
     toggleSidebar: () -> Unit,
     navigateToForm: () -> Unit,
     navigateToDetail: (Long) -> Unit,
@@ -31,6 +31,7 @@ fun NavGraphBuilder.localesDestination(
 ) {
     // Lista de Locales
     composable<LocalesListRoute> {
+        val vm = hiltViewModel<LocalesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         LocalesScreen(
@@ -44,6 +45,7 @@ fun NavGraphBuilder.localesDestination(
 
     // Formulario de Locales
     composable<LocalFormRoute> {
+        val vm = hiltViewModel<LocalesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         LocalFormScreen(
@@ -53,7 +55,7 @@ fun NavGraphBuilder.localesDestination(
         )
     }
     composable<LocalDetailRoute> { backStackEntry ->
-
+        val vm = hiltViewModel<LocalesViewModel>()
         val route = backStackEntry.toRoute<LocalDetailRoute>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 

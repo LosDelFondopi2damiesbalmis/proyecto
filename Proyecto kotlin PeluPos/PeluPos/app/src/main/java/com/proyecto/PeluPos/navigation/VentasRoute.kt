@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.proyecto.PeluPos.ui.features.ventas.VentasScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.proyecto.PeluPos.ui.features.ventas.AddSaleScreen
@@ -22,7 +23,6 @@ data class DetalleVentaRoute(val idFactura: Long)
 
 
 fun NavGraphBuilder.salesDestination(
-    vm: FacturacionViewModel, // Usamos tu ViewModel unificado
     toggleSidebar: () -> Unit,
     navigateToNewSale: () -> Unit,
     navigateToSaleDetail: (Long) -> Unit,
@@ -32,6 +32,8 @@ fun NavGraphBuilder.salesDestination(
     // 1. HISTORIAL DE VENTAS
     // ==========================================
     composable<VentasRoute> {
+
+        val vm = hiltViewModel<FacturacionViewModel>()
         // Recolectamos el estado una sola vez
         val state by vm.uiState.collectAsStateWithLifecycle()
 
@@ -50,6 +52,7 @@ fun NavGraphBuilder.salesDestination(
     // 2. CREAR NUEVA FACTURA / CERRAR TICKET
     // ==========================================
     composable<AddSaleRoute> {
+        val vm = hiltViewModel<FacturacionViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         AddSaleScreen(
@@ -72,7 +75,7 @@ fun NavGraphBuilder.salesDestination(
     composable<DetalleVentaRoute> { backStackEntry ->
         // 1. Extraemos el ID tipado de la ruta
         val route = backStackEntry.toRoute<DetalleVentaRoute>()
-
+        val vm = hiltViewModel<FacturacionViewModel>()
         // 2. Recolectamos el estado global del ViewModel
         val state by vm.uiState.collectAsStateWithLifecycle()
 
