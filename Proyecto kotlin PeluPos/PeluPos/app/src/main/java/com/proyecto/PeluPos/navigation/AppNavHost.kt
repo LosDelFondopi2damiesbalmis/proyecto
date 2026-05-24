@@ -5,11 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.proyecto.PeluPos.ui.dashboard.DashboardViewModel
 
 
 @Composable
 fun AppNavHost(toggleSidebar: () -> Unit,
-               navController: NavHostController
+               navController: NavHostController,
+               viewModel : DashboardViewModel
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -21,7 +23,8 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         // GRAFO PRINCIPAL: DASHBOARD
         // ==========================================
         dashboardDestination(
-            toggleSidebar = toggleSidebar
+            toggleSidebar = toggleSidebar,
+            vm = viewModel
         )
         // ==========================================
         // GRAFO 0: LOGIN
@@ -56,11 +59,12 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         salesDestination(
             toggleSidebar = toggleSidebar,
             navigateToNewSale = {
+                // Al ser un 'object', no necesita ID
                 navController.navigate(AddSaleRoute)
             },
             navigateToSaleDetail = { idFactura ->
-
-                navController.navigate(DetalleVentaRoute(idFactura))
+                // Aquí pasamos el ID que manda la lista
+                navController.navigate(DetalleVentaRoute(idFactura = idFactura))
             },
             onBack = {
                 navController.popBackStack()
@@ -71,9 +75,9 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // GRAFO 2: GESTIÓN DE USUARIOS
 //        // ==========================================
         usuariosDestination(
-            navigateToForm = {
-
-                navController.navigate(UsuarioFormRoute)
+            navigateToForm = { id -> // 👈 1. Añadimos la variable 'id'
+                // 2. Le pasamos el ID a la ruta (null = crea, número = edita)
+                navController.navigate(UsuarioFormRoute(idUsuario = id))
             },
             onBack = {
                 navController.popBackStack()
@@ -84,16 +88,13 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // ==========================================
         clientesDestination(
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                // Navegamos a la pantalla de crear/editar
-                navController.navigate(ClienteFormRoute)
+            navigateToForm = { id -> // 👈 ¡Añadimos la variable 'id' aquí!
+                // Navegamos pasando el ID.
+                // Si 'id' es null -> Crea uno nuevo. Si tiene número -> Edita.
+                navController.navigate(ClienteFormRoute(idCliente = id))
             },
             navigateToDetail = { idCliente ->
-                // Si tienes o vas a crear una pantalla de detalle del cliente, la llamarías así:
-                navController.navigate(ClienteDetailRoute(idCliente))
-
-                // Si aún no la tienes, puedes dejar un println o un Toast por ahora:
-                // println("Navegando al detalle del cliente: $idCliente")
+                navController.navigate(ClienteDetailRoute(idCliente = idCliente))
             },
             onBack = {
                 // Vuelve a la pantalla anterior mágicamente destruyendo el formulario
@@ -105,8 +106,8 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // ==========================================
         localesDestination(
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(LocalFormRoute)
+            navigateToForm = { id ->
+                navController.navigate(LocalFormRoute(idLocal = id))
             },
             onBack = {
                 navController.popBackStack()
@@ -120,12 +121,12 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // ==========================================
         productosDestination(
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
+            navigateToForm = { id ->
 
-                navController.navigate(ProductoFormRoute)
+                // 2. Le pasamos el ID a la ruta
+                navController.navigate(ProductoFormRoute(idProducto = id))
             },
             onBack = {
-
                 navController.popBackStack()
             }
         )
@@ -134,11 +135,10 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // ==========================================
         serviciosDestination(
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(ServicioFormRoute)
+            navigateToForm = { id -> // 👈 Recibe el ID
+                navController.navigate(ServicioFormRoute(idServicio = id))
             },
             onBack = {
-                // Volvemos a la pantalla anterior
                 navController.popBackStack()
             }
         )
@@ -147,8 +147,9 @@ fun AppNavHost(toggleSidebar: () -> Unit,
 //        // ==========================================
         empleadosDestination(
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(EmpleadoFormRoute)
+            navigateToForm = { id -> // 👈 1. Añadimos la variable 'id'
+                // 2. Le pasamos el ID a la ruta (null = crea, número = edita)
+                navController.navigate(EmpleadoFormRoute(idEmpleado = id))
             },
             navigateToStats = { idEmpleado ->
                 navController.navigate(EmpleadoStatsRoute(idEmpleado = idEmpleado))

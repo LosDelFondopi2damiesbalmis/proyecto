@@ -1,5 +1,6 @@
 package com.proyecto.PeluPos.ui.features.clientes
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
 import com.proyecto.PeluPos.models.Cliente
@@ -10,33 +11,63 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import kotlin.collections.filter
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.proyecto.PeluPos.navigation.ClienteFormRoute
+import kotlinx.coroutines.launch
+
 
 @HiltViewModel
 class ClientesViewModel @Inject constructor(
-    private val clienteRepository: ClienteRepository
+    private val clienteRepository: ClienteRepository,
+    savedStateHandle: SavedStateHandle // 🚀 1. INYECTAMOS LA ANTENA
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ClientesUiState())
     val uiState: StateFlow<ClientesUiState> = _uiState.asStateFlow()
+
+    // 🚀 2. CAPTURAMOS EL ID DE LA RUTA (ClienteFormRoute)
+    private val idClienteAEditar = savedStateHandle.toRoute<ClienteFormRoute>().idCliente
 
     init {
         cargarDatos()
     }
 
     private fun cargarDatos() {
-        val clientes = clienteRepository.getClientes()
-        _uiState.update {
-            it.copy(
-                todosLosClientes = clientes,
-                // Aplicamos el filtro por si recarga la lista mientras hay algo escrito
-                clientesVisibles = filtrarClientes(clientes, it.searchQuery)
-            )
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val clientes = clienteRepository.getClientes()
+
+                _uiState.update { state ->
+                    // Creamos el nuevo estado base
+                    var newState = state.copy(
+                        todosLosClientes = clientes,
+                        clientesVisibles = filtrarClientes(clientes, state.searchQuery),
+                        isLoading = false
+                    )
+                    idClienteAEditar?.let { id ->
+                        val cli = clientes.find { it.idCliente == id }
+                        if (cli != null) {
+                            newState = newState.copy(
+                                editandoClienteId = cli.idCliente,
+                                formNombre = cli.nombre ?: "",
+                                formTelefono = if (cli.telefono == 0L || cli.telefono == null) "" else cli.telefono.toString(),
+                                formDeuda = cli.deuda?.toString() ?: "0.0"
+                            )
+                        }
+                    }
+                    newState
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Error: ${e.message}") }
+            }
         }
     }
 
     private fun filtrarClientes(lista: List<Cliente>, query: String): List<Cliente> {
         if (query.isBlank()) return lista
-        return lista.filter { it.nombre.contains(query, ignoreCase = true) }
+        return lista.filter { (it.nombre ?: "").contains(query, ignoreCase = true) }
     }
 
     fun onEvent(event: ClientesEvent) {
@@ -52,27 +83,9 @@ class ClientesViewModel @Inject constructor(
                 }
             }
 
-            ClientesEvent.PrepararNuevoCliente -> {
-                _uiState.update {
-                    it.copy(
-                        editandoClienteId = null, formNombre = "", formTelefono = "", formDeuda = ""
-                    )
-                }
-            }
-
-            is ClientesEvent.PrepararEdicion -> {
-                val cliente = _uiState.value.todosLosClientes.find { it.idCliente == event.idCliente }
-                cliente?.let { cli ->
-                    _uiState.update {
-                        it.copy(
-                            editandoClienteId = cli.idCliente,
-                            formNombre = cli.nombre,
-                            formTelefono = if (cli.telefono == 0L) "" else cli.telefono.toString(),
-                            formDeuda = cli.deuda.toString()
-                        )
-                    }
-                }
-            }
+            // 🧹 EVENTOS ZOMBIS: Ya no se necesitan desde la UI, el init se encarga
+            ClientesEvent.PrepararNuevoCliente -> { }
+            is ClientesEvent.PrepararEdicion -> { }
 
             is ClientesEvent.OnNombreChange -> _uiState.update { it.copy(formNombre = event.nombre) }
             is ClientesEvent.OnTelefonoChange -> {
@@ -86,37 +99,47 @@ class ClientesViewModel @Inject constructor(
             is ClientesEvent.SaldarDeuda -> saldarDeudaCliente(event.idCliente)
         }
     }
+
     private fun saldarDeudaCliente(idCliente: Long) {
-        // 1. Buscamos al cliente en nuestra lista actual
         val cliente = _uiState.value.todosLosClientes.find { it.idCliente == idCliente }
-
         if (cliente != null) {
-            // 2. Creamos una copia del cliente pero con la deuda a cero
             val clienteActualizado = cliente.copy(deuda = 0.0)
-
-            // 3. Lo actualizamos en la base de datos (repositorio)
-            clienteRepository.updateCliente(clienteActualizado)
-
-            // 4. Recargamos la lista.
-            // ¡Esto hará que el 'uiState' cambie y la tarjeta roja desaparezca de golpe!
-            cargarDatos()
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                try {
+                    clienteRepository.updateCliente(idCliente, clienteActualizado)
+                    _uiState.update { it.copy(mensaje = "¡Deuda saldada correctamente!") }
+                    cargarDatos()
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(isLoading = false, error = "No se pudo saldar la deuda: ${e.message}") }
+                }
+            }
         }
     }
 
     private fun guardarCliente() {
         val state = _uiState.value
-        val nuevoCliente = Cliente(
-            idCliente = state.editandoClienteId ?: System.currentTimeMillis(),
+        val clienteDatos = Cliente(
+            idCliente = state.editandoClienteId ?: 0L,
             nombre = state.formNombre,
             telefono = state.formTelefono.toLongOrNull() ?: 0L,
             deuda = state.formDeuda.replace(",", ".").toDoubleOrNull() ?: 0.0
         )
 
-        if (state.editandoClienteId != null) {
-            clienteRepository.updateCliente(nuevoCliente)
-        } else {
-            clienteRepository.insert(nuevoCliente)
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoClienteId != null) {
+                    clienteRepository.updateCliente(state.editandoClienteId, clienteDatos)
+                    _uiState.update { it.copy(mensaje = "Cliente actualizado con éxito") }
+                } else {
+                    clienteRepository.createCliente(clienteDatos)
+                    _uiState.update { it.copy(mensaje = "Cliente guardado con éxito") }
+                }
+                cargarDatos()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Error al guardar cliente: ${e.message}") }
+            }
         }
-        cargarDatos()
     }
 }

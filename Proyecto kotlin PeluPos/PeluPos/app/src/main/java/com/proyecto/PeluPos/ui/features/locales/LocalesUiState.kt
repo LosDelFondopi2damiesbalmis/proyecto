@@ -16,7 +16,12 @@ data class LocalesUiState(
     val editandoLocalId: Long? = null,
     val formNombre: String = "",
     val formDireccion: String = "",
-    val formEmpleadosSeleccionados: List<Empleado> = emptyList()
+    val formEmpleadosSeleccionados: List<Empleado> = emptyList(),
+
+    // 🚀 NUEVO: Control de estados de red para Retrofit
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 ) {
     val isFormValid: Boolean
         get() = formNombre.isNotBlank() && formDireccion.isNotBlank()

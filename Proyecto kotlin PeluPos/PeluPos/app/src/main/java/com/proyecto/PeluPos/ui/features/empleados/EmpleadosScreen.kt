@@ -10,12 +10,16 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.proyecto.PeluPos.models.Empleado
 
 import com.proyecto.PeluPos.models.Local
@@ -27,9 +31,24 @@ fun EmpleadosScreen(
     onEvent: (EmpleadosEvent) -> Unit,
     toggleSidebar: () -> Unit,
     onNavigateToCreate: () -> Unit,
-    onNavigateToEdit: () -> Unit,
+    onNavigateToEdit: (Long) -> Unit, // 🚨 ¡Aquí está el cambio! (Long)
     onNavigateToStats: (Long) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // ON_RESUME significa "La pantalla acaba de aparecer frente al usuario"
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Llama al evento que recarga los datos desde tu base de datos
+                onEvent(EmpleadosEvent.CargarDatos)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -78,7 +97,7 @@ fun EmpleadosScreen(
                         }
                         IconButton(onClick = {
                             onEvent(EmpleadosEvent.PrepararEdicion(empleado.idEmpleado))
-                            onNavigateToEdit()
+                            onNavigateToEdit(empleado.idEmpleado)
                         }) {
                             Icon(Icons.Default.Edit, "Modificar")
                         }

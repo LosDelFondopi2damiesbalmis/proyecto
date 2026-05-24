@@ -5,54 +5,76 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.proyecto.PeluPos.models.Local
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmpleadoStatsScreen(
     empleadoId: Long,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    // 1. Inyectamos el ViewModel que ya tienes cargado con toda la lista
+    viewModel: EmpleadosViewModel = hiltViewModel()
 ) {
-    // Aquí buscarías el Empleado real usando el empleadoId.
+    // 2. Observamos el estado.
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // 3. Buscamos al empleado en la lista que ya está en memoria
+    val empleado = state.empleados.find { it.idEmpleado == empleadoId }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Rendimiento", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) { Icon(Icons.Default.ArrowBack, contentDescription = "Volver") }
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
                 }
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text("Resumen de ventas", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("Datos del mes actual", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        // 4. Si el empleado existe, mostramos sus datos reales
+        if (empleado != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text("Empleado: ${empleado.nombre}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("Cargo: ${empleado.cargo}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Email: ${empleado.email}", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                MetricCard(title = "Servicios realizados", value = "124", modifier = Modifier.weight(1f))
-                MetricCard(title = "Productos vendidos", value = "18", modifier = Modifier.weight(1f))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    // Aquí podrías mostrar datos de tu modelo si los añades
+                    MetricCard(title = "Local", value = empleado.local?.nombre ?: "Sin local", modifier = Modifier.weight(1f))
+                    MetricCard(title = "ID Empleado", value = empleado.idEmpleado.toString(), modifier = Modifier.weight(1f))
+                }
+
+                MetricCard(
+                    title = "Teléfono",
+                    value = empleado.telefono.toString(),
+                    modifier = Modifier.fillMaxWidth(),
+                    isPrimary = true
+                )
             }
-
-            MetricCard(
-                title = "Total Facturado",
-                value = "2.850,00 €",
-                modifier = Modifier.fillMaxWidth(),
-                isPrimary = true
-            )
+        } else {
+            // Estado de carga o error
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
     }
 }

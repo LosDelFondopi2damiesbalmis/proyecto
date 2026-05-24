@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class ServiciosViewModel @Inject constructor(
     private val servicioRepository: ServicioRepository,
@@ -25,24 +26,27 @@ class ServiciosViewModel @Inject constructor(
     }
 
     private fun cargarDatos() {
-        // 🚀 Abrimos la corrutina para ir a internet en segundo plano
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                // Pedimos los datos reales a los repositorios (las líneas rojas desaparecerán)
                 val servicios = servicioRepository.getServicios()
                 val empleados = empleadoRepository.getEmpleados()
 
-                // Actualizamos la interfaz cuando los datos ya han llegado
                 _uiState.update {
                     it.copy(
                         todosLosServicios = servicios,
                         serviciosVisibles = filtrarServicios(servicios, it.searchQuery),
-                        empleadosDisponibles = empleados
+                        empleadosDisponibles = empleados,
+                        isLoading = false
                     )
                 }
             } catch (e: Exception) {
-                // Si Tomcat falla o no hay conexión, evitamos que la app explote
-                println("🚨 Error al cargar servicios o empleados: ${e.message}")
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Error al cargar servicios o empleados: ${e.message}"
+                    )
+                }
             }
         }
     }
@@ -50,8 +54,8 @@ class ServiciosViewModel @Inject constructor(
     private fun filtrarServicios(lista: List<Servicio>, query: String): List<Servicio> {
         if (query.isBlank()) return lista
         return lista.filter {
-            it.nombre.contains(query, ignoreCase = true) ||
-                    it.empleado.nombre.contains(query, ignoreCase = true)
+            (it.nombre?.contains(query, ignoreCase = true) ?: false) ||
+                    (it.empleado?.nombre?.contains(query, ignoreCase = true) ?: false)
         }
     }
 
@@ -69,7 +73,15 @@ class ServiciosViewModel @Inject constructor(
 
             ServiciosEvent.PrepararNuevoServicio -> {
                 _uiState.update {
-                    it.copy(editandoServicioId = null, formNombre = "", formPrecio = "", formDescripcion = "", formEmpleadoSeleccionado = null)
+                    it.copy(
+                        editandoServicioId = null,
+                        formNombre = "",
+                        formPrecio = "",
+                        formDescripcion = "",
+                        formEmpleadoSeleccionado = null,
+                        mensaje = null,
+                        error = null
+                    )
                 }
             }
 
@@ -79,10 +91,12 @@ class ServiciosViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             editandoServicioId = srv.idServicio,
-                            formNombre = srv.nombre,
-                            formPrecio = srv.precio.toString(),
-                            formDescripcion = srv.descripcion,
-                            formEmpleadoSeleccionado = srv.empleado
+                            formNombre = srv.nombre ?: "",
+                            formPrecio = srv.precio?.toString() ?: "",
+                            formDescripcion = srv.descripcion ?: "",
+                            formEmpleadoSeleccionado = srv.empleado,
+                            mensaje = null,
+                            error = null
                         )
                     }
                 }
@@ -102,26 +116,60 @@ class ServiciosViewModel @Inject constructor(
         val state = _uiState.value
         val empleado = state.formEmpleadoSeleccionado ?: return
 
-        val nuevoServicio = Servicio(
-            idServicio = state.editandoServicioId ?: System.currentTimeMillis(),
+        // Mapeamos el objeto Servicio listo para enviar a la API
+        val servicioDatos = Servicio(
+            // ⚠️ Importante: Mandamos 0L en nuevos para que la BD aplique AUTO_INCREMENT
+            idServicio = state.editandoServicioId ?: 0L,
             nombre = state.formNombre,
             precio = state.formPrecio.replace(",", ".").toDoubleOrNull() ?: 0.0,
             descripcion = state.formDescripcion,
             empleado = empleado
         )
 
-        if (state.editandoServicioId != null) {
-            servicioRepository.updateServicio(nuevoServicio)
-        } else {
-            servicioRepository.insert(nuevoServicio)
+        // 🚀 Usamos viewModelScope.launch porque llamamos a la API de Retrofit
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoServicioId != null) {
+                    // 🔄 ACTUALIZAR (PUT): Enviamos el ID y los datos modificados
+                    servicioRepository.updateServicio(state.editandoServicioId, servicioDatos)
+                    _uiState.update { it.copy(mensaje = "Servicio actualizado con éxito") }
+                } else {
+                    // ➕ CREAR (POST): Enviamos el nuevo servicio a Tomcat
+                    servicioRepository.createServicio(servicioDatos)
+                    _uiState.update { it.copy(mensaje = "Servicio guardado con éxito") }
+                }
+
+                cargarDatos() // Sincronizamos la app trayendo la lista actualizada del servidor
+                onEvent(ServiciosEvent.PrepararNuevoServicio) // Limpiamos el formulario
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Error al guardar el servicio: ${e.message}")
+                }
+            }
         }
-        cargarDatos()
     }
 
     private fun borrarServicio() {
-        _uiState.value.editandoServicioId?.let { id ->
-            servicioRepository.delete(id)
-            cargarDatos()
+        val id = _uiState.value.editandoServicioId
+        if (id != null) {
+            // 🚀 Usamos viewModelScope.launch para el borrado asíncrono
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                try {
+                    // ❌ ELIMINAR (DELETE): Pasamos el ID a Retrofit
+                    servicioRepository.deleteServicio(id)
+                    _uiState.update { it.copy(mensaje = "Servicio eliminado con éxito") }
+
+                    cargarDatos() // Actualizamos lista completa
+                    onEvent(ServiciosEvent.PrepararNuevoServicio) // Reseteamos formulario
+                } catch (e: Exception) {
+                    _uiState.update {
+                        it.copy(isLoading = false, error = "Error al eliminar el servicio: ${e.message}")
+                    }
+                }
+            }
         }
     }
 }

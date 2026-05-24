@@ -20,8 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 import com.proyecto.PeluPos.models.Producto
+import com.proyecto.PeluPos.ui.features.empleados.EmpleadosEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,8 +34,24 @@ fun ProductosScreen(
     state: ProductosUiState,
     onEvent: (ProductosEvent) -> Unit,
     toggleSidebar: () -> Unit,
-    navigateToForm: () -> Unit
+    // 🚨 CAMBIA ESTA LÍNEA: Ponle el (Long?)
+    navigateToForm: (Long?) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // ON_RESUME significa "La pantalla acaba de aparecer frente al usuario"
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Llama al evento que recarga los datos desde tu base de datos
+                onEvent(ProductosEvent.CargarDatos)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -38,10 +59,15 @@ fun ProductosScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onEvent(ProductosEvent.PrepararNuevoProducto)
-                navigateToForm()
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    // 1. Borramos el evento viejo (ya no hace falta)
+                    // onEvent(ProductosEvent.PrepararNuevoProducto)
+
+                    // 2. Le pasamos 'null' para indicarle al grafo que vamos a CREAR
+                    navigateToForm(null)
+                }
+            ) {
                 Icon(Icons.Default.Add, "Nuevo Producto")
             }
         }
@@ -88,8 +114,7 @@ fun ProductosScreen(
                         ProductCard(
                             producto = producto,
                             onClick = {
-                                onEvent(ProductosEvent.PrepararEdicion(producto.idProducto))
-                                navigateToForm()
+                                navigateToForm(producto.idProducto)
                             }
                         )
                     }

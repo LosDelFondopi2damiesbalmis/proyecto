@@ -15,10 +15,10 @@ import kotlinx.serialization.Serializable
 object DashboardRoute
 
 fun NavGraphBuilder.dashboardDestination(
-    toggleSidebar: () -> Unit
+    toggleSidebar: () -> Unit,
+    vm : DashboardViewModel
 ) {
     composable<DashboardRoute> {
-        val vm = hiltViewModel<DashboardViewModel>()
         // Recopilamos el estado
         val state by vm.uiState.collectAsStateWithLifecycle()
 

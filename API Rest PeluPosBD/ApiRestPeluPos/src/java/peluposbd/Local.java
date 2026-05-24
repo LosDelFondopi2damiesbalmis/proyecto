@@ -49,6 +49,7 @@ public class Local implements Serializable {
     @Column(name = "direccion")
     private String direccion;
     @OneToMany(mappedBy = "idLocal")
+     
     private Collection<Empleado> empleadoCollection;
 
     public Local() {

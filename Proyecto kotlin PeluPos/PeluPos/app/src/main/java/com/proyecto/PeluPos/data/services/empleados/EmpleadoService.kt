@@ -28,11 +28,8 @@ interface EmpleadoService {
     ): Response<Empleado>
 
     // 4. Actualizar un empleado (necesitamos el ID en la URL y el objeto en el Body)
-    @PUT("empleados/{id}")
-    suspend fun updateEmpleado(
-        @Path("id") id: Long,
-        @Body empleado: Empleado
-    ): Response<Empleado>
+    @PUT("empleados")
+    suspend fun updateEmpleado(@Body empleado: Empleado): Response<Empleado>
 
     // 5. Borrar un empleado (solo necesitamos mandarle el ID)
     @DELETE("empleados/{id}")

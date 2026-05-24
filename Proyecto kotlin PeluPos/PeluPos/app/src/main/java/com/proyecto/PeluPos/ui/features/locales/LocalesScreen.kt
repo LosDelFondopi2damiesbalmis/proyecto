@@ -129,9 +129,9 @@ fun LocalCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.secondary)
                     Spacer(modifier = Modifier.width(4.dp))
-                    if (local.empleados.isNotEmpty()) {
+                    if (local.empleadoCollection.isNotEmpty()) {
                         Text(
-                            text = local.empleados.joinToString(", ") { it.nombre },
+                            text = local.empleadoCollection.joinToString(", ") { it.nombre },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
                             maxLines = 1,

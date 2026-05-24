@@ -1,24 +1,47 @@
 package com.proyecto.PeluPos.data.mocks.servicio
 
+import com.proyecto.PeluPos.data.services.servicios.ServicioService
 import com.proyecto.PeluPos.models.Servicio
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
-class ServicioRepository @Inject constructor() {
-    private val servicioDaoMock: ServicioDaoMock = ServicioDaoMock()
-    fun getServicios(): List<Servicio> =
-        servicioDaoMock.getAll().toServicios()
+class ServicioRepository @Inject constructor(
+    private val servicioService: ServicioService // 🚀 Inyectamos Retrofit
+) {
 
-    fun getServicio(id: Long): Servicio? =
-        servicioDaoMock.get(id)?.toServicio()
+    suspend fun getServicios(): List<Servicio> {
+        val response = servicioService.getServicios()
+        if (response.isSuccessful) {
+            return response.body() ?: emptyList()
+        } else {
+            throw Exception("Error del servidor al obtener servicios: ${response.code()}")
+        }
+    }
 
-    fun insert(servicio: Servicio): Boolean =
-        servicioDaoMock.insert(servicio.toServicioMock())
+    suspend fun createServicio(servicio: Servicio): Servicio {
+        val response = servicioService.createServicio(servicio)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            throw Exception("No se pudo crear el servicio en el servidor")
+        }
+    }
 
-    fun updateServicio(servicio: Servicio): Boolean =
-        servicioDaoMock.update(servicio.toServicioMock())
+    suspend fun updateServicio(id: Long, servicio: Servicio): Servicio {
+        val response = servicioService.updateServicio(id, servicio)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            throw Exception("No se pudo actualizar el servicio")
+        }
+    }
 
-    fun delete(id: Long): Boolean =
-        servicioDaoMock.delete(id)
+    suspend fun deleteServicio(id: Long) {
+        val response = servicioService.deleteServicio(id)
+        if (!response.isSuccessful) {
+            throw Exception("No se pudo borrar el servicio")
+        }
+    }
 }

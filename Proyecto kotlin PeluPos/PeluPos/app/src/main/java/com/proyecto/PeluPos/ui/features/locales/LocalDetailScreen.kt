@@ -109,13 +109,13 @@ fun LocalDetailScreen(
             // --- 2. LISTA DE EMPLEADOS ---
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "Equipo Asignado (${local.empleados.size})",
+                    text = "Equipo Asignado (${local.empleadoCollection.size})",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
 
-                if (local.empleados.isEmpty()) {
+                if (local.empleadoCollection.isEmpty()) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -135,7 +135,7 @@ fun LocalDetailScreen(
                         }
                     }
                 } else {
-                    local.empleados.forEach { empleado ->
+                    local.empleadoCollection.forEach { empleado ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -214,7 +214,7 @@ fun LocalDetailScreenPreview() {
                     idLocal = 1L,
                     nombre = "Barbería Centro",
                     direccion = "Av. de la Constitución 45, Madrid",
-                    empleados = mutableListOf(empleadoMock1, empleadoMock2)
+                    empleadoCollection = mutableListOf(empleadoMock1, empleadoMock2)
                 ),
                 onBack = {},
                 onEditClick = {}
@@ -233,7 +233,7 @@ fun LocalDetailScreenEmptyPreview() {
                     idLocal = 2L,
                     nombre = "Local Norte (En obras)",
                     direccion = "C/ Gran Vía 12, Bilbao",
-                    empleados = mutableListOf() // Lista vacía
+                    empleadoCollection = mutableListOf() // Lista vacía
                 ),
                 onBack = {},
                 onEditClick = {}

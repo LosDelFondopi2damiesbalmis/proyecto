@@ -1,18 +1,14 @@
 package com.proyecto.PeluPos.di
 
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
-import com.proyecto.PeluPos.data.mocks.SessionRepository
-import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
-import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
-import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
-import com.proyecto.PeluPos.data.mocks.local.LocalRepository
-import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
-import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
-import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
 import com.proyecto.PeluPos.data.services.autentication.AuthInterceptor
 import com.proyecto.PeluPos.data.services.autentication.AuthService
+import com.proyecto.PeluPos.data.services.clientes.ClienteService
 import com.proyecto.PeluPos.data.services.empleados.EmpleadoService
+import com.proyecto.PeluPos.data.services.facturas.FacturaService
+import com.proyecto.PeluPos.data.services.locales.LocalService
 import com.proyecto.PeluPos.data.services.productos.ProductoService
+import com.proyecto.PeluPos.data.services.servicios.ServicioService
 import com.proyecto.PeluPos.data.services.usuarios.UsuarioService
 import dagger.Module
 import dagger.Provides
@@ -41,8 +37,8 @@ class ModuleApp {
     }
     @Provides
     @Singleton
-    fun provideClienteRepository(): ClienteRepository {
-        return ClienteRepository()
+    fun provideClienteService(retrofit: Retrofit): ClienteService {
+        return retrofit.create(ClienteService::class.java)
     }
 
     @Provides
@@ -89,8 +85,8 @@ class ModuleApp {
 
     @Provides
     @Singleton
-    fun provideServicioRepository(): ServicioRepository {
-        return ServicioRepository()
+    fun provideServicioService(retrofit: Retrofit): ServicioService {
+        return retrofit.create(ServicioService::class.java)
     }
     @Provides
     @Singleton
@@ -99,13 +95,13 @@ class ModuleApp {
     }
     @Provides
     @Singleton
-    fun provideLocalesRepository(): LocalRepository {
-        return LocalRepository()
+    fun provideLocalService(retrofit: Retrofit): LocalService {
+        return retrofit.create(LocalService::class.java)
     }
     @Provides
     @Singleton
-    fun provideFacturasRepository(): FacturaRepository {
-        return FacturaRepository()
+    fun provideFacturaService(retrofit: Retrofit): FacturaService {
+        return retrofit.create(FacturaService::class.java)
     }
 
 

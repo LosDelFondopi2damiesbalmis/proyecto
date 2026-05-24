@@ -11,3 +11,40 @@ data class Factura(
     val productos: MutableList<Producto> = mutableListOf(),
     val servicios: MutableList<Servicio> = mutableListOf()
 )
+// Estas clases son solo para "leer" el JSON de la API
+data class FacturaDto(
+    val idFactura: Long,
+    val monto: Double,
+    val fecha: String, // Recibimos el String del JSON
+    val pendiente: Boolean,
+    val tipoPago: String,
+    val idCliente: Cliente, // El JSON devuelve el objeto Cliente completo
+    val idEmpleado: Empleado, // El JSON devuelve el objeto Empleado completo
+    val facturaProductoCollection: List<FacturaProductoDto>,
+    val facturaServicioCollection: List<FacturaServicioDto>
+)
+
+data class FacturaProductoDto(
+    val producto: Producto,
+    val cantidad: Int
+)
+
+data class FacturaServicioDto(
+    val servicio: Servicio,
+    val cantidad: Int
+)
+data class ClienteIdDto(val idCliente: Long)
+
+// Clase envoltorio para el empleado
+data class EmpleadoIdDto(val idEmpleado: Long)
+
+// El DTO que enviaremos a la API en POST y PUT
+data class FacturaRequestDto(
+    val idFactura: Long? = null, // Nullable para el POST (donde el ID lo pone la BD)
+    val monto: Double,
+    val fecha: String,
+    val pendiente: Boolean,
+    val tipoPago: String,
+    val idCliente: ClienteIdDto,
+    val idEmpleado: EmpleadoIdDto
+)

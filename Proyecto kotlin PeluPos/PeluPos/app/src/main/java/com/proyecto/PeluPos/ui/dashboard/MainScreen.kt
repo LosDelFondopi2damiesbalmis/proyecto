@@ -91,7 +91,13 @@ fun MainScreen() {
                         }
                     },
                     onLogout = {
-                        navController.navigate(LoginRoute) { popUpTo(0) }
+                        // 1. Limpiamos el disco y el estado del ViewModel Maestro
+                        vmDashboard.cerrarSesion()
+
+                        // 2. Navegamos
+                        navController.navigate(LoginRoute) {
+                            popUpTo(0) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -104,7 +110,8 @@ fun MainScreen() {
             ) {
                 AppNavHost(
                     navController = navController,
-                    toggleSidebar = { isSidebarVisible = !isSidebarVisible }
+                    toggleSidebar = { isSidebarVisible = !isSidebarVisible },
+                    viewModel = vmDashboard
                 )
             }
         }

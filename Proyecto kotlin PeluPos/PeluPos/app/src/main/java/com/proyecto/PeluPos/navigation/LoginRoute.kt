@@ -21,8 +21,10 @@ object LoginRoute
 
 @Serializable
 object FakePermissionsRoute
+
 @Serializable
 object AccessDeniedRoute
+
 fun NavGraphBuilder.loginDestination(
     navigateToHome: () -> Unit,
     onExitApp: () -> Unit,
@@ -43,9 +45,11 @@ fun NavGraphBuilder.loginDestination(
                 navigateToHome()
             }
         }
+
         LaunchedEffect(Unit) {
             vm.onEvent(LoginEvent.CargarUsuarios)
         }
+
         LoginScreen(
             users = state.usuariosDisponibles,
             errorMessage = state.errorMessage,
@@ -53,15 +57,14 @@ fun NavGraphBuilder.loginDestination(
                 vm.onEvent(LoginEvent.OnLoginClick(usuario, contrasena))
             },
             onCancelClick = onExitApp,
-            onNoAccountClick = {navController.navigate(FakePermissionsRoute)},
+            onNoAccountClick = { navController.navigate(FakePermissionsRoute) },
         )
     }
+
     composable<FakePermissionsRoute> {
         FakePermissionsScreen(
             onAcceptClick = {
-                // Si acepta, lo mandamos al formulario de crear usuario!
-                // Suponiendo que tu ruta del formulario de usuario se llama UsuarioFormRoute
-                navController.navigate(UsuarioFormRoute) {
+                navController.navigate(UsuarioFormRoute(idUsuario = null)) {
                     popUpTo(FakePermissionsRoute) { inclusive = true } // Borramos esta pantalla del historial
                 }
             },
