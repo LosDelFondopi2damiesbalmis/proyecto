@@ -11,7 +11,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.KeyGenerator;
 import peluposbd.TokenVerificado;
 import peluposbd.TokenVerificadoJpaController;
-
+import java.util.Date;
 public class JwtUtil {
 
     // Clave secreta para firmar el JWT
@@ -36,13 +36,13 @@ public class JwtUtil {
         // No vamos ha hacer que el token expire porque entonces necesitaríamos un
         // sistema de doble Token Access (Expitable a los 10 min) y Refresh sin expiración
         // y comprobable a través de una caché de tokens válidos.
-        // long tiempo = System.currentTimeMillis();
-        // final long EXPIRACION_EN_MILISEGUNDOS = 1000 * 60;
+         long tiempo = System.currentTimeMillis();
+       //  final long EXPIRACION_EN_MILISEGUNDOS = 1000 * 60;
         
         String token = Jwts.builder()
                 .subject(idusuario)
-                //.issuedAt(new Date(tiempo))
-                //.expiration(new Date(tiempo + EXPIRACION_EN_MILISEGUNDOS))
+                .issuedAt(new Date(tiempo))
+             //   .expiration(new Date(tiempo + EXPIRACION_EN_MILISEGUNDOS))
                 .claim("rol", rol)
                 .signWith(SECRET_KEY, Jwts.SIG.HS256)
                 .compact();

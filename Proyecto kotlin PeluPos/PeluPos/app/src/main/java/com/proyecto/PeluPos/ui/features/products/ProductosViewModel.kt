@@ -1,5 +1,6 @@
 package com.proyecto.PeluPos.ui.features.products
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.models.Producto
@@ -10,17 +11,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.proyecto.PeluPos.navigation.ProductoFormRoute
 import kotlinx.coroutines.launch
 
 
 @HiltViewModel
 class ProductosViewModel @Inject constructor(
-    private val productoRepository: ProductoRepository
+    private val productoRepository: ProductoRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductosUiState())
     val uiState: StateFlow<ProductosUiState> = _uiState.asStateFlow()
-
+    private val idProductoAEditar = savedStateHandle.toRoute<ProductoFormRoute>().idProducto
     init {
         cargarDatos()
     }
@@ -32,16 +36,40 @@ class ProductosViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
             try {
-                // Llamamos a Tomcat
                 val productosApi = productoRepository.obtenerProductos()
 
-                _uiState.update {
-                    it.copy(
-                        todosLosProductos = productosApi,
-                        productosVisibles = filtrarProductos(productosApi, it.searchQuery),
-                        isLoading = false
+                // 🚀 3. Estado base con la lista
+                var newState = _uiState.value.copy(
+                    todosLosProductos = productosApi,
+                    productosVisibles = filtrarProductos(productosApi, _uiState.value.searchQuery),
+                    isLoading = false
+                )
+
+                // 🚀 4. LA MAGIA DE LA EDICIÓN:
+                // Si la ruta tiene ID, buscamos el producto en la lista recién cargada
+                if (idProductoAEditar != null) {
+                    val prod = productosApi.find { it.idProducto == idProductoAEditar }
+                    if (prod != null) {
+                        newState = newState.copy(
+                            editandoProductoId = prod.idProducto,
+                            formNombre = prod.nombre,
+                            formPrecioCompra = prod.precioCompra.toString(),
+                            formPrecioVenta = prod.precioVenta.toString(),
+                            formStock = prod.stock.toString()
+                        )
+                    }
+                } else {
+                    // Si no hay ID, nos aseguramos de que el formulario esté vacío
+                    newState = newState.copy(
+                        editandoProductoId = null,
+                        formNombre = "",
+                        formPrecioCompra = "",
+                        formPrecioVenta = "",
+                        formStock = ""
                     )
                 }
+
+                _uiState.value = newState
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }

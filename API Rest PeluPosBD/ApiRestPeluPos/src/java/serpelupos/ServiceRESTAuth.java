@@ -23,18 +23,19 @@ import peluposbd.UsuarioJpaController;
 public class ServiceRESTAuth {
 
     private static final String PERSISTENCE_UNIT = "ApiRestPeluPosPU";
-
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(Usuario usuario, @Context ContainerRequestContext requestContext) {
-
+        
         HashMap<String, String> mensaje = new HashMap<>();
         Response.Status statusResul;
         Usuario usuarioEncontrado;
-        try (EntityManagerFactory emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);) {
-            EntityManager em = emf.createEntityManager(); // Usamos el EntityManager directamente
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
             
             // 1. Buscamos al usuario por su NOMBRE (usuario.getUsuario()), no por su ID
             try {
@@ -72,6 +73,11 @@ public class ServiceRESTAuth {
         } catch (Exception ex) {
             statusResul = Response.Status.BAD_REQUEST;
             mensaje.put("mensaje", "Error al procesar la petición " + ex.getLocalizedMessage());
+        }finally {
+            // 🚀 3. CERRAMOS LA CONEXIÓN SIEMPRE, PASE LO QUE PASE
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
 
         Response response = Response

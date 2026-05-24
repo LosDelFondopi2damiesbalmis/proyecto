@@ -50,7 +50,8 @@ fun ServiciosScreen(
     state: ServiciosUiState,
     onEvent: (ServiciosEvent) -> Unit,
     toggleSidebar: () -> Unit,
-    navigateToForm: () -> Unit
+    // 🚨 PONLE EL (Long?) AQUÍ 🚨
+    navigateToForm: (Long?) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -71,8 +72,7 @@ fun ServiciosScreen(
                 searchQuery = state.searchQuery,
                 onSearchChange = { onEvent(ServiciosEvent.OnSearchQueryChange(it)) },
                 onAddClick = {
-                    onEvent(ServiciosEvent.PrepararNuevoServicio)
-                    navigateToForm()
+                    navigateToForm(null)
                 }
             )
 
@@ -89,8 +89,7 @@ fun ServiciosScreen(
                         ServiceCard(
                             servicio = servicio,
                             onClick = {
-                                onEvent(ServiciosEvent.PrepararEdicion(servicio.idServicio))
-                                navigateToForm()
+                                navigateToForm(servicio.idServicio)
                             }
                         )
                     }

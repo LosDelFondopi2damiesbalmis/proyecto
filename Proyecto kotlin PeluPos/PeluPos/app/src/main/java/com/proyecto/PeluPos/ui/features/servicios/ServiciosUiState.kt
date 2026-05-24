@@ -16,7 +16,12 @@ data class ServiciosUiState(
     val formNombre: String = "",
     val formPrecio: String = "",
     val formDescripcion: String = "",
-    val formEmpleadoSeleccionado: Empleado? = null
+    val formEmpleadoSeleccionado: Empleado? = null,
+
+    // 🚀 NUEVO: Banderas de control de red para Retrofit
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 ) {
     val isFormValid: Boolean
         get() = formNombre.isNotBlank() &&

@@ -41,8 +41,8 @@ class EmpleadoRepository @Inject constructor(
     }
 
     // 4. Actualizar empleado
-    suspend fun updateEmpleado(id: Long, empleado: Empleado): Empleado {
-        val response = empleadoService.updateEmpleado(id, empleado)
+    suspend fun updateEmpleado(empleado: Empleado): Empleado {
+        val response = empleadoService.updateEmpleado(empleado)
         if (response.isSuccessful && response.body() != null) {
             return response.body()!!
         } else {

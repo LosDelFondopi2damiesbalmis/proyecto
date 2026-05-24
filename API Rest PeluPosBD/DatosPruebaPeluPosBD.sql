@@ -79,3 +79,4 @@ INSERT INTO Usuario (usuario, contrasena, id_empleado) VALUES
 INSERT INTO usuario (usuario, contrasena, id_empleado, rol_usuario) 
 VALUES ('luciaAdmin', '123456', 5, 'ADMINISTRADOR'),
 	   ('Franco', '123456', 6, 'MANAGER');
+

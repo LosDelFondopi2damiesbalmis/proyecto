@@ -49,10 +49,10 @@ import com.proyecto.PeluPos.models.Usuario
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsuariosScreen(
-    state: UsuariosUiState, // Recibe el estado
-    onEvent: (UsuariosEvent) -> Unit, // Recibe los eventos
-    onNavigateToCreate: () -> Unit,
-    onNavigateToEdit: () -> Unit,
+    state: UsuariosUiState,
+    onEvent: (UsuariosEvent) -> Unit,
+    onNavigateToCreate: () -> Unit, // Este se queda igual (vacío)
+    onNavigateToEdit: (Long) -> Unit, // 🚨 Ponle el (Long) aquí
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -119,8 +119,7 @@ fun UsuariosScreen(
                         }
 
                         IconButton(onClick = {
-                            onEvent(UsuariosEvent.PrepararEdicion(user.idUsuario)) // Cargamos los datos en el ViewModel
-                            onNavigateToEdit()
+                            onNavigateToEdit(user.idUsuario)
                         }) {
                             Icon(Icons.Default.Edit, contentDescription = "Modificar")
                         }

@@ -14,22 +14,32 @@ import com.proyecto.PeluPos.ui.features.locales.LocalesScreen
 import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
 import kotlinx.serialization.Serializable
 
-// Rutas Tipadas
+// ==========================================
+// RUTAS
+// ==========================================
 @Serializable
 object LocalesListRoute
 
 @Serializable
-object LocalFormRoute
+data class LocalFormRoute(
+    val idLocal: Long? = null // 👈 null = Crear, Número = Editar
+)
+
 @Serializable
 data class LocalDetailRoute(val idLocal: Long)
 
+// ==========================================
+// FUNCIÓN DESTINATION
+// ==========================================
 fun NavGraphBuilder.localesDestination(
     toggleSidebar: () -> Unit,
-    navigateToForm: () -> Unit,
+    navigateToForm: (Long?) -> Unit, // 👈 Ahora acepta el ID opcional
     navigateToDetail: (Long) -> Unit,
     onBack: () -> Unit
 ) {
-    // Lista de Locales
+    // ==========================================
+    // 1. LISTA DE LOCALES
+    // ==========================================
     composable<LocalesListRoute> {
         val vm = hiltViewModel<LocalesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
@@ -38,13 +48,19 @@ fun NavGraphBuilder.localesDestination(
             state = state,
             onEvent = vm::onEvent,
             toggleSidebar = toggleSidebar,
-            navigateToForm = navigateToForm,
+            // 🚀 CREAR: Mandamos 'null' a la ruta
+            navigateToForm = { navigateToForm(null) },
             navigateToLocalDetail = navigateToDetail
         )
     }
 
-    // Formulario de Locales
-    composable<LocalFormRoute> {
+    // ==========================================
+    // 2. FORMULARIO DE LOCALES
+    // ==========================================
+    composable<LocalFormRoute> { backStackEntry ->
+        // Extraemos la ruta (Hilt se encargará de pasársela al ViewModel)
+        val routeData = backStackEntry.toRoute<LocalFormRoute>()
+
         val vm = hiltViewModel<LocalesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
@@ -54,6 +70,10 @@ fun NavGraphBuilder.localesDestination(
             onNavigateBack = onBack
         )
     }
+
+    // ==========================================
+    // 3. DETALLE DEL LOCAL
+    // ==========================================
     composable<LocalDetailRoute> { backStackEntry ->
         val vm = hiltViewModel<LocalesViewModel>()
         val route = backStackEntry.toRoute<LocalDetailRoute>()
@@ -65,8 +85,9 @@ fun NavGraphBuilder.localesDestination(
             local = localEncontrado,
             onBack = onBack,
             onEditClick = {
-                vm.onEvent(LocalesEvent.PrepararEdicion(route.idLocal))
-                navigateToForm()
+                // 🧹 ADIÓS AL EVENTO ZOMBI: Borramos vm.onEvent(...)
+                // 🚀 EDITAR: Mandamos el ID real a la navegación
+                navigateToForm(route.idLocal)
             }
         )
     }
