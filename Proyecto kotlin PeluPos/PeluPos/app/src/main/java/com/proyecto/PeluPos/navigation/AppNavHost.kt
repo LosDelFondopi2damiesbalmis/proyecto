@@ -3,35 +3,18 @@ package com.proyecto.PeluPos.navigation
 import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.proyecto.PeluPos.ui.dashboard.DashboardViewModel
-import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
-import com.proyecto.PeluPos.ui.features.empleados.EmpleadosViewModel
-import com.proyecto.PeluPos.ui.features.locales.LocalesViewModel
-import com.proyecto.PeluPos.ui.features.products.ProductosViewModel
-import com.proyecto.PeluPos.ui.features.servicios.ServiciosViewModel
-import com.proyecto.PeluPos.ui.features.tpv.TpvViewModel
-import com.proyecto.PeluPos.ui.features.usuarios.UsuariosViewModel
-import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
 
 
 @Composable
 fun AppNavHost(toggleSidebar: () -> Unit,
-               navController: NavHostController
+               navController: NavHostController,
+               viewModel : DashboardViewModel
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-    val vmTpv = hiltViewModel<TpvViewModel>()
-    val sharedViewModel = hiltViewModel<FacturacionViewModel>()
-    val vmUsuarios = hiltViewModel<UsuariosViewModel>()
-    val vmClientes = hiltViewModel<ClientesViewModel>()
-    val vmLocales = hiltViewModel<LocalesViewModel>()
-    val vmProductos = hiltViewModel<ProductosViewModel>()
-    val vmServicios = hiltViewModel<ServiciosViewModel>()
-    val vmDashboard = hiltViewModel<DashboardViewModel>()
-    val vmEmpleados = hiltViewModel<EmpleadosViewModel>()
     NavHost(
         navController = navController,
         startDestination = LoginRoute
@@ -40,8 +23,8 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         // GRAFO PRINCIPAL: DASHBOARD
         // ==========================================
         dashboardDestination(
-            vm = vmDashboard,
-            toggleSidebar = toggleSidebar
+            toggleSidebar = toggleSidebar,
+            vm = viewModel
         )
         // ==========================================
         // GRAFO 0: LOGIN
@@ -63,7 +46,6 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         // GRAFO 1: TPV
         // ==========================================
         tpvDestination(
-            vm = vmTpv,
             toggleSidebar = toggleSidebar,
             navigateToSales = {
                 navController.navigate(VentasRoute)
@@ -75,63 +57,57 @@ fun AppNavHost(toggleSidebar: () -> Unit,
         )
 
         salesDestination(
-            vm = sharedViewModel,
             toggleSidebar = toggleSidebar,
             navigateToNewSale = {
+                // Al ser un 'object', no necesita ID
                 navController.navigate(AddSaleRoute)
             },
             navigateToSaleDetail = { idFactura ->
-
-                navController.navigate(DetalleVentaRoute(idFactura))
+                // Aquí pasamos el ID que manda la lista
+                navController.navigate(DetalleVentaRoute(idFactura = idFactura))
             },
             onBack = {
                 navController.popBackStack()
             }
         )
-
-        // ==========================================
-        // GRAFO 2: GESTIÓN DE USUARIOS
-        // ==========================================
+//
+//        // ==========================================
+//        // GRAFO 2: GESTIÓN DE USUARIOS
+//        // ==========================================
         usuariosDestination(
-            vm = vmUsuarios,
-            navigateToForm = {
-
-                navController.navigate(UsuarioFormRoute)
+            navigateToForm = { id -> // 👈 1. Añadimos la variable 'id'
+                // 2. Le pasamos el ID a la ruta (null = crea, número = edita)
+                navController.navigate(UsuarioFormRoute(idUsuario = id))
             },
             onBack = {
                 navController.popBackStack()
             }
         )
-        // ==========================================
-        // GRAFO 3: GESTIÓN DE CLIENTES
-        // ==========================================
+//        // ==========================================
+//        // GRAFO 3: GESTIÓN DE CLIENTES
+//        // ==========================================
         clientesDestination(
-            vm = vmClientes,
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                // Navegamos a la pantalla de crear/editar
-                navController.navigate(ClienteFormRoute)
+            navigateToForm = { id -> // 👈 ¡Añadimos la variable 'id' aquí!
+                // Navegamos pasando el ID.
+                // Si 'id' es null -> Crea uno nuevo. Si tiene número -> Edita.
+                navController.navigate(ClienteFormRoute(idCliente = id))
             },
             navigateToDetail = { idCliente ->
-                // Si tienes o vas a crear una pantalla de detalle del cliente, la llamarías así:
-                navController.navigate(ClienteDetailRoute(idCliente))
-
-                // Si aún no la tienes, puedes dejar un println o un Toast por ahora:
-                // println("Navegando al detalle del cliente: $idCliente")
+                navController.navigate(ClienteDetailRoute(idCliente = idCliente))
             },
             onBack = {
                 // Vuelve a la pantalla anterior mágicamente destruyendo el formulario
                 navController.popBackStack()
             }
         )
-        // ==========================================
-        // GRAFO: 4 GESTIÓN DE LOCALES
-        // ==========================================
+//        // ==========================================
+//        // GRAFO: 4 GESTIÓN DE LOCALES
+//        // ==========================================
         localesDestination(
-            vm = vmLocales,
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(LocalFormRoute)
+            navigateToForm = { id ->
+                navController.navigate(LocalFormRoute(idLocal = id))
             },
             onBack = {
                 navController.popBackStack()
@@ -140,43 +116,40 @@ fun AppNavHost(toggleSidebar: () -> Unit,
                 navController.navigate(LocalDetailRoute(idLocal = idDelLocal))
             }
         )
-        // ==========================================
-        // GRAFO: 5 GESTIÓN DE INVENTARIO / PRODUCTOS
-        // ==========================================
+//        // ==========================================
+//        // GRAFO: 5 GESTIÓN DE INVENTARIO / PRODUCTOS
+//        // ==========================================
         productosDestination(
-            vm = vmProductos,
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
+            navigateToForm = { id ->
 
-                navController.navigate(ProductoFormRoute)
+                // 2. Le pasamos el ID a la ruta
+                navController.navigate(ProductoFormRoute(idProducto = id))
             },
             onBack = {
-
                 navController.popBackStack()
             }
         )
-        // ==========================================
-        // GRAFO: 6 GESTIÓN DE SERVICIOS
-        // ==========================================
+//        // ==========================================
+//        // GRAFO: 6 GESTIÓN DE SERVICIOS
+//        // ==========================================
         serviciosDestination(
-            vm = vmServicios,
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(ServicioFormRoute)
+            navigateToForm = { id -> // 👈 Recibe el ID
+                navController.navigate(ServicioFormRoute(idServicio = id))
             },
             onBack = {
-                // Volvemos a la pantalla anterior
                 navController.popBackStack()
             }
         )
-        // ==========================================
-        // GRAFO 7: GESTIÓN DE EMPLEADOS
-        // ==========================================
+//        // ==========================================
+//        // GRAFO 7: GESTIÓN DE EMPLEADOS
+//        // ==========================================
         empleadosDestination(
-            vm = vmEmpleados,
             toggleSidebar = toggleSidebar,
-            navigateToForm = {
-                navController.navigate(EmpleadoFormRoute)
+            navigateToForm = { id -> // 👈 1. Añadimos la variable 'id'
+                // 2. Le pasamos el ID a la ruta (null = crea, número = edita)
+                navController.navigate(EmpleadoFormRoute(idEmpleado = id))
             },
             navigateToStats = { idEmpleado ->
                 navController.navigate(EmpleadoStatsRoute(idEmpleado = idEmpleado))

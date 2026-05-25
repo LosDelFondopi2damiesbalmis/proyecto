@@ -39,7 +39,7 @@ class TpvViewModel @Inject constructor(
 
     private fun cargarCatalogos() {
         viewModelScope.launch {
-            _productosDisponibles.value = productoRepository.getProductos()
+            _productosDisponibles.value = productoRepository.obtenerProductos()
             _serviciosDisponibles.value = servicioRepository.getServicios()
         }
     }

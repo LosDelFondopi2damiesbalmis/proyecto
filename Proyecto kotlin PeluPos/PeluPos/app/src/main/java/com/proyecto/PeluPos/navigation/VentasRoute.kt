@@ -6,11 +6,16 @@ import androidx.navigation.compose.composable
 import com.proyecto.PeluPos.ui.features.ventas.VentasScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.proyecto.PeluPos.ui.features.ventas.AddSaleScreen
 import com.proyecto.PeluPos.ui.features.ventas.DetallesVentaScreen
 import com.proyecto.PeluPos.ui.features.ventas.FacturacionViewModel
+
+// ==========================================
+// RUTAS
+// ==========================================
 @Serializable
 object VentasRoute
 
@@ -18,21 +23,20 @@ object VentasRoute
 object AddSaleRoute
 
 @Serializable
-data class DetalleVentaRoute(val idFactura: Long)
+data class DetalleVentaRoute(val idFactura: Long) // 👈 Perfecto, ya lo tenías bien
 
-
+// ==========================================
+// FUNCIÓN DESTINATION
+// ==========================================
 fun NavGraphBuilder.salesDestination(
-    vm: FacturacionViewModel, // Usamos tu ViewModel unificado
     toggleSidebar: () -> Unit,
     navigateToNewSale: () -> Unit,
     navigateToSaleDetail: (Long) -> Unit,
     onBack: () -> Unit
 ) {
-    // ==========================================
-    // 1. HISTORIAL DE VENTAS
-    // ==========================================
+    // 1. HISTORIAL DE VENTAS (Igual que lo tenías)
     composable<VentasRoute> {
-        // Recolectamos el estado una sola vez
+        val vm = hiltViewModel<FacturacionViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         VentasScreen(
@@ -46,13 +50,13 @@ fun NavGraphBuilder.salesDestination(
         )
     }
 
-    // ==========================================
-    // 2. CREAR NUEVA FACTURA / CERRAR TICKET
-    // ==========================================
+    // 2. CREAR NUEVA FACTURA (Igual que lo tenías)
     composable<AddSaleRoute> {
+        val vm = hiltViewModel<FacturacionViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         AddSaleScreen(
+            // ... todos tus parámetros ...
             productosCart = state.carritoProductos,
             serviciosCart = state.carritoServicios,
             empleadosDisponibles = state.empleadosDisponibles,
@@ -62,24 +66,21 @@ fun NavGraphBuilder.salesDestination(
             tipoPago = state.tipoPago,
             onEvent = vm::onEvent,
             onBack = onBack,
-            onFacturaGuardada = onBack // Al guardar, simplemente volvemos atrás
+            onFacturaGuardada = onBack
         )
     }
 
-    // ==========================================
     // 3. DETALLE DE LA VENTA
-    // ==========================================
     composable<DetalleVentaRoute> { backStackEntry ->
-        // 1. Extraemos el ID tipado de la ruta
         val route = backStackEntry.toRoute<DetalleVentaRoute>()
-
-        // 2. Recolectamos el estado global del ViewModel
+        val vm = hiltViewModel<FacturacionViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
-        // 3. Buscamos la factura en nuestra lista (cache) que coincida con ese ID
+        // ⚠️ ATENCIÓN AQUÍ: Si el ViewModel acaba de nacer, todasLasFacturas puede estar
+        // vacía unos instantes. Tu DetallesVentaScreen debe soportar que le llegue 'null'
+        // y mostrar un "Cargando..." mientras tanto.
         val facturaEncontrada = state.todasLasFacturas.find { it.idFactura == route.idFactura }
 
-        // 4. Se la pasamos ya montada a la pantalla
         DetallesVentaScreen(
             factura = facturaEncontrada,
             onBack = onBack

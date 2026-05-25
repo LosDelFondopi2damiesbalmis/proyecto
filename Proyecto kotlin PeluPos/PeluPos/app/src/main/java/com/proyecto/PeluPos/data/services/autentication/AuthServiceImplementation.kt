@@ -6,7 +6,6 @@ import com.proyecto.PeluPos.models.LoginResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Excepción personalizada tal y como pide tu PDF
 class ApiServicesException(mensaje: String) : Exception(mensaje)
 
 @Singleton
@@ -25,7 +24,6 @@ class AuthServiceImplementation @Inject constructor(
                 Log.d(logTag, response.toString())
                 val dato = response.body()
 
-                // Si el token es null o vacío, lanzamos error aunque sea un 200 OK
                 if (dato?.jwtToken.isNullOrEmpty()) {
                     throw ApiServicesException("Credenciales incorrectas o usuario no encontrado")
                 }
@@ -40,6 +38,27 @@ class AuthServiceImplementation @Inject constructor(
         } catch (e: Exception) {
             Log.e(logTag, "Error de red: ${e.localizedMessage}")
             throw ApiServicesException("No se pudo conectar con el servidor. Comprueba tu conexión.")
+        }
+    }
+
+    // 🚀 NUEVO MÉTODO: Gestiona la petición de logout hacia Retrofit
+    suspend fun logout() {
+        val mensajeError = "Error al intentar cerrar sesión en el servidor"
+
+        try {
+            val response = authService.logout()
+
+            if (response.isSuccessful) {
+                Log.d(logTag, "Logout exitoso en el servidor (código ${response.code()})")
+                // No necesitamos devolver nada, un 200 OK es suficiente
+            } else {
+                val body = response.errorBody()?.string()
+                Log.e(logTag, "$mensajeError (código ${response.code()}): \n$body")
+                throw ApiServicesException(mensajeError)
+            }
+        } catch (e: Exception) {
+            Log.e(logTag, "Error de red en logout: ${e.localizedMessage}")
+            throw ApiServicesException("No se pudo conectar con el servidor para cerrar sesión.")
         }
     }
 }

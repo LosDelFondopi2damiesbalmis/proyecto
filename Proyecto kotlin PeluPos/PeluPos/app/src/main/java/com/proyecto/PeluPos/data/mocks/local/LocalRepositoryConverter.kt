@@ -6,7 +6,7 @@ import com.proyecto.PeluPos.data.mocks.empleado.toEmpleadosMock
 import com.proyecto.PeluPos.models.Local
 
 fun Local.toLocalMock() =
-    LocalMock(idLocal, nombre, direccion, empleados.toEmpleadosMock())
+    LocalMock(idLocal, nombre, direccion, empleadoCollection.toEmpleadosMock())
 
 fun List<Local>.toLocalesMock() =
     map { it.toLocalMock() }

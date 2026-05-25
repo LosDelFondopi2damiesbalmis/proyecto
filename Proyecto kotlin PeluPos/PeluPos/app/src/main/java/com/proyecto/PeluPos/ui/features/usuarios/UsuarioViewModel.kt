@@ -1,6 +1,7 @@
 package com.proyecto.PeluPos.ui.features.usuarios
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
 import com.proyecto.PeluPos.models.RolUsuario
@@ -10,12 +11,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class UsuariosViewModel @Inject constructor(
     private val usuarioRepository: UsuarioRepository,
-    private val empleadoRepository: EmpleadoRepository // ¡Inyectamos el tuyo real!
+    private val empleadoRepository: EmpleadoRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsuariosUiState())
@@ -25,17 +28,33 @@ class UsuariosViewModel @Inject constructor(
         cargarDatos()
     }
 
-
+    // --------------------------------------------------------
+    // 1. CARGAR DATOS (Ahora con internet y Corrutinas)
+    // --------------------------------------------------------
     private fun cargarDatos() {
-        _uiState.update {
-            it.copy(
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                // Descargamos de Tomcat simultáneamente
+                val usuariosApi = usuarioRepository.getUsuarios()
+                val empleadosApi = empleadoRepository.getEmpleados() // Asumo que esto ya lo pasaste a suspend fun
 
-                listaUsuarios = usuarioRepository.getUsuarios(),
-                empleadosDisponibles = empleadoRepository.getEmpleados()
-            )
+                _uiState.update {
+                    it.copy(
+                        listaUsuarios = usuariosApi,
+                        empleadosDisponibles = empleadosApi,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
         }
     }
 
+    // --------------------------------------------------------
+    // 2. EVENTOS (Casi intactos, súper limpios)
+    // --------------------------------------------------------
     fun onEvent(event: UsuariosEvent) {
         when (event) {
             UsuariosEvent.CargarUsuarios -> cargarDatos()
@@ -46,23 +65,26 @@ class UsuariosViewModel @Inject constructor(
                         editandoUsuarioId = null,
                         formNombreUsuario = "",
                         formContrasena = "",
-                        formRol = RolUsuario.EMPLEADO,
+                        formRol = RolUsuario.EMPLEADO, // Asumo que usas un Enum o Constante
                         formEmpleadoSeleccionado = null
                     )
                 }
             }
-            is UsuariosEvent.PrepararEdicion -> { val usuarioAEditar = _uiState.value.listaUsuarios.find { it.idUsuario == event.idUsuario }
+
+            is UsuariosEvent.PrepararEdicion -> {
+                val usuarioAEditar = _uiState.value.listaUsuarios.find { it.idUsuario == event.idUsuario }
                 usuarioAEditar?.let { user ->
                     _uiState.update {
                         it.copy(
                             editandoUsuarioId = user.idUsuario,
-                            formNombreUsuario = user.usuario,
-                            formContrasena = "", // Por seguridad, no cargamos la contraseña antigua en el campo visual
-                            formRol = user.rolUsuario,
+                            formNombreUsuario = user.usuario ?: "",
+                            formContrasena = "", // Por seguridad, no cargamos la contraseña antigua visualmente
+                            formRol = user.rolUsuario ?: RolUsuario.EMPLEADO,
                             formEmpleadoSeleccionado = user.empleado
                         )
                     }
-                } }
+                }
+            }
 
             is UsuariosEvent.OnNombreUsuarioChange -> _uiState.update { it.copy(formNombreUsuario = event.nombre) }
             is UsuariosEvent.OnContrasenaChange -> _uiState.update { it.copy(formContrasena = event.contrasena) }
@@ -70,39 +92,70 @@ class UsuariosViewModel @Inject constructor(
             is UsuariosEvent.OnEmpleadoChange -> _uiState.update { it.copy(formEmpleadoSeleccionado = event.empleado) }
 
             UsuariosEvent.GuardarUsuario -> guardarUsuario()
+
+            // Opcional para limpiar Toast
         }
     }
 
-
+    // --------------------------------------------------------
+    // 3. GUARDAR (POST / PUT)
+    // --------------------------------------------------------
     private fun guardarUsuario() {
         val currentState = _uiState.value
-        val empleado = currentState.formEmpleadoSeleccionado ?: return
+        val empleado = currentState.formEmpleadoSeleccionado
 
+        // Pequeña validación extra de seguridad
+        if (empleado == null) {
+            _uiState.update { it.copy(error = "Debes seleccionar un empleado") }
+            return
+        }
 
+        // Recuperamos la contraseña vieja desde la memoria (listaUsuarios) en vez de llamar al Repo
         val contraseñaFinal = if (currentState.editandoUsuarioId != null && currentState.formContrasena.isBlank()) {
-            val usuarioAntiguo = usuarioRepository.getUsuario(currentState.editandoUsuarioId)
+            val usuarioAntiguo = currentState.listaUsuarios.find { it.idUsuario == currentState.editandoUsuarioId }
             usuarioAntiguo?.contrasena ?: ""
         } else {
             currentState.formContrasena
         }
 
         val nuevoUsuario = Usuario(
-            idUsuario = currentState.editandoUsuarioId
-                ?: System.currentTimeMillis(),
+            // Le añadimos el ?: 0L al final
+            idUsuario = currentState.editandoUsuarioId ?: 0L,
             usuario = currentState.formNombreUsuario,
             contrasena = contraseñaFinal,
             empleado = empleado,
             rolUsuario = currentState.formRol
         )
 
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                // Usamos los métodos de Retrofit que devuelven el String con el "Mensaje de éxito"
+                val mensajeExito = if (currentState.editandoUsuarioId != null) {
+                    usuarioRepository.actualizarUsuario(nuevoUsuario) // O updateUsuario si le dejaste ese nombre
+                } else {
+                    usuarioRepository.crearUsuario(nuevoUsuario)      // O insert si le dejaste ese nombre
+                }
 
-        if (currentState.editandoUsuarioId != null) {
-            usuarioRepository.updateUsuario(nuevoUsuario)
-        } else {
-            usuarioRepository.insert(nuevoUsuario)
+                // Limpiamos el formulario y avisamos a la pantalla
+                _uiState.update {
+                    it.copy(
+                        mensaje = mensajeExito,
+                        isLoading = false,
+                        editandoUsuarioId = null,
+                        formNombreUsuario = "",
+                        formContrasena = "",
+                        formRol = RolUsuario.EMPLEADO,
+                        formEmpleadoSeleccionado = null
+                    )
+                }
+
+                // Recargamos la lista actualizada de la base de datos
+                cargarDatos()
+
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
         }
-
-
-        cargarDatos()
     }
 }

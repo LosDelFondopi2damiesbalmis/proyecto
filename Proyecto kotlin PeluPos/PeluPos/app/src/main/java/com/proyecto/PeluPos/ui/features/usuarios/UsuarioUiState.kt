@@ -16,7 +16,12 @@ data class UsuariosUiState(
     val formNombreUsuario: String = "",
     val formContrasena: String = "",
     val formRol: RolUsuario = RolUsuario.EMPLEADO,
-    val formEmpleadoSeleccionado: Empleado? = null
+    val formEmpleadoSeleccionado: Empleado? = null,
+
+    // NUEVO: Banderas de control para las peticiones a Tomcat
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 ) {
     // Computamos la validación directamente en el estado
     val isFormValid: Boolean

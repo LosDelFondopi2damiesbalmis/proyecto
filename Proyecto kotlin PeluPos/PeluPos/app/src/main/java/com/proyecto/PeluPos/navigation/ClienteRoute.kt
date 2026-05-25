@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.navigation
 
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,20 +13,27 @@ import com.proyecto.PeluPos.ui.features.clientes.ClientesEvent
 import com.proyecto.PeluPos.ui.features.clientes.ClientesScreen
 import com.proyecto.PeluPos.ui.features.clientes.ClientesViewModel
 
+
+// ==========================================
+// RUTAS
+// ==========================================
 @Serializable
 object ClientesListRoute
 
 @Serializable
-object ClienteFormRoute
+data class ClienteFormRoute(
+    val idCliente: Long? = null // 👈 null = Crear, Número = Editar
+)
 
-// Opcional: Si en el futuro vas a crear una pantalla de Detalle del Cliente
 @Serializable
 data class ClienteDetailRoute(val idCliente: Long)
 
+// ==========================================
+// FUNCIÓN DESTINATION
+// ==========================================
 fun NavGraphBuilder.clientesDestination(
-    vm: ClientesViewModel,
     toggleSidebar: () -> Unit,
-    navigateToForm: () -> Unit,
+    navigateToForm: (Long?) -> Unit, // 👈 Ahora acepta el ID opcional
     navigateToDetail: (Long) -> Unit,
     onBack: () -> Unit
 ) {
@@ -33,50 +41,53 @@ fun NavGraphBuilder.clientesDestination(
     // 1. LISTA DE CLIENTES
     // ==========================================
     composable<ClientesListRoute> {
+        val vm = hiltViewModel<ClientesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ClientesScreen(
             state = state,
             onEvent = vm::onEvent,
             toggleSidebar = toggleSidebar,
-            navigateToNewCliente = navigateToForm, // Usamos esta para crear
-            navigateToClienteDetail = navigateToDetail // Para ver el detalle
+            // 🚀 CREAR: Le pasamos 'null' para que abra un formulario vacío
+            navigateToNewCliente = { navigateToForm(null) },
+            navigateToClienteDetail = navigateToDetail
         )
     }
 
     // ==========================================
     // 2. FORMULARIO (Crear/Editar)
     // ==========================================
-    composable<ClienteFormRoute> {
+    composable<ClienteFormRoute> { backStackEntry ->
+        // Extraemos la ruta (aunque Hilt lo leerá por detrás)
+        val routeData = backStackEntry.toRoute<ClienteFormRoute>()
+
+        val vm = hiltViewModel<ClientesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
         ClienteFormScreen(
             state = state,
             onEvent = vm::onEvent,
-            onNavigateBack = onBack // Al guardar o cancelar, simplemente volvemos atrás
+            onNavigateBack = onBack
         )
     }
+
     // ==========================================
     // 3. DETALLE DEL CLIENTE
     // ==========================================
     composable<ClienteDetailRoute> { backStackEntry ->
-        // 1. Extraemos el ID tipado de la ruta
         val route = backStackEntry.toRoute<ClienteDetailRoute>()
-
-        // 2. Recolectamos el estado global del ViewModel de clientes
+        val vm = hiltViewModel<ClientesViewModel>()
         val state by vm.uiState.collectAsStateWithLifecycle()
 
-        // 3. Buscamos el cliente que coincida con el ID
+        // ⚠️ NOTA: Esto asume que el ViewModel del detalle carga todos los clientes
+        // nada más nacer. Si no es así, el clienteEncontrado será null.
         val clienteEncontrado = state.todosLosClientes.find { it.idCliente == route.idCliente }
 
-        // 4. Se lo pasamos a nuestra pantalla stateless
         ClienteDetailScreen(
             cliente = clienteEncontrado,
             onBack = onBack,
             onEditClick = {
-                // Preparamos la edición en el ViewModel y viajamos al formulario
-                vm.onEvent(ClientesEvent.PrepararEdicion(route.idCliente))
-                navigateToForm()
+                navigateToForm(route.idCliente)
             },
             onPayDebtClick = {
                 vm.onEvent(ClientesEvent.SaldarDeuda(route.idCliente))

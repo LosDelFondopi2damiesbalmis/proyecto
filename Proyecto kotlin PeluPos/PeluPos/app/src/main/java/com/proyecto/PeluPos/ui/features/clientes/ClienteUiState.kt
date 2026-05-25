@@ -12,7 +12,12 @@ data class ClientesUiState(
     val editandoClienteId: Long? = null,
     val formNombre: String = "",
     val formTelefono: String = "",
-    val formDeuda: String = "" // Lo guardamos como String para el TextField
+    val formDeuda: String = "", // Lo guardamos como String para el TextField
+
+    // 🚀 NUEVO: Banderas de control de red para Retrofit
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 ) {
     val isFormValid: Boolean
         get() = formNombre.isNotBlank()

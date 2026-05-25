@@ -10,26 +10,71 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
+import com.proyecto.PeluPos.navigation.EmpleadoFormRoute
 
 @HiltViewModel
 class EmpleadosViewModel @Inject constructor(
     private val empleadoRepository: EmpleadoRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    savedStateHandle: SavedStateHandle // 🚀 1. INYECTAMOS LA ANTENA PARA ESCUCHAR LA RUTA
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EmpleadosUiState())
     val uiState: StateFlow<EmpleadosUiState> = _uiState.asStateFlow()
+
+    // 🚀 2. CAPTURAMOS EL ID DE LA RUTA MÁGICAMENTE (Si es null = Crear, Si tiene número = Editar)
+    // Nota: Asegúrate de importar tu EmpleadoFormRoute
+    private val idEmpleadoAEditar = savedStateHandle.toRoute<EmpleadoFormRoute>().idEmpleado
 
     init {
         cargarDatos()
     }
 
     private fun cargarDatos() {
-        _uiState.update {
-            it.copy(
-                empleados = empleadoRepository.getEmpleados(),
-                localesDisponibles = localRepository.getLocales()
-            )
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val listaEmpleados = empleadoRepository.getEmpleados()
+                val listaLocales = localRepository.getLocales()
+
+                // 🚀 3. PREPARAMOS EL ESTADO BASE
+                var newState = _uiState.value.copy(
+                    empleados = listaEmpleados,
+                    localesDisponibles = listaLocales,
+                    isLoading = false
+                )
+
+                // 🚀 4. ¡LA MAGIA DE LA EDICIÓN!
+                // Si la ruta nos pasó un ID, buscamos al empleado y rellenamos el formulario
+                if (idEmpleadoAEditar != null) {
+                    val emp = listaEmpleados.find { it.idEmpleado == idEmpleadoAEditar }
+                    if (emp != null) {
+                        newState = newState.copy(
+                            editandoEmpleadoId = emp.idEmpleado,
+                            formNombre = emp.nombre ?: "",
+                            formCargo = emp.cargo ?: "",
+                            formEmail = emp.email ?: "",
+                            formTelefono = emp.telefono?.toString() ?: "",
+                            formLocalSeleccionado = emp.local
+                        )
+                    }
+                }
+
+                // Guardamos el estado final para que la pantalla lo dibuje
+                _uiState.value = newState
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Error al cargar datos: ${e.message}"
+                    )
+                }
+            }
         }
     }
 
@@ -37,25 +82,12 @@ class EmpleadosViewModel @Inject constructor(
         when (event) {
             EmpleadosEvent.CargarDatos -> cargarDatos()
 
-            EmpleadosEvent.PrepararNuevoEmpleado -> {
-                _uiState.update { it.copy(editandoEmpleadoId = null, formNombre = "", formCargo = "", formEmail = "", formTelefono = "", formLocalSeleccionado = null) }
-            }
-
-            is EmpleadosEvent.PrepararEdicion -> {
-                val empleado = _uiState.value.empleados.find { it.idEmpleado == event.idEmpleado }
-                empleado?.let { emp ->
-                    _uiState.update {
-                        it.copy(
-                            editandoEmpleadoId = emp.idEmpleado,
-                            formNombre = emp.nombre,
-                            formCargo = emp.cargo,
-                            formEmail = emp.email,
-                            formTelefono = emp.telefono.toString().replace("0", ""), // Manejo básico
-                            formLocalSeleccionado = emp.local
-                        )
-                    }
-                }
-            }
+            // 🧹 Estos dos eventos (PrepararNuevoEmpleado y PrepararEdicion)
+            // ya son eventos zombis reales. Ya no se usan nunca desde la UI.
+            // Los dejo aquí para que no te dé error el archivo EmpleadosEvent,
+            // pero podrías borrarlos tranquilamente de tu sealed class en el futuro.
+            EmpleadosEvent.PrepararNuevoEmpleado -> { /* Ya no hace falta */ }
+            is EmpleadosEvent.PrepararEdicion -> { /* Ya no hace falta */ }
 
             is EmpleadosEvent.OnNombreChange -> _uiState.update { it.copy(formNombre = event.nombre) }
             is EmpleadosEvent.OnCargoChange -> _uiState.update { it.copy(formCargo = event.cargo) }
@@ -70,8 +102,9 @@ class EmpleadosViewModel @Inject constructor(
 
     private fun guardarEmpleado() {
         val state = _uiState.value
-        val nuevoEmpleado = Empleado(
-            idEmpleado = state.editandoEmpleadoId ?: System.currentTimeMillis(),
+
+        val empleadoDatos = Empleado(
+            idEmpleado = state.editandoEmpleadoId ?: 0L,
             telefono = state.formTelefono.toLongOrNull() ?: 0L,
             email = state.formEmail,
             cargo = state.formCargo,
@@ -79,18 +112,41 @@ class EmpleadosViewModel @Inject constructor(
             local = state.formLocalSeleccionado
         )
 
-        if (state.editandoEmpleadoId != null) {
-            empleadoRepository.updateEmpleado(nuevoEmpleado)
-        } else {
-            empleadoRepository.insert(nuevoEmpleado)
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoEmpleadoId != null) {
+                    empleadoRepository.updateEmpleado( empleadoDatos)
+                    _uiState.update { it.copy(mensaje = "Empleado actualizado con éxito") }
+                } else {
+                    empleadoRepository.createEmpleado(empleadoDatos)
+                    _uiState.update { it.copy(mensaje = "Empleado guardado con éxito") }
+                }
+
+                cargarDatos()
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Error al guardar: ${e.message}")
+                }
+            }
         }
-        cargarDatos()
     }
 
     private fun borrarEmpleado() {
-        _uiState.value.editandoEmpleadoId?.let { id ->
-            empleadoRepository.delete(id)
-            cargarDatos()
+        val id = _uiState.value.editandoEmpleadoId
+        if (id != null) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                try {
+                    empleadoRepository.deleteEmpleado(id)
+                    _uiState.update { it.copy(mensaje = "Empleado eliminado con éxito") }
+                    cargarDatos()
+                } catch (e: Exception) {
+                    _uiState.update {
+                        it.copy(isLoading = false, error = "Error al borrar: ${e.message}")
+                    }
+                }
+            }
         }
     }
 }

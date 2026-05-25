@@ -19,11 +19,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val sessionRepository: SessionRepository, // Para el usuario logeado
-    private val empleadoRepository: EmpleadoRepository, // Para contar empleados
-    private val localRepository: LocalRepository,       // Para contar locales
-    private val productoRepository: ProductoRepository, // Para el stock
-    private val facturaRepository: FacturaRepository    // Para las últimas ventas (ajusta el nombre si usas otro)
+    private val sessionRepository: SessionRepository,
+    private val empleadoRepository: EmpleadoRepository,
+    private val localRepository: LocalRepository,
+    private val productoRepository: ProductoRepository,
+    private val facturaRepository: FacturaRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -36,21 +36,44 @@ class DashboardViewModel @Inject constructor(
     fun cargarDatos() {
         viewModelScope.launch {
             try {
-                // 1. Cargamos el usuario
+                // ==========================================
+                // 1. CARGAMOS EL USUARIO PRIMERO
+                // ==========================================
                 val usuarioActual = sessionRepository.getUsuarioActual()
-                val nombre = usuarioActual?.empleado?.nombre ?: "Admin"
-                val rol = usuarioActual?.rolUsuario?.name ?: "Sin Rol"
 
-                // 2. Cargamos contadores
+                if (usuarioActual == null || usuarioActual.jwtToken.isNullOrEmpty()) {
+                    println("⚠️ Dashboard abortado: No hay usuario o token válido.")
+                    // 🚀 Le decimos a la UI que deje de cargar y muestre un error
+                    _uiState.update {
+                        it.copy(
+                            nombreUsuarioLogeado = "Sesión no iniciada",
+                            rolUsuarioLogeado = "Error"
+                        )
+                    }
+                    return@launch
+                }
+
+                val nombre = usuarioActual.usuario?: ""
+                val rol = usuarioActual.rolUsuario?: ""
+
+                // 🚀 ACTUALIZAMOS LA UI INMEDIATAMENTE CON EL USUARIO
+                _uiState.update {
+                    it.copy(
+                        nombreUsuarioLogeado = nombre,
+                        rolUsuarioLogeado = rol
+                    )
+                }
+
+                // ==========================================
+                // 2. CARGAMOS EL RESTO DE DATOS PESADOS
+                // ==========================================
                 val empleados = empleadoRepository.getEmpleados().size
                 val locales = localRepository.getLocales().size
 
-                // 3. Cargamos productos
-                val bajoStock = productoRepository.getProductos()
+                val bajoStock = productoRepository.obtenerProductos()
                     .filter { it.stock < 5 }
                     .take(4)
 
-                // 4. Cargamos ventas
                 val facturasReales = facturaRepository.getFacturas()
                     .sortedByDescending { it.idFactura }
                     .take(4)
@@ -58,27 +81,45 @@ class DashboardViewModel @Inject constructor(
                 val ventasFormateadas = facturasReales.map { factura ->
                     Triple(
                         "Hoy",
-                        factura.cliente?.nombre ?: "Anónimo", // <-- Cuidado aquí si cliente es null
+                        factura.cliente?.nombre ?: "Anónimo",
                         "${factura.monto} €"
                     )
                 }
 
-                // 5. Actualizamos el estado
+                // 🚀 ACTUALIZAMOS LA UI CON LOS CONTADORES
                 _uiState.update {
                     it.copy(
-                        nombreUsuarioLogeado = nombre,
-                        rolUsuarioLogeado = rol,
                         totalEmpleados = empleados,
                         totalLocales = locales,
                         productosBajoStock = bajoStock,
                         ultimasVentas = ventasFormateadas
                     )
                 }
+
             } catch (e: Exception) {
-                // Si algo falla, lo imprimimos en el Logcat (la consola de Android Studio)
                 println("🚨 ERROR EN EL DASHBOARD: ${e.message}")
                 e.printStackTrace()
+
+                // Si por algún motivo nos da 401 estando logueados, limpiamos la UI
+                _uiState.update {
+                    it.copy(
+                        nombreUsuarioLogeado = if (it.nombreUsuarioLogeado.contains("Cargando", ignoreCase = true)) "Desconocido" else it.nombreUsuarioLogeado,
+                        rolUsuarioLogeado = if (it.rolUsuarioLogeado.contains("Cargando", ignoreCase = true)) "Error" else it.rolUsuarioLogeado
+                    )
+                }
             }
         }
     }
-}
+    // Dentro de DashboardViewModel.kt
+    fun cerrarSesion() {
+        viewModelScope.launch {
+            // A) Borramos del disco
+            sessionRepository.cerrarSesion()
+
+            // B) 🚀 RESETEAMOS EL ESTADO A CERO
+            // Esto es clave: al crear un objeto DashboardUiState() vacío,
+            // el Sidebar recibe un estado con los valores por defecto (ej: "Cargando...")
+            _uiState.value = DashboardUiState()
+        }
+    }
+    }

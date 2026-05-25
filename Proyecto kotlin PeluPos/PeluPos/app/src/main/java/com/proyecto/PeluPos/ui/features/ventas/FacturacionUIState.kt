@@ -23,5 +23,10 @@ data class FacturacionUiState(
     // Datos Historial
     val todasLasFacturas: List<Factura> = emptyList(), // Cache
     val facturasVisibles: List<Factura> = emptyList(), // Las que se muestran tras filtrar
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+
+    // 🚀 NUEVO: Banderas de control de red para Retrofit
+    val isLoading: Boolean = false,
+    val mensaje: String? = null,
+    val error: String? = null
 )

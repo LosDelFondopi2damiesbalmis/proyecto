@@ -1,15 +1,15 @@
 package com.proyecto.PeluPos.di
 
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
-import com.proyecto.PeluPos.data.mocks.SessionRepository
-import com.proyecto.PeluPos.data.mocks.cliente.ClienteRepository
-import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
-import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
-import com.proyecto.PeluPos.data.mocks.local.LocalRepository
-import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
-import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
-import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
+import com.proyecto.PeluPos.data.services.autentication.AuthInterceptor
 import com.proyecto.PeluPos.data.services.autentication.AuthService
+import com.proyecto.PeluPos.data.services.clientes.ClienteService
+import com.proyecto.PeluPos.data.services.empleados.EmpleadoService
+import com.proyecto.PeluPos.data.services.facturas.FacturaService
+import com.proyecto.PeluPos.data.services.locales.LocalService
+import com.proyecto.PeluPos.data.services.productos.ProductoService
+import com.proyecto.PeluPos.data.services.servicios.ServicioService
+import com.proyecto.PeluPos.data.services.usuarios.UsuarioService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,33 +27,34 @@ class ModuleApp {
 
     @Provides
     @Singleton
-    fun provideProductoRepository(): ProductoRepository {
-        // Como tu repositorio actual no pide parámetros en el constructor,
-        // simplemente lo instanciamos aquí.
-        return ProductoRepository()
+    fun provideProductoService(retrofit: Retrofit): ProductoService {
+        return retrofit.create(ProductoService::class.java)
     }
     @Provides
     @Singleton
-    fun provideUsuarioRepository(): UsuarioRepository {
-        return UsuarioRepository()
+    fun provideUsuarioService(retrofit: Retrofit): UsuarioService {
+        return retrofit.create(UsuarioService::class.java)
     }
     @Provides
     @Singleton
-    fun provideClienteRepository(): ClienteRepository {
-        return ClienteRepository()
+    fun provideClienteService(retrofit: Retrofit): ClienteService {
+        return retrofit.create(ClienteService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        // Esto te permitirá ver las peticiones en el Logcat de Android Studio [cite: 14]
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor // 👈 1. Hilt nos inyecta tu interceptor aquí
+    ): OkHttpClient {
+        // Esto te permitirá ver las peticiones en el Logcat de Android Studio
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         val timeout = 10L
 
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(loggingInterceptor) // El que imprime en el Logcat
+            .addInterceptor(authInterceptor)    // 👈 2. ¡EL QUE PONE EL TOKEN!
             .connectTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
             .writeTimeout(timeout, TimeUnit.SECONDS)
@@ -66,7 +67,7 @@ class ModuleApp {
         return Retrofit.Builder()
             .client(okHttpClient)
             // IMPORTANTE: Cambia "api/" por la ruta base real de tu API en NetBeans [cite: 15]
-            .baseUrl("http://10.0.2.2:8080/PeluPosAPI/api/")
+            .baseUrl("http://192.168.1.109:8080/pelupos/servicio/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -84,23 +85,23 @@ class ModuleApp {
 
     @Provides
     @Singleton
-    fun provideServicioRepository(): ServicioRepository {
-        return ServicioRepository()
+    fun provideServicioService(retrofit: Retrofit): ServicioService {
+        return retrofit.create(ServicioService::class.java)
     }
     @Provides
     @Singleton
-    fun provideEmpleadoRepository(): EmpleadoRepository {
-        return EmpleadoRepository()
+    fun provideEmpleadoService(retrofit: Retrofit): EmpleadoService {
+        return retrofit.create(EmpleadoService::class.java)
     }
     @Provides
     @Singleton
-    fun provideLocalesRepository(): LocalRepository {
-        return LocalRepository()
+    fun provideLocalService(retrofit: Retrofit): LocalService {
+        return retrofit.create(LocalService::class.java)
     }
     @Provides
     @Singleton
-    fun provideFacturasRepository(): FacturaRepository {
-        return FacturaRepository()
+    fun provideFacturaService(retrofit: Retrofit): FacturaService {
+        return retrofit.create(FacturaService::class.java)
     }
 
 

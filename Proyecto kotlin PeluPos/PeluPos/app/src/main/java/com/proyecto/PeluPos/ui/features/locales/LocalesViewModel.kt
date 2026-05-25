@@ -1,6 +1,7 @@
 package com.proyecto.PeluPos.ui.features.locales
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.local.LocalRepository
 import com.proyecto.PeluPos.models.Local
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,26 +26,37 @@ class LocalesViewModel @Inject constructor(
         cargarDatos()
     }
 
-    // --- AQUÍ USAMOS TUS REPOSITORIOS PARA LEER ---
+    // --- AQUÍ USAMOS TUS REPOSITORIOS PARA LEER DESDE RETROFIT ---
     private fun cargarDatos() {
-        // Pedimos los datos reales a tus repositorios
-        val localesReales = localRepository.getLocales()
-        val empleadosReales = empleadoRepository.getEmpleados()
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                // Pedimos los datos reales asíncronamente a Tomcat
+                val localesReales = localRepository.getLocales()
+                val empleadosReales = empleadoRepository.getEmpleados()
 
-        _uiState.update {
-            it.copy(
-                todosLosLocales = localesReales,
-                localesVisibles = filtrarLocales(localesReales, it.searchQuery),
-                empleadosDisponibles = empleadosReales
-            )
+                _uiState.update {
+                    it.copy(
+                        todosLosLocales = localesReales,
+                        localesVisibles = filtrarLocales(lista = localesReales, query = it.searchQuery),
+                        empleadosDisponibles = empleadosReales,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                // Captura fallos de red o errores de Tomcat (como un 401 sin token)
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Error al cargar datos: ${e.message}")
+                }
+            }
         }
     }
 
     private fun filtrarLocales(lista: List<Local>, query: String): List<Local> {
         if (query.isBlank()) return lista
         return lista.filter {
-            it.nombre.contains(query, ignoreCase = true) ||
-                    it.direccion.contains(query, ignoreCase = true)
+            (it.nombre?.contains(query, ignoreCase = true) ?: false) ||
+                    (it.direccion?.contains(query, ignoreCase = true) ?: false)
         }
     }
 
@@ -66,7 +79,9 @@ class LocalesViewModel @Inject constructor(
                         editandoLocalId = null,
                         formNombre = "",
                         formDireccion = "",
-                        formEmpleadosSeleccionados = emptyList()
+                        formEmpleadosSeleccionados = emptyList(),
+                        mensaje = null,
+                        error = null
                     )
                 }
             }
@@ -77,9 +92,11 @@ class LocalesViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             editandoLocalId = loc.idLocal,
-                            formNombre = loc.nombre,
-                            formDireccion = loc.direccion,
-                            formEmpleadosSeleccionados = loc.empleados.toList()
+                            formNombre = loc.nombre ?: "",
+                            formDireccion = loc.direccion ?: "",
+                            formEmpleadosSeleccionados = loc.empleadoCollection?.toList() ?: emptyList(),
+                            mensaje = null,
+                            error = null
                         )
                     }
                 }
@@ -87,6 +104,7 @@ class LocalesViewModel @Inject constructor(
 
             is LocalesEvent.OnNombreChange -> _uiState.update { it.copy(formNombre = event.nombre) }
             is LocalesEvent.OnDireccionChange -> _uiState.update { it.copy(formDireccion = event.direccion) }
+
             is LocalesEvent.OnAddEmpleado -> {
                 val seleccionados = _uiState.value.formEmpleadosSeleccionados.toMutableList()
                 if (!seleccionados.contains(event.empleado)) {
@@ -102,31 +120,63 @@ class LocalesViewModel @Inject constructor(
             }
 
             is LocalesEvent.GuardarLocal -> guardarLocal()
+
             is LocalesEvent.BorrarLocal -> {
                 _uiState.value.editandoLocalId?.let { id ->
-                    localRepository.delete(id)
-                    cargarDatos()
+                    // 🚀 Migrado a corrutina para llamar de forma segura a la API
+                    viewModelScope.launch {
+                        _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+                        try {
+                            localRepository.deleteLocal(id)
+                            _uiState.update { it.copy(mensaje = "Local eliminado correctamente") }
+
+                            cargarDatos() // Recargamos lista completa de Tomcat
+                            onEvent(LocalesEvent.PrepararNuevoLocal) // Limpiamos campos
+                        } catch (e: Exception) {
+                            _uiState.update {
+                                it.copy(isLoading = false, error = "No se pudo eliminar: ${e.message}")
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    // --- AQUÍ USAMOS TU REPOSITORIO PARA GUARDAR ---
+    // --- AQUÍ USAMOS TU REPOSITORIO PARA GUARDAR EN INTERNET VIA RETROFIT ---
     private fun guardarLocal() {
         val state = _uiState.value
-        val nuevoLocal = Local(
-            idLocal = state.editandoLocalId ?: System.currentTimeMillis(),
+
+        // Mapeamos los datos recogidos del estado del formulario
+        val localDatos = Local(
+            // ⚠️ Importante: Mandamos 0L en nuevos para activar el AUTO_INCREMENT de MySQL
+            idLocal = state.editandoLocalId ?: 0L,
             nombre = state.formNombre,
             direccion = state.formDireccion,
-            empleados = state.formEmpleadosSeleccionados.toMutableList()
+            empleadoCollection = state.formEmpleadosSeleccionados.toMutableList()
         )
 
-        if (state.editandoLocalId != null) {
-            localRepository.updateLocal(nuevoLocal) // Modificar existente
-        } else {
-            localRepository.insert(nuevoLocal) // Crear nuevo
-        }
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                if (state.editandoLocalId != null) {
+                    // 🔄 ACTUALIZAR (PUT): Enviamos el ID de la ruta de Retrofit y el cuerpo
+                    localRepository.updateLocal(state.editandoLocalId, localDatos)
+                    _uiState.update { it.copy(mensaje = "Local actualizado con éxito") }
+                } else {
+                    // ➕ CREAR (POST): Enviamos los datos del nuevo local a Tomcat
+                    localRepository.createLocal(localDatos)
+                    _uiState.update { it.copy(mensaje = "Local guardado con éxito") }
+                }
 
-        cargarDatos() // ¡Recargamos la lista automáticamente!
+                cargarDatos() // Volvemos a traer los datos actualizados del servidor
+                onEvent(LocalesEvent.PrepararNuevoLocal) // Reseteamos el formulario
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Error al procesar: ${e.message}")
+                }
+            }
+        }
     }
 }
