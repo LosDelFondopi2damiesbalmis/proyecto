@@ -33,7 +33,7 @@ data class ClienteDetailRoute(val idCliente: Long)
 // ==========================================
 fun NavGraphBuilder.clientesDestination(
     toggleSidebar: () -> Unit,
-    navigateToForm: (Long?) -> Unit, // 👈 Ahora acepta el ID opcional
+    navigateToForm: (Long?) -> Unit,
     navigateToDetail: (Long) -> Unit,
     onBack: () -> Unit
 ) {
@@ -48,8 +48,7 @@ fun NavGraphBuilder.clientesDestination(
             state = state,
             onEvent = vm::onEvent,
             toggleSidebar = toggleSidebar,
-            // 🚀 CREAR: Le pasamos 'null' para que abra un formulario vacío
-            navigateToNewCliente = { navigateToForm(null) },
+            navigateToForm = { id -> navigateToForm(id) },
             navigateToClienteDetail = navigateToDetail
         )
     }

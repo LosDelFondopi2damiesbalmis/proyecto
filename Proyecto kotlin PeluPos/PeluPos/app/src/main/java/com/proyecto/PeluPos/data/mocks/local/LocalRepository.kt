@@ -41,8 +41,8 @@ class LocalRepository @Inject constructor(
     }
 
     // 4. Actualizar un local existente
-    suspend fun updateLocal(id: Long, local: Local): Local {
-        val response = localService.updateLocal(id, local)
+    suspend fun updateLocal(local: Local): Local {
+        val response = localService.updateLocal(local)
         if (response.isSuccessful && response.body() != null) {
             return response.body()!!
         } else {

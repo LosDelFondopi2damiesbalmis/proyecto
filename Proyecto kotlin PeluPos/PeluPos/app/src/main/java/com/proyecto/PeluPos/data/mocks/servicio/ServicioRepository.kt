@@ -29,8 +29,8 @@ class ServicioRepository @Inject constructor(
         }
     }
 
-    suspend fun updateServicio(id: Long, servicio: Servicio): Servicio {
-        val response = servicioService.updateServicio(id, servicio)
+    suspend fun updateServicio(servicio: Servicio): Servicio {
+        val response = servicioService.updateServicio(servicio)
         if (response.isSuccessful && response.body() != null) {
             return response.body()!!
         } else {

@@ -49,7 +49,7 @@ fun NavGraphBuilder.localesDestination(
             onEvent = vm::onEvent,
             toggleSidebar = toggleSidebar,
             // 🚀 CREAR: Mandamos 'null' a la ruta
-            navigateToForm = { navigateToForm(null) },
+            navigateToForm = { id -> navigateToForm(id) },
             navigateToLocalDetail = navigateToDetail
         )
     }

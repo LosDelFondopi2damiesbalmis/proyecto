@@ -7,7 +7,7 @@ import com.proyecto.PeluPos.models.Empleado
 
 
 fun Empleado.toEmpleadoMock() =
-    EmpleadoMock(idEmpleado, telefono, email, cargo, nombre, local?.toLocalMock())
+    EmpleadoMock(idEmpleado, telefono, email, cargo, nombre, idLocal?.toLocalMock())
 
 fun List<Empleado>.toEmpleadosMock(): List<EmpleadoMock> =
     map { it.toEmpleadoMock() }

@@ -87,9 +87,9 @@ fun EmpleadosScreen(
                             Text(empleado.nombre, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Text(empleado.cargo, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(empleado.email, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            if (empleado.local != null) {
+                            if (empleado.idLocal != null) {
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("📍 ${empleado.local!!.nombre}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+                                Text("📍 ${empleado.idLocal!!.nombre}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
                             }
                         }
                         IconButton(onClick = { onNavigateToStats(empleado.idEmpleado) }) {

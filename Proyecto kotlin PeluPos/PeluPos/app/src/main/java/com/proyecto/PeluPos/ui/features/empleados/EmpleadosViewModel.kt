@@ -59,7 +59,7 @@ class EmpleadosViewModel @Inject constructor(
                             formCargo = emp.cargo ?: "",
                             formEmail = emp.email ?: "",
                             formTelefono = emp.telefono?.toString() ?: "",
-                            formLocalSeleccionado = emp.local
+                            formLocalSeleccionado = emp.idLocal
                         )
                     }
                 }
@@ -109,7 +109,7 @@ class EmpleadosViewModel @Inject constructor(
             email = state.formEmail,
             cargo = state.formCargo,
             nombre = state.formNombre,
-            local = state.formLocalSeleccionado
+            idLocal = state.formLocalSeleccionado
         )
 
         viewModelScope.launch {

@@ -17,8 +17,8 @@ interface ServicioService {
     @POST("servicios")
     suspend fun createServicio(@Body servicio: Servicio): Response<Servicio>
 
-    @PUT("servicios/{id}")
-    suspend fun updateServicio(@Path("id") id: Long, @Body servicio: Servicio): Response<Servicio>
+    @PUT("servicios")
+    suspend fun updateServicio(@Body servicio: Servicio): Response<Servicio>
 
     @DELETE("servicios/{id}")
     suspend fun deleteServicio(@Path("id") id: Long): Response<Unit>
