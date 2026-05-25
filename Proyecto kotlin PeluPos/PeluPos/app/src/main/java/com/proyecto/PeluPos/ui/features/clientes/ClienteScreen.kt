@@ -42,7 +42,7 @@ fun ClientesScreen(
     state: ClientesUiState,
     onEvent: (ClientesEvent) -> Unit,
     toggleSidebar: () -> Unit,
-    navigateToNewCliente: () -> Unit,
+    navigateToForm: (Long?) -> Unit,
     navigateToClienteDetail: (Long) -> Unit
 ) {
     Scaffold(
@@ -55,7 +55,7 @@ fun ClientesScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(ClientesEvent.PrepararNuevoCliente)
-                navigateToNewCliente()
+                navigateToForm(null)
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Añadir Cliente")
             }
@@ -99,8 +99,7 @@ fun ClientesScreen(
                         ClienteListItem(
                             cliente = cliente,
                             onEditClick = {
-                                onEvent(ClientesEvent.PrepararEdicion(cliente.idCliente))
-                                navigateToNewCliente() // Usamos la misma ruta para editar
+                                navigateToForm(cliente.idCliente) // Usamos la misma ruta para editar
                             },
                             onDetailClick = { navigateToClienteDetail(cliente.idCliente) }
                         )
@@ -194,7 +193,7 @@ fun ClienteScreenPreview() {
                 ),
                 onEvent = {}, // Vacío porque en Preview no hacemos clics reales
                 toggleSidebar = {},
-                navigateToNewCliente = {},
+                navigateToForm = {},
                 navigateToClienteDetail = {}
             )
         }

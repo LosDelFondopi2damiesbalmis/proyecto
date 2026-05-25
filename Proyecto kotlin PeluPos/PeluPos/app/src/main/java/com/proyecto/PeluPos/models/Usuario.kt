@@ -12,6 +12,6 @@ data class Usuario(
     var usuario: String,
     var contrasena: String,
     @SerializedName("idEmpleado")
-    val empleado: Empleado,
+    val empleado: Empleado? = null,
     val rolUsuario: RolUsuario
 )

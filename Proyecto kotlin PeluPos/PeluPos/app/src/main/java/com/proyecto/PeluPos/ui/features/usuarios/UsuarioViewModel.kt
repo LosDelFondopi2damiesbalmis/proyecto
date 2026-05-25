@@ -1,11 +1,14 @@
 package com.proyecto.PeluPos.ui.features.usuarios
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.usuario.UsuarioRepository
 import com.proyecto.PeluPos.models.RolUsuario
 import com.proyecto.PeluPos.models.Usuario
+import com.proyecto.PeluPos.navigation.UsuarioFormRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UsuariosViewModel @Inject constructor(
     private val usuarioRepository: UsuarioRepository,
-    private val empleadoRepository: EmpleadoRepository
+    private val empleadoRepository: EmpleadoRepository,
+    private val savedStateHandle: SavedStateHandle // 🚀 1. INYECTAMOS LA ANTENA
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsuariosUiState())
@@ -29,7 +33,7 @@ class UsuariosViewModel @Inject constructor(
     }
 
     // --------------------------------------------------------
-    // 1. CARGAR DATOS (Ahora con internet y Corrutinas)
+    // 1. CARGAR DATOS (Ahora lee la ruta dinámicamente)
     // --------------------------------------------------------
     private fun cargarDatos() {
         viewModelScope.launch {
@@ -37,15 +41,44 @@ class UsuariosViewModel @Inject constructor(
             try {
                 // Descargamos de Tomcat simultáneamente
                 val usuariosApi = usuarioRepository.getUsuarios()
-                val empleadosApi = empleadoRepository.getEmpleados() // Asumo que esto ya lo pasaste a suspend fun
+                val empleadosApi = empleadoRepository.getEmpleados()
 
-                _uiState.update {
-                    it.copy(
-                        listaUsuarios = usuariosApi,
-                        empleadosDisponibles = empleadosApi,
-                        isLoading = false
+                // 🚀 2. CAPTURAMOS EL ID DE LA RUTA EN ESTE MOMENTO EXACTO
+                // Asegúrate de importar tu UsuarioFormRoute aquí
+                val idDesdeRuta = savedStateHandle.toRoute<UsuarioFormRoute>().idUsuario
+
+                // 🚀 3. PREPARAMOS EL ESTADO BASE
+                var newState = _uiState.value.copy(
+                    listaUsuarios = usuariosApi,
+                    empleadosDisponibles = empleadosApi,
+                    isLoading = false
+                )
+
+                // 🚀 4. ¡LA MAGIA DE LA EDICIÓN AUTOMÁTICA!
+                if (idDesdeRuta != null) {
+                    val user = usuariosApi.find { it.idUsuario == idDesdeRuta }
+                    if (user != null) {
+                        newState = newState.copy(
+                            editandoUsuarioId = user.idUsuario,
+                            formNombreUsuario = user.usuario ?: "",
+                            formContrasena = "", // Por seguridad, no cargamos la contraseña visualmente
+                            formRol = user.rolUsuario ?: RolUsuario.EMPLEADO,
+                            formEmpleadoSeleccionado = user.empleado
+                        )
+                    }
+                } else {
+                    // MODO "CREAR": Limpiamos los campos para arrancar en blanco de forma segura
+                    newState = newState.copy(
+                        editandoUsuarioId = null,
+                        formNombreUsuario = "",
+                        formContrasena = "",
+                        formRol = RolUsuario.EMPLEADO,
+                        formEmpleadoSeleccionado = null
                     )
                 }
+
+                _uiState.value = newState
+
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
@@ -53,38 +86,15 @@ class UsuariosViewModel @Inject constructor(
     }
 
     // --------------------------------------------------------
-    // 2. EVENTOS (Casi intactos, súper limpios)
+    // 2. EVENTOS (Zombies eliminados)
     // --------------------------------------------------------
     fun onEvent(event: UsuariosEvent) {
         when (event) {
             UsuariosEvent.CargarUsuarios -> cargarDatos()
 
-            UsuariosEvent.PrepararNuevoUsuario -> {
-                _uiState.update {
-                    it.copy(
-                        editandoUsuarioId = null,
-                        formNombreUsuario = "",
-                        formContrasena = "",
-                        formRol = RolUsuario.EMPLEADO, // Asumo que usas un Enum o Constante
-                        formEmpleadoSeleccionado = null
-                    )
-                }
-            }
-
-            is UsuariosEvent.PrepararEdicion -> {
-                val usuarioAEditar = _uiState.value.listaUsuarios.find { it.idUsuario == event.idUsuario }
-                usuarioAEditar?.let { user ->
-                    _uiState.update {
-                        it.copy(
-                            editandoUsuarioId = user.idUsuario,
-                            formNombreUsuario = user.usuario ?: "",
-                            formContrasena = "", // Por seguridad, no cargamos la contraseña antigua visualmente
-                            formRol = user.rolUsuario ?: RolUsuario.EMPLEADO,
-                            formEmpleadoSeleccionado = user.empleado
-                        )
-                    }
-                }
-            }
+            // 🧹 ESTOS EVENTOS YA SON ZOMBIS. Ya no hace falta dispararlos desde la UI.
+            UsuariosEvent.PrepararNuevoUsuario -> { }
+            is UsuariosEvent.PrepararEdicion -> { }
 
             is UsuariosEvent.OnNombreUsuarioChange -> _uiState.update { it.copy(formNombreUsuario = event.nombre) }
             is UsuariosEvent.OnContrasenaChange -> _uiState.update { it.copy(formContrasena = event.contrasena) }
@@ -92,8 +102,6 @@ class UsuariosViewModel @Inject constructor(
             is UsuariosEvent.OnEmpleadoChange -> _uiState.update { it.copy(formEmpleadoSeleccionado = event.empleado) }
 
             UsuariosEvent.GuardarUsuario -> guardarUsuario()
-
-            // Opcional para limpiar Toast
         }
     }
 
@@ -104,13 +112,12 @@ class UsuariosViewModel @Inject constructor(
         val currentState = _uiState.value
         val empleado = currentState.formEmpleadoSeleccionado
 
-        // Pequeña validación extra de seguridad
         if (empleado == null) {
             _uiState.update { it.copy(error = "Debes seleccionar un empleado") }
             return
         }
 
-        // Recuperamos la contraseña vieja desde la memoria (listaUsuarios) en vez de llamar al Repo
+        // Recuperamos la contraseña vieja desde la memoria si estamos editando y el campo está en blanco
         val contraseñaFinal = if (currentState.editandoUsuarioId != null && currentState.formContrasena.isBlank()) {
             val usuarioAntiguo = currentState.listaUsuarios.find { it.idUsuario == currentState.editandoUsuarioId }
             usuarioAntiguo?.contrasena ?: ""
@@ -119,7 +126,6 @@ class UsuariosViewModel @Inject constructor(
         }
 
         val nuevoUsuario = Usuario(
-            // Le añadimos el ?: 0L al final
             idUsuario = currentState.editandoUsuarioId ?: 0L,
             usuario = currentState.formNombreUsuario,
             contrasena = contraseñaFinal,
@@ -130,27 +136,16 @@ class UsuariosViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
             try {
-                // Usamos los métodos de Retrofit que devuelven el String con el "Mensaje de éxito"
                 val mensajeExito = if (currentState.editandoUsuarioId != null) {
-                    usuarioRepository.actualizarUsuario(nuevoUsuario) // O updateUsuario si le dejaste ese nombre
+                    usuarioRepository.actualizarUsuario(nuevoUsuario)
                 } else {
-                    usuarioRepository.crearUsuario(nuevoUsuario)      // O insert si le dejaste ese nombre
+                    usuarioRepository.crearUsuario(nuevoUsuario)
                 }
 
-                // Limpiamos el formulario y avisamos a la pantalla
-                _uiState.update {
-                    it.copy(
-                        mensaje = mensajeExito,
-                        isLoading = false,
-                        editandoUsuarioId = null,
-                        formNombreUsuario = "",
-                        formContrasena = "",
-                        formRol = RolUsuario.EMPLEADO,
-                        formEmpleadoSeleccionado = null
-                    )
-                }
+                _uiState.update { it.copy(mensaje = mensajeExito) }
 
-                // Recargamos la lista actualizada de la base de datos
+                // Recargamos la lista. Al ejecutarse 'cargarDatos()', si la ruta ya no tiene el ID,
+                // el propio flujo limpiará el estado del formulario automáticamente.
                 cargarDatos()
 
             } catch (e: Exception) {

@@ -188,7 +188,7 @@ private val empleadoMock1 = Empleado(
     email = "carlos@pelupos.com",
     cargo = "Barbero",
     nombre = "Carlos Ruiz",
-    local = null
+    idLocal = null
 )
 
 private val empleadoMock2 = Empleado(
@@ -197,7 +197,7 @@ private val empleadoMock2 = Empleado(
     email = "elena@pelupos.com",
     cargo = "Estilista",
     nombre = "Elena Gómez",
-    local = null
+    idLocal = null
 )
 
 // ==========================================

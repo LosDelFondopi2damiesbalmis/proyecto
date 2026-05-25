@@ -20,8 +20,8 @@ interface LocalService {
     @POST("locales")
     suspend fun createLocal(@Body local: Local): Response<Local>
 
-    @PUT("locales/{id}")
-    suspend fun updateLocal(@Path("id") id: Long, @Body local: Local): Response<Local>
+    @PUT("locales")
+    suspend fun updateLocal(@Body local: Local): Response<Local>
 
     @DELETE("locales/{id}")
     suspend fun deleteLocal(@Path("id") id: Long): Response<Unit>

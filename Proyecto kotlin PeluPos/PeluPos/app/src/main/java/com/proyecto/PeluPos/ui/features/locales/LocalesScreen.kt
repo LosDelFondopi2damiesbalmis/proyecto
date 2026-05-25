@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -16,8 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Local
+import com.proyecto.PeluPos.ui.features.empleados.EmpleadosEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,9 +30,24 @@ fun LocalesScreen(
     state: LocalesUiState,
     onEvent: (LocalesEvent) -> Unit,
     toggleSidebar: () -> Unit,
-    navigateToForm: () -> Unit,
+    navigateToForm: (Long?) -> Unit,
     navigateToLocalDetail: (Long) -> Unit // 1. <-- AÑADIMOS ESTA FUNCIÓN
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // ON_RESUME significa "La pantalla acaba de aparecer frente al usuario"
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Llama al evento que recarga los datos desde tu base de datos
+                onEvent(LocalesEvent.CargarDatos)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -38,7 +58,7 @@ fun LocalesScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(LocalesEvent.PrepararNuevoLocal)
-                navigateToForm()
+                navigateToForm(null)
             }) {
                 Icon(Icons.Default.Add, "Nuevo Local")
             }
@@ -69,8 +89,7 @@ fun LocalesScreen(
                     LocalCard(
                         local = local,
                         onEditClick = {
-                            onEvent(LocalesEvent.PrepararEdicion(local.idLocal))
-                            navigateToForm()
+                            navigateToForm(local.idLocal)
                         },
                         onDetailClick = { // 2. <-- PASAMOS EL ID AL HACER CLIC
                             navigateToLocalDetail(local.idLocal)

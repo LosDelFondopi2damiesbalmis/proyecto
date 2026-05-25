@@ -20,14 +20,13 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ClientesViewModel @Inject constructor(
     private val clienteRepository: ClienteRepository,
-    savedStateHandle: SavedStateHandle // 🚀 1. INYECTAMOS LA ANTENA
+    private val savedStateHandle: SavedStateHandle // 🚀 1. INYECTAMOS LA ANTENA
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ClientesUiState())
     val uiState: StateFlow<ClientesUiState> = _uiState.asStateFlow()
 
-    // 🚀 2. CAPTURAMOS EL ID DE LA RUTA (ClienteFormRoute)
-    private val idClienteAEditar = savedStateHandle.toRoute<ClienteFormRoute>().idCliente
+
 
     init {
         cargarDatos()
@@ -39,15 +38,19 @@ class ClientesViewModel @Inject constructor(
             try {
                 val clientes = clienteRepository.getClientes()
 
+                // 🚀 2. LEEMOS LA RUTA AQUÍ (Para que siempre esté fresca)
+                val idDesdeRuta = savedStateHandle.toRoute<ClienteFormRoute>().idCliente
+
                 _uiState.update { state ->
-                    // Creamos el nuevo estado base
                     var newState = state.copy(
                         todosLosClientes = clientes,
                         clientesVisibles = filtrarClientes(clientes, state.searchQuery),
                         isLoading = false
                     )
-                    idClienteAEditar?.let { id ->
-                        val cli = clientes.find { it.idCliente == id }
+
+                    // 🚀 3. COMPROBAMOS EL ID FRESCO
+                    if (idDesdeRuta != null) {
+                        val cli = clientes.find { it.idCliente == idDesdeRuta }
                         if (cli != null) {
                             newState = newState.copy(
                                 editandoClienteId = cli.idCliente,
@@ -56,6 +59,14 @@ class ClientesViewModel @Inject constructor(
                                 formDeuda = cli.deuda?.toString() ?: "0.0"
                             )
                         }
+                    } else {
+                        // 🚀 4. ¡EL ELSE MÁGICO! Vacía los campos cuando es "Crear Nuevo"
+                        newState = newState.copy(
+                            editandoClienteId = null,
+                            formNombre = "",
+                            formTelefono = "",
+                            formDeuda = "0.0"
+                        )
                     }
                     newState
                 }

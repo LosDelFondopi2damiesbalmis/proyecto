@@ -3,5 +3,5 @@ data class Local(
     val idLocal: Long,
     var nombre: String,
     var direccion: String,
-    val empleadoCollection: MutableList<Empleado> = mutableListOf()
+    val empleadoCollection: List<Empleado> = emptyList()
 )
