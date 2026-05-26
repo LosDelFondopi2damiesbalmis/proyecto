@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,59 +22,61 @@ import com.proyecto.PeluPos.models.Local
 fun EmpleadoStatsScreen(
     empleadoId: Long,
     onBackClick: () -> Unit,
-    // 1. Inyectamos el ViewModel que ya tienes cargado con toda la lista
-    viewModel: EmpleadosViewModel = hiltViewModel()
+    // El ViewModel de la lista general para sacar el nombre del empleado
+    empleadosViewModel: EmpleadosViewModel = hiltViewModel(),
+    // 🚀 NUESTRO NUEVO VIEWMODEL DE ESTADÍSTICAS
+    statsViewModel: EmpleadoStatsViewModel = hiltViewModel()
 ) {
-    // 2. Observamos el estado.
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val empleadosState by empleadosViewModel.uiState.collectAsStateWithLifecycle()
+    val empleado = empleadosState.empleados.find { it.idEmpleado == empleadoId }
 
-    // 3. Buscamos al empleado en la lista que ya está en memoria
-    val empleado = state.empleados.find { it.idEmpleado == empleadoId }
+    // El estado con los cálculos matemáticos de Kotlin
+    val statsState by statsViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(empleadoId) {
+        // Lanzamos el cálculo en Kotlin
+        statsViewModel.cargarEstadisticasDesdeKotlin(empleadoId)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Rendimiento", fontWeight = FontWeight.Bold) },
+                title = { Text("Rendimiento del Mes", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                    }
+                    IconButton(onClick = onBackClick) { Icon(Icons.Default.ArrowBack, "Volver") }
                 }
             )
         }
     ) { paddingValues ->
-        // 4. Si el empleado existe, mostramos sus datos reales
         if (empleado != null) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Empleado: ${empleado.nombre}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(empleado.nombre, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Text("Cargo: ${empleado.cargo}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text("Email: ${empleado.email}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                Text("Estadísticas del mes actual", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    // Aquí podrías mostrar datos de tu modelo si los añades
-                    MetricCard(title = "Local", value = empleado.idLocal?.nombre ?: "Sin local", modifier = Modifier.weight(1f))
-                    MetricCard(title = "ID Empleado", value = empleado.idEmpleado.toString(), modifier = Modifier.weight(1f))
+                if (statsState.isLoading) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else if (statsState.error != null) {
+                    Text(statsState.error!!, color = MaterialTheme.colorScheme.error)
+                } else {
+                    // 🚀 AQUÍ PONEMOS LOS RESULTADOS CALCULADOS EN KOTLIN
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        MetricCard(title = "Productos", value = statsState.productosVendidos.toString(), modifier = Modifier.weight(1f))
+                        MetricCard(title = "Servicios", value = statsState.serviciosRealizados.toString(), modifier = Modifier.weight(1f))
+                    }
+                    MetricCard(
+                        title = "Total Facturado",
+                        value = String.format("%.2f €", statsState.totalFacturado),
+                        modifier = Modifier.fillMaxWidth(),
+                        isPrimary = true
+                    )
                 }
-
-                MetricCard(
-                    title = "Teléfono",
-                    value = empleado.telefono.toString(),
-                    modifier = Modifier.fillMaxWidth(),
-                    isPrimary = true
-                )
-            }
-        } else {
-            // Estado de carga o error
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
             }
         }
     }

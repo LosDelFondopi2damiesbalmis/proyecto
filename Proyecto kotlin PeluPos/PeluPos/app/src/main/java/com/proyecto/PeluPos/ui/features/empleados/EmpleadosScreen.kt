@@ -14,6 +14,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,31 +76,78 @@ fun EmpleadosScreen(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(50.dp)) {
-                            Icon(Icons.Default.Person, null, modifier = Modifier.padding(12.dp))
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(empleado.nombre, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(empleado.cargo, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(empleado.email, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            if (empleado.idLocal != null) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text("📍 ${empleado.idLocal!!.nombre}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+                    // 🚀 LA MAGIA RESPONSIVE:
+                    BoxWithConstraints {
+                        val isCompact = this.maxWidth < 300.dp // Si el menú lateral roba mucho espacio
+
+                        if (isCompact) {
+                            // --- DISEÑO VERTICAL (Menú lateral abierto) ---
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    // Avatar más pequeño
+                                    Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(40.dp)) {
+                                        Icon(Icons.Default.Person, null, modifier = Modifier.padding(8.dp))
+                                    }
+
+                                    // Agrupamos los dos botones arriba a la derecha
+                                    Row {
+                                        IconButton(onClick = { onNavigateToStats(empleado.idEmpleado) }) {
+                                            Icon(Icons.Default.BarChart, "Estadística", tint = MaterialTheme.colorScheme.primary)
+                                        }
+                                        IconButton(onClick = {
+                                            onEvent(EmpleadosEvent.PrepararEdicion(empleado.idEmpleado))
+                                            onNavigateToEdit(empleado.idEmpleado)
+                                        }) {
+                                            Icon(Icons.Default.Edit, "Modificar")
+                                        }
+                                    }
+                                }
+
+                                // Textos protegidos contra saltos de línea
+                                Text(empleado.nombre, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(empleado.cargo, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(empleado.email, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+
+                                if (empleado.idLocal != null) {
+                                    Text("📍 ${empleado.idLocal!!.nombre}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
                             }
-                        }
-                        IconButton(onClick = { onNavigateToStats(empleado.idEmpleado) }) {
-                            Icon(Icons.Default.BarChart, "Estadística", tint = MaterialTheme.colorScheme.primary)
-                        }
-                        IconButton(onClick = {
-                            onEvent(EmpleadosEvent.PrepararEdicion(empleado.idEmpleado))
-                            onNavigateToEdit(empleado.idEmpleado)
-                        }) {
-                            Icon(Icons.Default.Edit, "Modificar")
+                        } else {
+                            // --- DISEÑO HORIZONTAL ORIGINAL (Pantalla normal) ---
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(50.dp)) {
+                                    Icon(Icons.Default.Person, null, modifier = Modifier.padding(12.dp))
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(empleado.nombre, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(empleado.cargo, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(empleado.email, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    if (empleado.idLocal != null) {
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text("📍 ${empleado.idLocal!!.nombre}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    }
+                                }
+                                IconButton(onClick = { onNavigateToStats(empleado.idEmpleado) }) {
+                                    Icon(Icons.Default.BarChart, "Estadística", tint = MaterialTheme.colorScheme.primary)
+                                }
+                                IconButton(onClick = {
+                                    onEvent(EmpleadosEvent.PrepararEdicion(empleado.idEmpleado))
+                                    onNavigateToEdit(empleado.idEmpleado)
+                                }) {
+                                    Icon(Icons.Default.Edit, "Modificar")
+                                }
+                            }
                         }
                     }
                 }

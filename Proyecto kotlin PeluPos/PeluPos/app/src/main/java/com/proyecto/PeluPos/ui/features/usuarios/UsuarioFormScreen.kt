@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -58,9 +59,33 @@ fun UsuarioFormScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (isEditing) "Modificar Usuario" else "Crear Cuenta de Usuario", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        if (isEditing) "Modificar Usuario" else "Crear Cuenta de Usuario",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) { Icon(Icons.Default.ArrowBack, contentDescription = "Volver") }
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver"
+                        )
+                    }
+                },
+                actions = {
+                    if (isEditing) {
+                        IconButton(onClick = {
+                            onEvent(UsuariosEvent.BorrarUsuario)
+                            onBackClick()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Borrar Usuario",
+                                tint = MaterialTheme.colorScheme.error // Lo pone en rojo (opcional)
+                            )
+                        }
+                    }
                 }
             )
         }
@@ -74,7 +99,11 @@ fun UsuarioFormScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // --- 1. SELECCIONAR EMPLEADO ---
-            Text("¿A qué empleado pertenece esta cuenta?", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            Text(
+                "¿A qué empleado pertenece esta cuenta?",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
             ExposedDropdownMenuBox(
                 expanded = expandedEmpleado,
                 onExpandedChange = { expandedEmpleado = !expandedEmpleado }
@@ -88,7 +117,9 @@ fun UsuarioFormScreen(
                     colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-                ExposedDropdownMenu(expanded = expandedEmpleado, onDismissRequest = { expandedEmpleado = false }) {
+                ExposedDropdownMenu(
+                    expanded = expandedEmpleado,
+                    onDismissRequest = { expandedEmpleado = false }) {
                     state.empleadosDisponibles.forEach { emp ->
                         DropdownMenuItem(
                             text = { Text(emp.nombre) },
@@ -104,7 +135,11 @@ fun UsuarioFormScreen(
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
             // --- 2. DATOS DE ACCESO ---
-            Text("Datos de Acceso", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            Text(
+                "Datos de Acceso",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             OutlinedTextField(
                 value = state.formNombreUsuario,
@@ -125,7 +160,11 @@ fun UsuarioFormScreen(
             )
 
             // --- 3. ROL DEL SISTEMA ---
-            Text("Permisos", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            Text(
+                "Permisos",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
             ExposedDropdownMenuBox(
                 expanded = expandedRol,
                 onExpandedChange = { expandedRol = !expandedRol }
@@ -139,7 +178,9 @@ fun UsuarioFormScreen(
                     colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-                ExposedDropdownMenu(expanded = expandedRol, onDismissRequest = { expandedRol = false }) {
+                ExposedDropdownMenu(
+                    expanded = expandedRol,
+                    onDismissRequest = { expandedRol = false }) {
                     RolUsuario.values().forEach { rol ->
                         DropdownMenuItem(
                             text = { Text(rol.name) },

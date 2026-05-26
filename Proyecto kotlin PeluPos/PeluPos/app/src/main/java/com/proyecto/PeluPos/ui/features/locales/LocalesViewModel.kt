@@ -160,8 +160,7 @@ class LocalesViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
             try {
                 if (state.editandoLocalId != null) {
-                    localRepository.updateLocal( localDatos)
-                    localRepository.updateLocal(localDatos)
+                    localRepository.updateLocal(localDatos) // Quité el duplicado que había aquí
 
                     // 🚀 2. LA MAGIA NEGRA DESDE ANDROID: Averiguamos quién entra y quién sale
                     // Buscamos cómo estaba el local antes de que el usuario tocara nada
@@ -178,6 +177,7 @@ class LocalesViewModel @Inject constructor(
                     val quitados = empleadosAntes.filter { viejo ->
                         empleadosAhora.none { it.idEmpleado == viejo.idEmpleado }
                     }
+
                     añadidos.forEach { empleado ->
                         empleadoRepository.updateEmpleado(empleado.copy(idLocal = localDatos))
                     }
@@ -194,6 +194,26 @@ class LocalesViewModel @Inject constructor(
 
                 // Recargamos los datos para ver los cambios reflejados instantáneamente
                 cargarDatos()
+
+                // --- ATRAPAMOS EL JSON DE LA API (Ej: 403 Acceso Denegado) ---
+            } catch (e: retrofit2.HttpException) {
+                val jsonString = e.response()?.errorBody()?.string()
+                var mensajeError = "Error en el servidor (${e.code()})"
+
+                if (!jsonString.isNullOrEmpty()) {
+                    try {
+                        val jsonObject = org.json.JSONObject(jsonString)
+                        if (jsonObject.has("mensaje")) {
+                            mensajeError = jsonObject.getString("mensaje")
+                        }
+                    } catch (parseException: Exception) {
+                        mensajeError = jsonString
+                    }
+                }
+
+                _uiState.update { it.copy(isLoading = false, error = mensajeError) }
+
+                // --- ATRAPAMOS OTROS ERRORES (Ej: Sin internet) ---
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(isLoading = false, error = "Error al procesar: ${e.message}")
