@@ -12,9 +12,6 @@ using PeluPOS.Views.Ventas;
 
 namespace PeluPOS
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -68,7 +65,6 @@ namespace PeluPOS
 
                 var result = dlg.LoginResult;
 
-                // Propagar el token JWT a todos los servicios de API
                 AppServices.ApiClient.SetBearerToken(result.jwtToken);
 
                 var role = RoleMapper.Parse(result.rolUsuario!);
@@ -96,6 +92,36 @@ namespace PeluPOS
             Sidebar.Visibility = SessionService.CanSeeSidebar
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            UpdateUserInfo();
+        }
+
+        private void UpdateUserInfo()
+        {
+            if (!SessionService.IsLoggedIn || string.IsNullOrWhiteSpace(SessionService.CurrentUsername))
+            {
+                UserInitialTxt.Text = "—";
+                UsernameTxt.Text    = "Sin sesión";
+                UserRoleTxt.Text    = string.Empty;
+                return;
+            }
+
+            var username = SessionService.CurrentUsername;
+            UsernameTxt.Text    = username;
+            UserInitialTxt.Text = username[0].ToString().ToUpperInvariant();
+
+            UserRoleTxt.Text = SessionService.CurrentRole switch
+            {
+                Models.Enums.Roles.Administrador => "Administrador",
+                Models.Enums.Roles.Manager       => "Manager",
+                Models.Enums.Roles.Empleado      => "Empleado",
+                _                                => string.Empty
+            };
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            SessionService.Logout();
         }
 
         private void Dashboard_Click(object sender, RoutedEventArgs e)

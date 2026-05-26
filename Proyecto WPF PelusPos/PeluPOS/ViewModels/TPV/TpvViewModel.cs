@@ -157,6 +157,18 @@ namespace PeluPOS.ViewModels.TPV
         }
 
         [RelayCommand]
+        public void NuevoTicket()
+        {
+            Ticket.Clear();
+            Pendiente = false;
+            TipoPago = "Efectivo";
+            ClienteSeleccionado = Clientes?.FirstOrDefault(c =>
+                c.Nombre.Contains("Mostrador", StringComparison.OrdinalIgnoreCase));
+            Error = null;
+            OnPropertyChanged(nameof(Total));
+        }
+
+        [RelayCommand]
         public async Task CobrarAsync(long? empleadoId)
         {
             Error = null;

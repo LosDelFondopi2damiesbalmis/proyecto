@@ -48,17 +48,14 @@
                 </Grid.RowDefinitions>
 
                 <!-- Barra de búsqueda -->
-                <DockPanel Grid.Row="0" Margin="0 0 0 12">
-                    <TextBox Width="260"
-                             Height="32"
-                             Margin="0 0 8 0"
-                             VerticalContentAlignment="Center"
+                <Grid Grid.Row="0" Margin="0 0 0 12">
+                    <TextBox VerticalContentAlignment="Center"
                              Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"
                              Foreground="{DynamicResource TextPrimaryBrush}"
                              Background="{DynamicResource BackgroundBrush}"
                              BorderBrush="{DynamicResource BorderBrush}"
                              BorderThickness="1"
-                             Padding="8,0">
+                             Padding="10,6">
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="Template">
@@ -81,11 +78,11 @@
                     <TextBlock Text="Buscar por nombre…"
                                VerticalAlignment="Center"
                                Foreground="{DynamicResource TextSecondaryBrush}"
-                               Margin="-240,0,0,0"
+                               Margin="14,0,0,0"
                                IsHitTestVisible="False"
                                Visibility="{Binding TextoBusqueda,
                                                     Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-                </DockPanel>
+                </Grid>
 
                 <!-- Lista de clientes -->
                 <ListView Grid.Row="1"

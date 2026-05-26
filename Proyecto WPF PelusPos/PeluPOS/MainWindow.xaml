@@ -6,132 +6,290 @@
         xmlns:local="clr-namespace:PeluPOS"
         xmlns:conv="clr-namespace:PeluPOS.Resources.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1200">
+        Title="PeluPOS"
+        MinHeight="580" MinWidth="820"
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
     </Window.Resources>
+
     <Grid>
-            <Grid.ColumnDefinitions>
-                <!-- Menú lateral -->
-                <ColumnDefinition Width="230"/>
-                <!-- Contenido -->
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <!-- NAV LATERAL -->
-            <Border x:Name="Sidebar"
-    Grid.Column="0"
-    Background="#111827"
-    Visibility="{Binding ShellState.IsTpvMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <DockPanel Margin="10">
-                    <!-- Logo / nombre app -->
-                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,20">
-                        <TextBlock Text="PeluPOS"
-                           Foreground="White"
-                           FontSize="22"
-                           FontWeight="Bold"/>
-                        <TextBlock Text="Gestión de peluquerías"
-                           Foreground="#9CA3AF"
-                           FontSize="12"/>
+        <!-- ══════════════════════════════════════════
+             SIDEBAR / NAV LATERAL
+        ══════════════════════════════════════════ -->
+        <Border x:Name="Sidebar"
+                Grid.Column="0"
+                Visibility="{Binding ShellState.IsTpvMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FF1C1F26" Offset="0"/>
+                    <GradientStop Color="#FF13151C" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <DockPanel>
+
+                <!-- ── LOGO / CABECERA ── -->
+                <Border DockPanel.Dock="Top" Padding="18,22,18,16">
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Icono app -->
+                        <Border Width="40" Height="40" CornerRadius="10"
+                                Margin="0,0,12,0" VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF5B8DEF" Offset="0"/>
+                                    <GradientStop Color="#FF4ECDC4" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="✂" Foreground="White" FontSize="18"
+                                       FontFamily="Segoe UI Emoji"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <!-- Nombre -->
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="PeluPOS"
+                                       Foreground="White"
+                                       FontSize="18"
+                                       FontWeight="Bold"/>
+                            <TextBlock Text="Gestión integral"
+                                       Foreground="#FF6DA9FF"
+                                       FontSize="10"/>
+                        </StackPanel>
                     </StackPanel>
+                </Border>
 
-                    <!-- Menú -->
-                    <StackPanel DockPanel.Dock="Top">
+                <!-- Divisor superior -->
+                <Rectangle DockPanel.Dock="Top" Height="1"
+                           Fill="#FF3A4151" Margin="16,0,16,6"/>
 
-                        <!-- Estilo nav -->
+                <!-- ── USUARIO (abajo) ── -->
+                <Border DockPanel.Dock="Bottom" Padding="14,12">
+                    <Border.Background>
+                        <SolidColorBrush Color="#FF2A2F3A"/>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Avatar circular -->
+                        <Border Grid.Column="0"
+                                Width="36" Height="36" CornerRadius="18"
+                                Margin="0,0,10,0" VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF5B8DEF" Offset="0"/>
+                                    <GradientStop Color="#FF4ECDC4" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock x:Name="UserInitialTxt"
+                                       Text=""
+                                       Foreground="White"
+                                       FontSize="14" FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Nombre y rol -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="UsernameTxt"
+                                       Text=""
+                                       Foreground="White"
+                                       FontSize="13" FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="UserRoleTxt"
+                                       Text=""
+                                       Foreground="#FFC8CDD7"
+                                       FontSize="10"/>
+                        </StackPanel>
+
+                        <!-- Botón cerrar sesión -->
+                        <Button Grid.Column="2"
+                                x:Name="LogoutBtn"
+                                Click="Logout_Click"
+                                ToolTip="Cerrar sesión"
+                                Cursor="Hand"
+                                VerticalAlignment="Center">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd"
+                                            Background="Transparent"
+                                            CornerRadius="6"
+                                            Padding="6,5">
+                                        <TextBlock Text="⏻"
+                                                   FontSize="14"
+                                                   Foreground="#FFFF6B6B"
+                                                   FontFamily="Segoe UI Symbol"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#33FF6B6B"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- ── MENÚ DE NAVEGACIÓN ── -->
+                <ScrollViewer DockPanel.Dock="Top"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="10,8,10,10">
+
                         <StackPanel.Resources>
+                            <!-- Estilo botón de navegación -->
                             <Style x:Key="NavButton" TargetType="Button">
-                                <Setter Property="Margin" Value="0,4,0,4"/>
-                                <Setter Property="Padding" Value="10,6"/>
+                                <Setter Property="Margin" Value="0,2,0,2"/>
+                                <Setter Property="Padding" Value="10,9"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="BorderBrush" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontSize" Value="13"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="6">
-                                                <ContentPresenter Margin="8,2"
-                                                          VerticalAlignment="Center"/>
+                                            <Border x:Name="Bd"
+                                                    Background="{TemplateBinding Background}"
+                                                    CornerRadius="8">
+                                                <ContentPresenter Margin="4,0"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Left"/>
                                             </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#FF2A2F3A"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#FF1E3A5F"/>
+                                                    <Setter Property="Foreground" Value="#FF5B8DEF"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#374151"/>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#1F2933"/>
-                                    </Trigger>
-                                </Style.Triggers>
+                            </Style>
+
+                            <!-- Estilo etiqueta de sección -->
+                            <Style x:Key="SectionLabel" TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#FF8A96A8"/>
+                                <Setter Property="FontSize" Value="10"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Margin" Value="12,12,8,4"/>
+                            </Style>
+
+                            <!-- Estilo icono nav -->
+                            <Style x:Key="NavIcon" TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontFamily" Value="Segoe UI Emoji"/>
+                                <Setter Property="Margin" Value="0,0,8,0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Style>
                         </StackPanel.Resources>
 
-                        <!-- Botones de navegación -->
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Dashboard"
-                        Click="Dashboard_Click"/>
+                        <!-- ── SECCIÓN PRINCIPAL ── -->
+                        <TextBlock Text="PRINCIPAL" Style="{StaticResource SectionLabel}"/>
 
-                        <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
+                        <Button Style="{StaticResource NavButton}" Click="Dashboard_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Clientes"
-                        Click="Clientes_Click"/>
+                        <!-- ── SECCIÓN GESTIÓN ── -->
+                        <TextBlock Text="GESTIÓN" Style="{StaticResource SectionLabel}"/>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Servicios"
-                        Click="Servicios_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Clientes_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="👥" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Clientes" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Productos"
-                        Click="Productos_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Servicios_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✂" Style="{StaticResource NavIcon}" FontFamily="Segoe UI Symbol"/>
+                                <TextBlock Text="Servicios" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Empleados"
-                        Click="Empleados_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Productos_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📦" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Productos" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Ventas"
-                        Click="Ventas_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Empleados_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="👤" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Empleados" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Usuarios"
-                        Click="Usuarios_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Ventas_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="💰" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Ventas" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Locales"
-                        Click="Locales_Click"/>
+                        <!-- ── SECCIÓN ADMINISTRACIÓN ── -->
+                        <TextBlock Text="ADMINISTRACIÓN" Style="{StaticResource SectionLabel}"/>
 
-                        <Separator Margin="0,8,0,8" Background="#4B5563" Height="1"/>
+                        <Button Style="{StaticResource NavButton}" Click="Usuarios_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔑" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Usuarios" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                        <Button Style="{StaticResource NavButton}"
-                        Content="Visión TPV"
-                        Click="Tpv_Click"/>
+                        <Button Style="{StaticResource NavButton}" Click="Locales_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🏪" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Locales" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- ── SECCIÓN HERRAMIENTAS ── -->
+                        <TextBlock Text="HERRAMIENTAS" Style="{StaticResource SectionLabel}"/>
+
+                        <Button Style="{StaticResource NavButton}" Click="Tpv_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🖥" Style="{StaticResource NavIcon}"/>
+                                <TextBlock Text="Visión TPV" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
                     </StackPanel>
+                </ScrollViewer>
 
-                    <!-- Info usuario (abajo) -->
-                    <StackPanel DockPanel.Dock="Bottom" Margin="0,20,0,0">
-                        <Separator Margin="0,0,0,8" Background="#4B5563" Height="1"/>
-                        <TextBlock Text="Usuario: Admin"
-                           Foreground="#9CA3AF"
-                           FontSize="12"/>
-                        <TextBlock Text="Peluquería Central"
-                           Foreground="#9CA3AF"
-                           FontSize="12"/>
-                    </StackPanel>
-                </DockPanel>
-            </Border>
+            </DockPanel>
+        </Border>
 
-            <!-- CONTENIDO (PAGES) -->
-            <Border Grid.Column="1" Background="#F3F4F6">
-                <Frame x:Name="MainFrame"
-               NavigationUIVisibility="Hidden"
-               Margin="0"/>
-            </Border>
-        </Grid>
+        <!-- ══════════════════════════════════════════
+             CONTENIDO PRINCIPAL
+        ══════════════════════════════════════════ -->
+        <Border Grid.Column="1" Background="#FFF7F9FC">
+            <Frame x:Name="MainFrame"
+                   NavigationUIVisibility="Hidden"
+                   Margin="0"/>
+        </Border>
+
+    </Grid>
 </Window>

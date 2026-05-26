@@ -7,8 +7,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DashboardPage" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Grid Background="#F3F4F6" Margin="10">
         <Grid.RowDefinitions>
@@ -76,10 +76,10 @@
                     <ListView Grid.Row="1" Margin="0,8,0,0">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Hora" Width="70"/>
-                                <GridViewColumn Header="Cliente" Width="140"/>
-                                <GridViewColumn Header="Servicio" Width="160"/>
-                                <GridViewColumn Header="Importe" Width="80"/>
+                                <GridViewColumn Header="Hora" Width="60"/>
+                                <GridViewColumn Header="Cliente" Width="120"/>
+                                <GridViewColumn Header="Servicio" Width="120"/>
+                                <GridViewColumn Header="Importe" Width="70"/>
                             </GridView>
                         </ListView.View>
 
@@ -129,9 +129,9 @@
                     <ListView Grid.Row="1" Margin="0,8,0,0">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Empleado" Width="160"/>
-                                <GridViewColumn Header="Servicios" Width="80"/>
-                                <GridViewColumn Header="Importe total" Width="100"/>
+                                <GridViewColumn Header="Empleado" Width="130"/>
+                                <GridViewColumn Header="Servicios" Width="70"/>
+                                <GridViewColumn Header="Importe total" Width="90"/>
                             </GridView>
                         </ListView.View>
 
@@ -175,9 +175,9 @@
                     <ListView Grid.Row="1" Margin="0,8,0,0">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Local" Width="180"/>
-                                <GridViewColumn Header="Hoy" Width="100"/>
-                                <GridViewColumn Header="Este mes" Width="100"/>
+                                <GridViewColumn Header="Local" Width="140"/>
+                                <GridViewColumn Header="Hoy" Width="80"/>
+                                <GridViewColumn Header="Este mes" Width="90"/>
                             </GridView>
                         </ListView.View>
 
@@ -221,9 +221,9 @@
                     <ListView Grid.Row="1" Margin="0,8,0,0">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Producto" Width="200"/>
-                                <GridViewColumn Header="Stock" Width="60"/>
-                                <GridViewColumn Header="Punto pedido" Width="90"/>
+                                <GridViewColumn Header="Producto" Width="160"/>
+                                <GridViewColumn Header="Stock" Width="50"/>
+                                <GridViewColumn Header="Punto pedido" Width="80"/>
                             </GridView>
                         </ListView.View>
 
