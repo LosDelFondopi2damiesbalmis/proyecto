@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.ui.features.empleados
 
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Local
+import com.proyecto.PeluPos.models.ResumenVentas
 
 data class EmpleadosUiState(
     val empleados: List<Empleado> = emptyList(),
@@ -14,7 +15,8 @@ data class EmpleadosUiState(
     val formEmail: String = "",
     val formTelefono: String = "",
     val formLocalSeleccionado: Local? = null,
-
+    val statsMes: ResumenVentas? = null,
+    val isLoadingStats: Boolean = false,
     // NUEVO: Banderas de control para Retrofit y la UI
     val isLoading: Boolean = false,
     val mensaje: String? = null,

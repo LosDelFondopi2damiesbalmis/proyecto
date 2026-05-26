@@ -148,6 +148,26 @@ class ClientesViewModel @Inject constructor(
                     _uiState.update { it.copy(mensaje = "Cliente guardado con éxito") }
                 }
                 cargarDatos()
+
+                // --- AQUÍ ATRAPAMOS EL ERROR DE SEGURIDAD DE LA API ---
+            } catch (e: retrofit2.HttpException) {
+                val jsonString = e.response()?.errorBody()?.string()
+                var mensajeError = "Error en el servidor (${e.code()})"
+
+                if (!jsonString.isNullOrEmpty()) {
+                    try {
+                        val jsonObject = org.json.JSONObject(jsonString)
+                        if (jsonObject.has("mensaje")) {
+                            mensajeError = jsonObject.getString("mensaje")
+                        }
+                    } catch (parseException: Exception) {
+                        mensajeError = jsonString
+                    }
+                }
+
+                _uiState.update { it.copy(isLoading = false, error = mensajeError) }
+
+                // --- AQUÍ ATRAPAMOS EL RESTO DE ERRORES (Ej: Sin internet) ---
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = "Error al guardar cliente: ${e.message}") }
             }

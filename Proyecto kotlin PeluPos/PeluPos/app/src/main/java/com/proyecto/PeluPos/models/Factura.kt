@@ -1,4 +1,5 @@
 package com.proyecto.PeluPos.models
+import com.google.gson.annotations.SerializedName
 import java.util.Date
 data class Factura(
     val idFactura: Long,
@@ -25,13 +26,26 @@ data class FacturaDto(
 )
 
 data class FacturaProductoDto(
+    @SerializedName("producto")
     val producto: Producto,
-    val cantidad: Int
+
+    @SerializedName("cantidad")
+    val cantidad: Int,
+
+    @SerializedName("precioVendido")
+    val precioVendido: Double? = null
 )
 
+// DTO para los Servicios
 data class FacturaServicioDto(
+    @SerializedName("servicio")
     val servicio: Servicio,
-    val cantidad: Int
+
+    @SerializedName("cantidad")
+    val cantidad: Int,
+
+    @SerializedName("precioCobrado")
+    val precioCobrado: Double? = null
 )
 data class ClienteIdDto(val idCliente: Long)
 

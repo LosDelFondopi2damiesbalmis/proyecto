@@ -85,9 +85,6 @@ class UsuariosViewModel @Inject constructor(
         }
     }
 
-    // --------------------------------------------------------
-    // 2. EVENTOS (Zombies eliminados)
-    // --------------------------------------------------------
     fun onEvent(event: UsuariosEvent) {
         when (event) {
             UsuariosEvent.CargarUsuarios -> cargarDatos()
@@ -100,7 +97,8 @@ class UsuariosViewModel @Inject constructor(
             is UsuariosEvent.OnContrasenaChange -> _uiState.update { it.copy(formContrasena = event.contrasena) }
             is UsuariosEvent.OnRolChange -> _uiState.update { it.copy(formRol = event.rol) }
             is UsuariosEvent.OnEmpleadoChange -> _uiState.update { it.copy(formEmpleadoSeleccionado = event.empleado) }
-
+            is UsuariosEvent.BorrarUsuario -> borrarUsuario()
+            UsuariosEvent.LimpiarMensaje -> _uiState.update { it.copy(mensaje = null) }
             UsuariosEvent.GuardarUsuario -> guardarUsuario()
         }
     }
@@ -146,6 +144,52 @@ class UsuariosViewModel @Inject constructor(
 
                 // Recargamos la lista. Al ejecutarse 'cargarDatos()', si la ruta ya no tiene el ID,
                 // el propio flujo limpiará el estado del formulario automáticamente.
+                cargarDatos()
+
+                // --- ATRAPAMOS EL JSON DE LA API (Ej: 403 Acceso Denegado) ---
+            } catch (e: retrofit2.HttpException) {
+                val jsonString = e.response()?.errorBody()?.string()
+
+                // Texto por defecto por si la API no devuelve JSON
+                var avisoApi = "Aviso del servidor (${e.code()})"
+
+                if (!jsonString.isNullOrEmpty()) {
+                    try {
+                        val jsonObject = org.json.JSONObject(jsonString)
+                        if (jsonObject.has("mensaje")) {
+                            avisoApi = jsonObject.getString("mensaje")
+                        }
+                    } catch (parseException: Exception) {
+                        avisoApi = jsonString
+                    }
+                }
+
+                // ¡AQUÍ ESTÁ EL CAMBIO! Lo metemos en 'mensaje' para que salga como un aviso normal
+                _uiState.update { it.copy(mensaje = avisoApi, isLoading = false) }
+
+                // --- ATRAPAMOS OTROS ERRORES REales (Ej: Sin internet) ---
+            } catch (e: Exception) {
+                // Este sí lo dejamos como error porque es un fallo técnico
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
+        }
+    }
+    private fun borrarUsuario() {
+        val currentState = _uiState.value
+        val idUsuario = currentState.editandoUsuarioId
+
+        if (idUsuario == null) {
+            _uiState.update { it.copy(error = "No hay ningún usuario seleccionado para borrar") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                val mensajeExito = usuarioRepository.borrarUsuario(idUsuario)
+
+                _uiState.update { it.copy(mensaje = mensajeExito) }
+
                 cargarDatos()
 
             } catch (e: Exception) {

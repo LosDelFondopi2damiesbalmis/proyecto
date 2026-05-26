@@ -16,6 +16,7 @@ sealed interface UsuariosEvent {
     data class OnContrasenaChange(val contrasena: String) : UsuariosEvent
     data class OnRolChange(val rol: RolUsuario) : UsuariosEvent
     data class OnEmpleadoChange(val empleado: Empleado) : UsuariosEvent
-
+    object BorrarUsuario : UsuariosEvent
     object GuardarUsuario : UsuariosEvent
+    object LimpiarMensaje : UsuariosEvent
 }

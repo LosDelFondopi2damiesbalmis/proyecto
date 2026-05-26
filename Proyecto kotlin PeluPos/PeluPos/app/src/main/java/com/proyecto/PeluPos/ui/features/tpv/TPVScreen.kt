@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.ShoppingCart
 
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Producto
@@ -95,7 +96,13 @@ fun TpvScreen(
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
-                        text = { Text(title) }
+                        text = {
+                            Text(
+                                text = title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     )
                 }
             }
@@ -131,7 +138,6 @@ fun TpvScreen(
     }
 }
 
-// Componente extraído para no repetir código entre productos y servicios
 @Composable
 fun ItemCard(nombre: String, precio: Double, onClick: () -> Unit) {
     Card(
@@ -147,9 +153,22 @@ fun ItemCard(nombre: String, precio: Double, onClick: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = nombre, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "${precio} €", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+            Text(
+                text = nombre,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${String.format("%.2f", precio)} €", // Format para que siempre salgan 2 decimales
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

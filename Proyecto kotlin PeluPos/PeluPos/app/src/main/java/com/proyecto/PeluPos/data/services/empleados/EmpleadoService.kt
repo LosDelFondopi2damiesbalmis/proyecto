@@ -1,6 +1,7 @@
 package com.proyecto.PeluPos.data.services.empleados
 
 import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.ResumenVentas
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -36,4 +37,7 @@ interface EmpleadoService {
     suspend fun deleteEmpleado(
         @Path("id") id: Long
     ): Response<Unit>
+    // En tu ApiService:
+    @GET("empleados/ventas/{idEmpleado}")
+    suspend fun getResumenVentasEmpleado(@Path("idEmpleado") idEmpleado: Long): ResumenVentas
 }

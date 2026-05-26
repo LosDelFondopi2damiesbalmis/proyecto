@@ -34,6 +34,7 @@ import com.proyecto.PeluPos.ui.theme.PeluPosTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -120,53 +121,137 @@ fun ClienteListItem(cliente: Cliente, onEditClick: () -> Unit, onDetailClick: ()
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         onClick = onDetailClick
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Círculo con Inicial
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(46.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
+        // 🚀 LA MAGIA RESPONSIVE:
+        BoxWithConstraints {
+            val isCompact = this.maxWidth < 250.dp // Detecta si el espacio es reducido
+
+            if (isCompact) {
+                // --- DISEÑO VERTICAL (Menú lateral abierto) ---
+                Column(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Círculo con Inicial (más pequeño)
+                        Surface(
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = cliente.nombre.take(1).uppercase(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        IconButton(onClick = onEditClick) {
+                            Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+
+                    // Textos protegidos
                     Text(
-                        text = cliente.nombre.take(1).uppercase(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontWeight = FontWeight.Bold
+                        text = cliente.nombre,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+
+                    if (cliente.telefono != 0L) {
+                        Text(
+                            text = "Tel: ${cliente.telefono}",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    // Resaltar Deuda
+                    if (cliente.deuda > 0) {
+                        Text(
+                            text = String.format("Deuda: %.2f €", cliente.deuda),
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
-            }
+            } else {
+                // --- DISEÑO HORIZONTAL ORIGINAL (Pantalla normal) ---
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Círculo con Inicial
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(46.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                text = cliente.nombre.take(1).uppercase(),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = cliente.nombre, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = cliente.nombre,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            maxLines = 1, // Límite de líneas para evitar compresión
+                            overflow = TextOverflow.Ellipsis
+                        )
 
-                if (cliente.telefono != 0L) {
-                    Text(text = "Tel: ${cliente.telefono}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (cliente.telefono != 0L) {
+                            Text(
+                                text = "Tel: ${cliente.telefono}",
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        // Resaltar Deuda
+                        if (cliente.deuda > 0) {
+                            Text(
+                                text = String.format("Deuda: %.2f €", cliente.deuda),
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.Medium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    IconButton(onClick = onEditClick) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
+                    }
                 }
-
-                // Resaltar Deuda
-                if (cliente.deuda > 0) {
-                    Text(
-                        text = String.format("Deuda: %.2f €", cliente.deuda),
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            IconButton(onClick = onEditClick) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
             }
         }
     }
 }
-
 private val mockClientesLista = listOf(
     Cliente(idCliente = 1L, nombre = "Diddy", deuda = 500000.0, telefono = 654380200L),
     Cliente(idCliente = 2L, nombre = "Einstein", deuda = 0.0, telefono = 611222333L),

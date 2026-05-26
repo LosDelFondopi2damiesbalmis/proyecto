@@ -116,7 +116,7 @@ class EmpleadosViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
             try {
                 if (state.editandoEmpleadoId != null) {
-                    empleadoRepository.updateEmpleado( empleadoDatos)
+                    empleadoRepository.updateEmpleado(empleadoDatos)
                     _uiState.update { it.copy(mensaje = "Empleado actualizado con éxito") }
                 } else {
                     empleadoRepository.createEmpleado(empleadoDatos)
@@ -124,10 +124,41 @@ class EmpleadosViewModel @Inject constructor(
                 }
 
                 cargarDatos()
+
+                // --- ATRAPAMOS EL JSON DE LA API (Ej: 403 Acceso Denegado) ---
+            } catch (e: retrofit2.HttpException) {
+                val jsonString = e.response()?.errorBody()?.string()
+                var mensajeError = "Error en el servidor (${e.code()})"
+
+                if (!jsonString.isNullOrEmpty()) {
+                    try {
+                        val jsonObject = org.json.JSONObject(jsonString)
+                        if (jsonObject.has("mensaje")) {
+                            mensajeError = jsonObject.getString("mensaje")
+                        }
+                    } catch (parseException: Exception) {
+                        mensajeError = jsonString
+                    }
+                }
+
+                _uiState.update { it.copy(isLoading = false, error = mensajeError) }
+
+                // --- ATRAPAMOS OTROS ERRORES (Ej: Sin internet) ---
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(isLoading = false, error = "Error al guardar: ${e.message}")
                 }
+            }
+        }
+    }
+    fun cargarEstadisticas(idEmpleado: Long) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingStats = true, statsMes = null) } // Limpiamos datos anteriores
+            try {
+                val stats = empleadoRepository.getResumenVentas(idEmpleado)
+                _uiState.update { it.copy(statsMes = stats, isLoadingStats = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoadingStats = false) } // Aquí podrías manejar el error
             }
         }
     }
