@@ -14,11 +14,11 @@
     <class>peluposbd.TokenVerificado</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/peluposbd?zeroDateTimeBehavior=CONVERT_TO_NULL?autoReconnect=true&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull"/>
-      <property name="jakarta.persistence.jdbc.user" value="root"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/peluposbd?zeroDateTimeBehavior=CONVERT_TO_NULL?autoReconnect=true&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull"/>
+      <property name="jakarta.persistence.jdbc.user" value="uremoto"/>
       <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-      <property name="jakarta.persistence.jdbc.password" value="1234"/>
-      <property name="eclipselink.logging.level" value="OFF"/>
+      <property name="jakarta.persistence.jdbc.password" value="pruebas"/>
+      <property name="eclipselink.logging.level" value="FINE"/>
     </properties>
   </persistence-unit>
 </persistence>

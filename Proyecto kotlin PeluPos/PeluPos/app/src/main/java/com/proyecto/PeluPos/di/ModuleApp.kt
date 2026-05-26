@@ -67,7 +67,7 @@ class ModuleApp {
         return Retrofit.Builder()
             .client(okHttpClient)
             // IMPORTANTE: Cambia "api/" por la ruta base real de tu API en NetBeans [cite: 15]
-            .baseUrl("http://192.168.1.109:8080/pelupos/servicio/")
+            .baseUrl("http://pelupos.spaincentral.cloudapp.azure.com:8080 /pelupos/servicio/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
