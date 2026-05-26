@@ -1,38 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using PeluPOS.Models.Entities;
-using PeluPOS.Services;
+﻿using System.Windows;
 using PeluPOS.Models.ApiDtos.Auth;
 using PeluPOS.Services.Api;
 using PeluPOS.ViewModels.Login;
 
 namespace PeluPOS.Views
 {
-    /// <summary>
-    /// Lógica de interacción para LoginDialog.xaml
-    /// </summary>
     public partial class LoginDialog : Window
     {
         private readonly AuthApiService _authApiService;
+        private readonly UsuarioApiService _usuarioApiService;
         public LoginViewModel ViewModel { get; }
 
-        public LoginDialog(LoginViewModel vm, AuthApiService authApiService)
+        public LoginDialog(LoginViewModel vm, AuthApiService authApiService, UsuarioApiService usuarioApiService)
         {
             InitializeComponent();
             ViewModel = vm;
             _authApiService = authApiService;
+            _usuarioApiService = usuarioApiService;
             DataContext = ViewModel;
+
+            Loaded += async (_, __) => await CargarUsuariosAsync();
+        }
+
+        private async Task CargarUsuariosAsync()
+        {
+            try
+            {
+                var usuarios = await _usuarioApiService.GetUsuariosAsync();
+                ViewModel.Usuarios.Clear();
+                foreach (var u in usuarios)
+                    ViewModel.Usuarios.Add(u);
+                ViewModel.UsuarioSeleccionado = ViewModel.Usuarios.FirstOrDefault();
+            }
+            catch
+            {
+                ViewModel.Error = "No se pudo cargar la lista de usuarios. Comprueba la conexión con la API.";
+            }
         }
 
         public LoginResponseDto? LoginResult { get; private set; }

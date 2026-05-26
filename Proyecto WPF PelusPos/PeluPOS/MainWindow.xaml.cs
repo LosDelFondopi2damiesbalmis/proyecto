@@ -56,15 +56,9 @@ namespace PeluPOS
         {
             while (!SessionService.IsLoggedIn)
             {
-                var usuarios = await AppServices.UsuarioApi.GetUsuariosAsync();
-
                 var vm = new LoginViewModel();
-                foreach (var u in usuarios)
-                    vm.Usuarios.Add(u);
 
-                vm.UsuarioSeleccionado = vm.Usuarios.FirstOrDefault();
-
-                var dlg = new LoginDialog(vm, AppServices.AuthApi)
+                var dlg = new LoginDialog(vm, AppServices.AuthApi, AppServices.UsuarioApi)
                 {
                     Owner = this
                 };
