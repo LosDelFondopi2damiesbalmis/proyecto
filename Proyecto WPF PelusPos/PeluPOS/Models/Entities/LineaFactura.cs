@@ -11,7 +11,7 @@ namespace PeluPOS.Models.Entities
         public long Id { get; set; }
 
         public long FacturaId { get; set; }
-        public Factura Factura { get; set; }
+        public Factura? Factura { get; set; }
 
         public long? ProductoId { get; set; }
         public Producto? Producto { get; set; }
