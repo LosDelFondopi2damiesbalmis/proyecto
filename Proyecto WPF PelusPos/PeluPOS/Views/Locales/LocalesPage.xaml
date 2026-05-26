@@ -37,8 +37,7 @@
 
             <Button Grid.Column="1"
                     Content="+ Añadir local"
-                    Width="140"
-                    Height="38"
+                    MinWidth="130" Padding="14,6"
                     Click="AddLocal_Click"
                     Background="{DynamicResource PrimaryBrush}"
                     Foreground="White"

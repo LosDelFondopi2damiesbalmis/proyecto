@@ -16,7 +16,7 @@ namespace PeluPOS.Models.Entities
 
         // Opcionalmente, navegación inversa
         public long EmpleadoId { get; set; }
-        public Empleado Empleado { get; set; }
+        public Empleado? Empleado { get; set; }
     }
 
 }

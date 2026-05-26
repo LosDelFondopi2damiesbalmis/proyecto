@@ -20,7 +20,7 @@ namespace PeluPOS.Models.Entities
 
         // Empleado que genera la factura
         public long EmpleadoId { get; set; }
-        public Empleado Empleado { get; set; }
+        public Empleado? Empleado { get; set; }
 
         // Líneas de la factura
         public ICollection<LineaFactura> Lineas { get; set; } = new List<LineaFactura>();

@@ -21,7 +21,7 @@ namespace PeluPOS.ViewModels.TPV
         [ObservableProperty] private string tipoPago = "Efectivo";
         [ObservableProperty] private bool pendiente;
 
-        [ObservableProperty] private ObservableCollection<Cliente> clientes;
+        [ObservableProperty] private ObservableCollection<Cliente> clientes = new();
         [ObservableProperty] private Cliente? clienteSeleccionado;
         [ObservableProperty] private string? error;
 
@@ -30,16 +30,10 @@ namespace PeluPOS.ViewModels.TPV
             "Efectivo", "Tarjeta", "Bizum", "Transferencia", "Otro"
         };
 
-        public TpvViewModel()
-        {
-            
-        }
-
         public TpvViewModel(ICatalogService catalog, ITpvVentaService venta)
         {
             _catalog = catalog;
             _venta = venta;
-            Clientes = new ObservableCollection<Cliente>();
         }
 
         public decimal Total => Ticket.Sum(t => t.Subtotal);
@@ -153,6 +147,18 @@ namespace PeluPOS.ViewModels.TPV
         public void RemoveLine(TpvLineaViewModel linea)
         {
             Ticket.Remove(linea);
+            OnPropertyChanged(nameof(Total));
+        }
+
+        [RelayCommand]
+        public void NuevoTicket()
+        {
+            Ticket.Clear();
+            Pendiente = false;
+            TipoPago = "Efectivo";
+            ClienteSeleccionado = Clientes?.FirstOrDefault(c =>
+                c.Nombre.Contains("Mostrador", StringComparison.OrdinalIgnoreCase));
+            Error = null;
             OnPropertyChanged(nameof(Total));
         }
 

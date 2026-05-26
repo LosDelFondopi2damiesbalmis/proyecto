@@ -78,7 +78,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Ver"
-                                        Width="60" Height="28"
+                                        Padding="12,4"
                                         Click="Ver_Click"
                                         Background="{DynamicResource AccentBrush}"
                                         Foreground="{DynamicResource TextPrimaryBrush}"

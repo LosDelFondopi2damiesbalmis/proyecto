@@ -17,7 +17,7 @@ namespace PeluPOS.Models.Entities
 
         // Relación con Local
         public long LocalId { get; set; }
-        public Local Local { get; set; }
+        public Local? Local { get; set; }
 
         // Relación composición con Usuario
         public Usuario? Usuario { get; set; }
