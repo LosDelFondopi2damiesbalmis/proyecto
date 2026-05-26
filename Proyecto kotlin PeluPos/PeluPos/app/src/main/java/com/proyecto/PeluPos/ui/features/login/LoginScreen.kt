@@ -179,7 +179,7 @@ fun UserItem(
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
-                text = user.empleado.nombre,
+                text = user.empleado?.nombre ?: "Sin asignar",
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -206,7 +206,7 @@ fun LoginScreenPreview() {
                 email = "ana@pelupos.com",
                 cargo = "Gerente",
                 nombre = "Ana García",
-                local = null
+                idLocal = null
             ),
             rolUsuario = RolUsuario.ADMINISTRADOR
         ),
@@ -220,7 +220,7 @@ fun LoginScreenPreview() {
                 email = "marcos@pelupos.com",
                 cargo = "Estilista",
                 nombre = "Marcos López",
-                local = null
+                idLocal = null
             ),
             rolUsuario = RolUsuario.MANAGER
         ),
@@ -234,7 +234,7 @@ fun LoginScreenPreview() {
                 email = "john@pelupos.com",
                 cargo = "Ayudante",
                 nombre = "John Doe",
-                local = null
+                idLocal = null
             ),
             rolUsuario = RolUsuario.EMPLEADO
         )

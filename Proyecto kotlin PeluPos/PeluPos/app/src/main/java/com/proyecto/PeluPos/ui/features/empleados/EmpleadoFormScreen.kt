@@ -71,29 +71,6 @@ fun EmpleadoFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Selector de Local
-            ExposedDropdownMenuBox(expanded = expandedDropdown, onExpandedChange = { expandedDropdown = !expandedDropdown }) {
-                OutlinedTextField(
-                    value = state.formLocalSeleccionado?.nombre ?: "Sin asignar",
-                    onValueChange = {}, readOnly = true, label = { Text("Asignar Local") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expandedDropdown) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
-                )
-                ExposedDropdownMenu(expanded = expandedDropdown, onDismissRequest = { expandedDropdown = false }) {
-                    DropdownMenuItem(
-                        text = { Text("Sin asignar") },
-                        onClick = { onEvent(EmpleadosEvent.OnLocalChange(null)); expandedDropdown = false }
-                    )
-                    state.localesDisponibles.forEach { local ->
-                        DropdownMenuItem(
-                            text = { Text(local.nombre) },
-                            onClick = { onEvent(EmpleadosEvent.OnLocalChange(local)); expandedDropdown = false }
-                        )
-                    }
-                }
-            }
-
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { onEvent(EmpleadosEvent.GuardarEmpleado); onBackClick() },

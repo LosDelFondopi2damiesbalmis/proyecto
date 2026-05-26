@@ -59,7 +59,7 @@ fun EmpleadoStatsScreen(
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     // Aquí podrías mostrar datos de tu modelo si los añades
-                    MetricCard(title = "Local", value = empleado.local?.nombre ?: "Sin local", modifier = Modifier.weight(1f))
+                    MetricCard(title = "Local", value = empleado.idLocal?.nombre ?: "Sin local", modifier = Modifier.weight(1f))
                     MetricCard(title = "ID Empleado", value = empleado.idEmpleado.toString(), modifier = Modifier.weight(1f))
                 }
 

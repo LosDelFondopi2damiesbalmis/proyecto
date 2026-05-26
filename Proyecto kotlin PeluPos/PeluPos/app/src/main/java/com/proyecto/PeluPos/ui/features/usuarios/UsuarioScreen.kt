@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
@@ -42,10 +43,15 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Local
 import com.proyecto.PeluPos.models.RolUsuario
 import com.proyecto.PeluPos.models.Usuario
+import com.proyecto.PeluPos.ui.features.servicios.ServiciosEvent
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsuariosScreen(
@@ -55,6 +61,21 @@ fun UsuariosScreen(
     onNavigateToEdit: (Long) -> Unit, // 🚨 Ponle el (Long) aquí
     onBackClick: () -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // ON_RESUME significa "La pantalla acaba de aparecer frente al usuario"
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Llama al evento que recarga los datos desde tu base de datos
+                onEvent(UsuariosEvent.CargarUsuarios)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -102,7 +123,7 @@ fun UsuariosScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = "@${user.usuario}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(text = "Vinculado a: ${user.empleado.nombre}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Vinculado a: ${user.empleado?.nombre ?: "Sin empleado asignado"}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Spacer(modifier = Modifier.height(6.dp))
                             Surface(
                                 color = if (user.rolUsuario == RolUsuario.ADMINISTRADOR) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,

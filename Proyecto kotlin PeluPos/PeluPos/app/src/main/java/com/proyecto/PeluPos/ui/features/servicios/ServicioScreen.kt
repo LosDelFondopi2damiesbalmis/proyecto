@@ -38,9 +38,14 @@ import androidx.compose.ui.unit.dp
 
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Servicio
+import com.proyecto.PeluPos.ui.features.empleados.EmpleadosEvent
 import com.proyecto.PeluPos.ui.features.servicios.ServiciosEvent
 import com.proyecto.PeluPos.ui.features.servicios.ServiciosUiState
 
@@ -53,6 +58,21 @@ fun ServiciosScreen(
     // 🚨 PONLE EL (Long?) AQUÍ 🚨
     navigateToForm: (Long?) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // ON_RESUME significa "La pantalla acaba de aparecer frente al usuario"
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Llama al evento que recarga los datos desde tu base de datos
+                onEvent(ServiciosEvent.CargarDatos)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
