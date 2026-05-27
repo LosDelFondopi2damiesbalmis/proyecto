@@ -97,7 +97,7 @@ namespace PeluPOS.Services
                 cargo    = cargo,
                 email    = email,
                 telefono = telefono,
-                idLocal  = localId
+                local    = localId == 0 ? null : new Models.ApiDtos.Locales.LocalDto { idLocal = localId }
             };
             await _empleadoApi.CreateAsync(dto);
 
@@ -126,7 +126,7 @@ namespace PeluPOS.Services
                 cargo      = cargo,
                 email      = email,
                 telefono   = telefono,
-                idLocal    = localId          // ← was missing; local assignment never saved
+                local      = localId == 0 ? null : new Models.ApiDtos.Locales.LocalDto { idLocal = localId }
             };
             await _empleadoApi.UpdateAsync(dto);
         }
