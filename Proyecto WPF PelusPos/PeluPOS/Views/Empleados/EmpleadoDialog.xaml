@@ -125,21 +125,6 @@
                               BorderThickness="1"/>
                 </StackPanel>
 
-                <!-- Password (solo en CREATE) -->
-                <StackPanel Grid.Row="4" Margin="0 0 0 10"
-                            Visibility="{Binding PasswordVisibility}">
-                    <TextBlock Text="Contraseña"
-                               FontSize="12"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    <TextBox Height="34"
-                             Text="{Binding VM.Password, UpdateSourceTrigger=PropertyChanged}"
-                             Background="{DynamicResource BackgroundBrush}"
-                             Foreground="{DynamicResource TextPrimaryBrush}"
-                             BorderBrush="{DynamicResource BorderBrush}"
-                             BorderThickness="1"
-                             Padding="10,0"/>
-                </StackPanel>
-
                 <!-- Error -->
                 <TextBlock Grid.Row="5"
                            Text="{Binding VM.Error}"

@@ -7,4 +7,6 @@ public class EmpleadoDto
     public string? cargo { get; set; }
     public string? email { get; set; }
     public long? telefono { get; set; }
+    public long? idLocal { get; set; }
+    public string? LocalNombre { get; set; }
 }

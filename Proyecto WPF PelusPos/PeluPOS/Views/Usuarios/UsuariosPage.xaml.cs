@@ -29,7 +29,9 @@ namespace PeluPOS.Views.Usuarios
             {
                 IdUsuario = u.idUsuario,
                 Nombre = u.usuario,
+                Contrasena = u.contrasena,
                 Empleado = u.idEmpleado?.nombre ?? "-",
+                EmpleadoId = u.idEmpleado?.idEmpleado,
                 Rol = u.rolUsuario ?? "-",
                 Activo = true,
                 UltimoAcceso = "-"
@@ -82,7 +84,7 @@ namespace PeluPOS.Views.Usuarios
                 usuario = vm.NombreUsuario,
                 contrasena = vm.Contrasena,
                 rolUsuario = vm.RolSeleccionado!,
-                idEmpleado = vm.EmpleadoSeleccionado?.idEmpleado
+                idEmpleado = vm.EmpleadoSeleccionado
             };
 
             var created = await AppServices.UsuarioApi.CreateAsync(req);
@@ -102,12 +104,15 @@ namespace PeluPOS.Views.Usuarios
             var vm = new UsuarioEditorViewModel
             {
                 NombreUsuario = row.Nombre ?? "",
+                Contrasena = row.Contrasena ?? "",
                 RolSeleccionado = row.Rol == "-" ? null : row.Rol
             };
             await CargarEmpleadosEnVm(vm);
 
-            // Pre-seleccionar empleado vinculado si existe
-            if (row.Empleado != "-")
+            // Pre-seleccionar empleado vinculado si existe (por id para evitar ambigüedades)
+            if (row.EmpleadoId.HasValue)
+                vm.EmpleadoSeleccionado = vm.Empleados.FirstOrDefault(emp => emp.idEmpleado == row.EmpleadoId.Value);
+            else if (row.Empleado != "-")
                 vm.EmpleadoSeleccionado = vm.Empleados.FirstOrDefault(emp => emp.nombre == row.Empleado);
 
             var dlg = new UsuarioDialog("Editar usuario", vm, isCreate: false)
@@ -121,8 +126,9 @@ namespace PeluPOS.Views.Usuarios
             {
                 idUsuario = row.IdUsuario,
                 usuario = vm.NombreUsuario,
+                contrasena = vm.Contrasena,
                 rolUsuario = vm.RolSeleccionado!,
-                idEmpleado = vm.EmpleadoSeleccionado?.idEmpleado
+                idEmpleado = vm.EmpleadoSeleccionado
             };
 
             var updated = await AppServices.UsuarioApi.UpdateAsync(req);
@@ -173,7 +179,9 @@ namespace PeluPOS.Views.Usuarios
     {
         public long IdUsuario { get; set; }
         public string? Nombre { get; set; }
+        public string? Contrasena { get; set; }
         public string? Empleado { get; set; }
+        public long? EmpleadoId { get; set; }
         public string? Rol { get; set; }
         public bool Activo { get; set; }
         public string? UltimoAcceso { get; set; }

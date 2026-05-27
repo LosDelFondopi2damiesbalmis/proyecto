@@ -17,7 +17,7 @@ public partial class UsuarioEditorViewModel : ObservableObject
 
     public ObservableCollection<string> Roles { get; } = new()
     {
-        "Administrador", "Manager", "Empleado"
+        "ADMINISTRADOR", "MANAGER", "EMPLEADO"
     };
 
     public ObservableCollection<EmpleadoMiniDto> Empleados { get; } = new();

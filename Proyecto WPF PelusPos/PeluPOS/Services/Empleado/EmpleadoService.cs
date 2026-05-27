@@ -30,7 +30,8 @@ namespace PeluPOS.Services
             Nombre   = dto.nombre,
             Cargo    = dto.cargo    ?? string.Empty,
             Email    = dto.email    ?? string.Empty,
-            Telefono = dto.telefono ?? 0L
+            Telefono = dto.telefono ?? 0L,
+            LocalId  = dto.idLocal  ?? 0L
         };
 
         private static Factura MapFactura(Models.ApiDtos.Facturas.FacturaDto dto) => new Factura
@@ -74,15 +75,15 @@ namespace PeluPOS.Services
             long   telefono,
             string email,
             string cargo,
-            long   localId,
-            string password)
+            long   localId)
         {
             var dto = new EmpleadoDto
             {
                 nombre   = nombre,
                 cargo    = cargo,
                 email    = email,
-                telefono = telefono
+                telefono = telefono,
+                idLocal  = localId
             };
             await _empleadoApi.CreateAsync(dto);
 
