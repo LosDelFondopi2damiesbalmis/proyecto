@@ -8,8 +8,8 @@ namespace PeluPOS.ViewModels.TPV
 {
     public partial class TpvViewModel : ObservableObject
     {
-        private readonly ICatalogService? _catalog;
-        private readonly ITpvVentaService? _venta;
+        private readonly ICatalogService _catalog;
+        private readonly ITpvVentaService _venta;
 
         public ObservableCollection<TpvItemCard> Items { get; } = new();
         public ObservableCollection<TpvLineaViewModel> Ticket { get; } = new();
@@ -63,7 +63,7 @@ namespace PeluPOS.ViewModels.TPV
 
             if (ModoProductos)
             {
-                var productos = await _catalog!.GetProductosAsync();
+                var productos = await _catalog.GetProductosAsync();
                 var filtered = string.IsNullOrWhiteSpace(q)
                     ? productos
                     : productos.Where(p => p.Nombre.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -73,7 +73,7 @@ namespace PeluPOS.ViewModels.TPV
             }
             else
             {
-                var servicios = await _catalog!.GetServiciosAsync();
+                var servicios = await _catalog.GetServiciosAsync();
                 var filtered = string.IsNullOrWhiteSpace(q)
                     ? servicios
                     : servicios.Where(s => s.Nombre.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -85,7 +85,7 @@ namespace PeluPOS.ViewModels.TPV
 
         private async Task CargarClientesAsync()
         {
-            var lista = await _catalog!.GetClientesAsync();
+            var lista = await _catalog.GetClientesAsync();
             Clientes.Clear();
             foreach (var c in lista)
                 Clientes.Add(c);
@@ -184,7 +184,7 @@ namespace PeluPOS.ViewModels.TPV
 
             try
             {
-                await _venta!.CrearFacturaAsync(
+                await _venta.CrearFacturaAsync(
                     empleadoId.Value,
                     ClienteSeleccionado,
                     TipoPago,

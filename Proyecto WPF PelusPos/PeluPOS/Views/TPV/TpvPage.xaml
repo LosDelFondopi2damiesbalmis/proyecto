@@ -294,7 +294,7 @@
                     </Grid>
 
                     <!-- Catálogo -->
-                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CatalogoFiltrado}">
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Items}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Horizontal"/>

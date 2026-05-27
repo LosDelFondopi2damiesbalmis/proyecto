@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -25,6 +25,7 @@
         ══════════════════════════════════════════ -->
         <Border x:Name="Sidebar"
                 Grid.Column="0"
+                Width="230"
                 Visibility="{Binding ShellState.IsTpvMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">

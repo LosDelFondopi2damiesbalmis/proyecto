@@ -18,6 +18,7 @@ namespace PeluPOS
         {
             InitializeComponent();
 
+            MainFrame.Navigated += OnFrameNavigated;
             SessionService.SessionChanged += ApplySidebarVisibility;
             SessionService.LoginRequired += async () =>
             {
@@ -85,6 +86,14 @@ namespace PeluPOS
             }
 
             return true;
+        }
+
+        private void OnFrameNavigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            if (e.Content is TpvPage)
+                Sidebar.Visibility = Visibility.Collapsed;
+            else
+                ApplySidebarVisibility();
         }
 
         private void ApplySidebarVisibility()

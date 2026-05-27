@@ -21,17 +21,35 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Título y descripción -->
-        <StackPanel Grid.Row="0" Margin="0 0 0 16">
-            <TextBlock Text="Clientes"
-                       FontSize="24"
-                       FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <TextBlock Text="Gestiona tus clientes y búscalos rápidamente por nombre."
-                       Margin="0,4,0,0"
-                       FontSize="12"
-                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-        </StackPanel>
+        <!-- Título, descripción y botón Nuevo -->
+        <Grid Grid.Row="0" Margin="0 0 0 16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Clientes"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBlock Text="Gestiona tus clientes y búscalos rápidamente por nombre."
+                           Margin="0,4,0,0"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+
+            <!-- Botón Nuevo Cliente -->
+            <Button Grid.Column="1"
+                    Content="+ Nuevo Cliente"
+                    Width="150" Height="38"
+                    VerticalAlignment="Center"
+                    Click="NuevoCliente_Click"
+                    Background="{DynamicResource PrimaryBrush}"
+                    Foreground="{DynamicResource TextPrimaryDarkBrush}"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"/>
+        </Grid>
 
         <!-- Tarjeta principal -->
         <Border Grid.Row="1"
@@ -133,9 +151,12 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0">
+                                <!-- Info del cliente -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Nombre}"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -144,11 +165,40 @@
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>
 
+                                <!-- Deuda -->
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding Deuda, StringFormat='Deuda: {0:C}'}"
                                            FontSize="11"
                                            VerticalAlignment="Center"
+                                           Margin="0,0,16,0"
                                            Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                                <!-- Botón Editar -->
+                                <Button Grid.Column="2"
+                                        Content="✏"
+                                        ToolTip="Editar cliente"
+                                        Width="32" Height="32"
+                                        Margin="0,0,6,0"
+                                        Tag="{Binding}"
+                                        Click="EditarCliente_Click"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        Foreground="{DynamicResource TextPrimaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        FontSize="14"/>
+
+                                <!-- Botón Eliminar -->
+                                <Button Grid.Column="3"
+                                        Content="🗑"
+                                        ToolTip="Eliminar cliente"
+                                        Width="32" Height="32"
+                                        Tag="{Binding}"
+                                        Click="EliminarCliente_Click"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        Foreground="{DynamicResource ErrorBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        FontSize="14"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
