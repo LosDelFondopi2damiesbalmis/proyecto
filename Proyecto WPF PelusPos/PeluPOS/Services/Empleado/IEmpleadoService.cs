@@ -19,8 +19,7 @@ namespace PeluPOS.Services
             long telefono,
             string email,
             string cargo,
-            long localId,
-            string password
+            long localId
         );
 
         Task UpdateAsync(

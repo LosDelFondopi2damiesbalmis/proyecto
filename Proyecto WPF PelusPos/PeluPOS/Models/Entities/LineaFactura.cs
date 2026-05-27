@@ -22,5 +22,11 @@ namespace PeluPOS.Models.Entities
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
         public decimal ImporteTotal => Cantidad * PrecioUnitario;
+
+        /// <summary>Nombre del producto o servicio según cuál esté asociado a esta línea.</summary>
+        public string NombreItem => Producto?.Nombre ?? Servicio?.Nombre ?? "—";
+
+        /// <summary>Indica si la línea corresponde a un servicio o a un producto.</summary>
+        public string TipoItem => Servicio != null ? "Servicio" : "Producto";
     }
 }

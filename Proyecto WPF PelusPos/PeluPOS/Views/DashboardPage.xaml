@@ -1,257 +1,186 @@
 ﻿<Page x:Class="PeluPOS.Views.DashboardPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:PeluPOS.Views"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="DashboardPage" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Background="{DynamicResource MaterialDesignPaper}"
-      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
-
-    <Grid Background="#F3F4F6" Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- CABECERA -->
-        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
-            <TextBlock Text="Dashboard general"
-                       FontSize="22"
-                       FontWeight="Bold"
-                       Foreground="#111827"/>
-            <TextBlock Text="Resumen de ventas, empleados y stock"
-                       FontSize="12"
-                       Foreground="#6B7280"/>
-        </StackPanel>
-
-        <!-- GRID 2x2 -->
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- ESTILO TARJETAS -->
-            <Grid.Resources>
-                <Style x:Key="Card" TargetType="Border">
-                    <Setter Property="CornerRadius" Value="8"/>
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="Padding" Value="10"/>
-                    <Setter Property="Margin" Value="5"/>
-                    <Setter Property="SnapsToDevicePixels" Value="True"/>
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect BlurRadius="6"
-                                              ShadowDepth="1"
-                                              Opacity="0.1"/>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-
-                <Style x:Key="CardTitle" TargetType="TextBlock">
-                    <Setter Property="FontSize" Value="16"/>
-                    <Setter Property="FontWeight" Value="Bold"/>
-                    <Setter Property="Foreground" Value="#111827"/>
-                </Style>
-            </Grid.Resources>
-
-            <!-- 🔹 ARRIBA IZQUIERDA: Últimas ventas -->
-            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Card}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="Últimas ventas"
-                               Style="{StaticResource CardTitle}"/>
-
-                    <ListView Grid.Row="1" Margin="0,8,0,0">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Hora" Width="60"/>
-                                <GridViewColumn Header="Cliente" Width="120"/>
-                                <GridViewColumn Header="Servicio" Width="120"/>
-                                <GridViewColumn Header="Importe" Width="70"/>
-                            </GridView>
-                        </ListView.View>
-
-                        <!-- Datos de prueba -->
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="10:15" Width="70"/>
-                                <TextBlock Text="Ana López" Width="140"/>
-                                <TextBlock Text="Corte + tinte" Width="160"/>
-                                <TextBlock Text="45,00 €" Width="80"
-                                           HorizontalAlignment="Right"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="10:45" Width="70"/>
-                                <TextBlock Text="María Pérez" Width="140"/>
-                                <TextBlock Text="Peinado evento" Width="160"/>
-                                <TextBlock Text="35,00 €" Width="80"
-                                           HorizontalAlignment="Right"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="11:05" Width="70"/>
-                                <TextBlock Text="Juan Ruiz" Width="140"/>
-                                <TextBlock Text="Corte caballero" Width="160"/>
-                                <TextBlock Text="18,00 €" Width="80"
-                                           HorizontalAlignment="Right"/>
-                            </StackPanel>
-                        </ListViewItem>
-                    </ListView>
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:conv="clr-namespace:PeluPOS.Resources.Converters"
+      mc:Ignorable="d" Title="Dashboard" Background="#F7F9FC">
+    <Page.Resources>
+        <DropShadowEffect x:Key="Sh" BlurRadius="14" ShadowDepth="2" Direction="270" Color="#000" Opacity="0.07"/>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Effect" Value="{StaticResource Sh}"/>
+            <Setter Property="Padding" Value="20"/>
+        </Style>
+        <conv:InverseBoolToVisibilityConverter x:Key="InvBool"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Page.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsLoading, Converter={StaticResource InvBool}}">
+            <StackPanel Margin="28,24,28,28">
+                <!-- Cabecera -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Dashboard" FontSize="26" FontWeight="Bold" Foreground="#1E1E2E"/>
+                        <TextBlock Text="Resumen de actividad del salón" FontSize="13" Foreground="#6E7A8A" Margin="0,3,0,0"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="14,9"
+                            BorderBrush="#E5E9F2" BorderThickness="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="DateLabel" FontSize="13" FontWeight="SemiBold" Foreground="#374151"/>
+                    </Border>
                 </Grid>
-            </Border>
 
-            <!-- 🔹 ARRIBA DERECHA: Empleados con más ventas -->
-            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Card}">
+                <!-- Error -->
+                <Border Background="#FFF0F0" CornerRadius="8" Padding="14,10" Margin="0,0,0,16"
+                        Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" FontSize="13"/>
+                </Border>
+
+                <!-- KPIs -->
+                <UniformGrid Rows="1" Margin="0,0,0,20">
+                    <Border Style="{StaticResource Card}" Margin="0,0,7,0">
+                        <Grid>
+                            <Border Height="4" Background="#5B8DEF" CornerRadius="12,12,0,0" VerticalAlignment="Top"/>
+                            <StackPanel Margin="0,8,0,0">
+                                <TextBlock Text="VENTAS HOY" FontSize="11" FontWeight="SemiBold" Foreground="#8A94A6"/>
+                                <TextBlock Text="{Binding VentasHoy}" FontSize="30" FontWeight="Bold" Foreground="#1E1E2E" Margin="0,4,0,6"/>
+                                <TextBlock Text="Facturas del día" FontSize="11" Foreground="#3B6FD4"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="7,0,7,0">
+                        <Grid>
+                            <Border Height="4" Background="#4ECDC4" CornerRadius="12,12,0,0" VerticalAlignment="Top"/>
+                            <StackPanel Margin="0,8,0,0">
+                                <TextBlock Text="IMPORTE HOY" FontSize="11" FontWeight="SemiBold" Foreground="#8A94A6"/>
+                                <TextBlock Text="{Binding ImporteHoy}" FontSize="30" FontWeight="Bold" Foreground="#1E1E2E" Margin="0,4,0,6"/>
+                                <TextBlock Text="Total facturado" FontSize="11" Foreground="#1A9E96"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="7,0,7,0">
+                        <Grid>
+                            <Border Height="4" Background="#FFB347" CornerRadius="12,12,0,0" VerticalAlignment="Top"/>
+                            <StackPanel Margin="0,8,0,0">
+                                <TextBlock Text="CLIENTES HOY" FontSize="11" FontWeight="SemiBold" Foreground="#8A94A6"/>
+                                <TextBlock Text="{Binding ClientesHoy}" FontSize="30" FontWeight="Bold" Foreground="#1E1E2E" Margin="0,4,0,6"/>
+                                <TextBlock Text="Clientes únicos" FontSize="11" Foreground="#C07A10"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="7,0,0,0">
+                        <Grid>
+                            <Border Height="4" Background="#FF6B6B" CornerRadius="12,12,0,0" VerticalAlignment="Top"/>
+                            <StackPanel Margin="0,8,0,0">
+                                <TextBlock Text="STOCK BAJO" FontSize="11" FontWeight="SemiBold" Foreground="#8A94A6"/>
+                                <TextBlock Text="{Binding StockBajo}" FontSize="30" FontWeight="Bold" Foreground="#1E1E2E" Margin="0,4,0,6"/>
+                                <TextBlock Text="⚠ Requiere atención" FontSize="11" Foreground="#C62828"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Contenido inferior -->
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Empleados con más ventas"
-                               Style="{StaticResource CardTitle}"/>
+                    <!-- Últimas ventas -->
+                    <Border Grid.Column="0" Background="White" CornerRadius="12" Effect="{StaticResource Sh}" ClipToBounds="True">
+                        <StackPanel>
+                            <StackPanel Margin="20,16,20,12">
+                                <TextBlock Text="Últimas ventas" FontSize="14" FontWeight="SemiBold" Foreground="#1E1E2E"/>
+                                <TextBlock Text="Transacciones recientes" FontSize="12" Foreground="#8A94A6" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <Grid Margin="20,0,20,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="56"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="HORA" FontSize="11" FontWeight="SemiBold" Foreground="#9AA3AF"/>
+                                <TextBlock Grid.Column="1" Text="CLIENTE" FontSize="11" FontWeight="SemiBold" Foreground="#9AA3AF"/>
+                                <TextBlock Grid.Column="2" Text="CONCEPTO" FontSize="11" FontWeight="SemiBold" Foreground="#9AA3AF"/>
+                                <TextBlock Grid.Column="3" Text="TOTAL" FontSize="11" FontWeight="SemiBold" Foreground="#9AA3AF" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <ItemsControl ItemsSource="{Binding UltimasVentas}" Margin="0,0,0,8">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="20,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="56"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="80"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Hora}" FontSize="13" Foreground="#374151"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Cliente}" FontSize="13" FontWeight="SemiBold" Foreground="#1E1E2E"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Concepto}" FontSize="13" Foreground="#374151"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding Total}" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Margin="20,4,20,12" FontSize="12" Foreground="#9AA3AF" FontStyle="Italic"
+                                       Text="Sin ventas registradas."
+                                       Visibility="{Binding HasVentas, Converter={StaticResource InvBool}}"/>
+                        </StackPanel>
+                    </Border>
 
-                    <ListView Grid.Row="1" Margin="0,8,0,0">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Empleado" Width="130"/>
-                                <GridViewColumn Header="Servicios" Width="70"/>
-                                <GridViewColumn Header="Importe total" Width="90"/>
-                            </GridView>
-                        </ListView.View>
-
-                        <!-- Datos de prueba -->
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Laura" Width="160"/>
-                                <TextBlock Text="18" Width="80"/>
-                                <TextBlock Text="420,00 €" Width="100"/>
+                    <!-- Top empleados -->
+                    <Border Grid.Column="2" Background="White" CornerRadius="12" Effect="{StaticResource Sh}" ClipToBounds="True">
+                        <StackPanel>
+                            <StackPanel Margin="20,16,20,12">
+                                <TextBlock Text="Top empleados" FontSize="14" FontWeight="SemiBold" Foreground="#1E1E2E"/>
+                                <TextBlock Text="Rendimiento del mes" FontSize="12" Foreground="#8A94A6" Margin="0,2,0,0"/>
                             </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Marta" Width="160"/>
-                                <TextBlock Text="15" Width="80"/>
-                                <TextBlock Text="380,00 €" Width="100"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Carlos" Width="160"/>
-                                <TextBlock Text="12" Width="80"/>
-                                <TextBlock Text="310,00 €" Width="100"/>
-                            </StackPanel>
-                        </ListViewItem>
-                    </ListView>
+                            <ItemsControl ItemsSource="{Binding TopEmpleados}" Margin="0,0,0,12">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="20,4" Padding="12" Background="#F8FAFF" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="#1E1E2E">
+                                                        <Run Text="{Binding Puesto}"/>
+                                                        <Run Text="{Binding Nombre}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding NumServicios}" FontSize="11" Foreground="#8A94A6"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Text="{Binding TotalImporte}" FontSize="13" FontWeight="Bold" Foreground="#5B8DEF" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Margin="20,4,20,12" FontSize="12" Foreground="#9AA3AF" FontStyle="Italic"
+                                       Text="Sin datos de empleados este mes."
+                                       Visibility="{Binding HasEmpleados, Converter={StaticResource InvBool}}"/>
+                        </StackPanel>
+                    </Border>
                 </Grid>
-            </Border>
+            </StackPanel>
+        </ScrollViewer>
 
-            <!-- 🔹 ABAJO IZQUIERDA: Ventas por local -->
-            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Card}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="Ventas por local"
-                               Style="{StaticResource CardTitle}"/>
-
-                    <ListView Grid.Row="1" Margin="0,8,0,0">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Local" Width="140"/>
-                                <GridViewColumn Header="Hoy" Width="80"/>
-                                <GridViewColumn Header="Este mes" Width="90"/>
-                            </GridView>
-                        </ListView.View>
-
-                        <!-- Datos de prueba -->
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Centro Alicante" Width="180"/>
-                                <TextBlock Text="12 ventas" Width="100"/>
-                                <TextBlock Text="1.250,00 €" Width="100"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="San Juan Playa" Width="180"/>
-                                <TextBlock Text="8 ventas" Width="100"/>
-                                <TextBlock Text="780,00 €" Width="100"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Elche Centro" Width="180"/>
-                                <TextBlock Text="10 ventas" Width="100"/>
-                                <TextBlock Text="1.050,00 €" Width="100"/>
-                            </StackPanel>
-                        </ListViewItem>
-                    </ListView>
-                </Grid>
-            </Border>
-
-            <!-- 🔹 ABAJO DERECHA: Productos con stock bajo -->
-            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Card}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="Productos con stock bajo"
-                               Style="{StaticResource CardTitle}"/>
-
-                    <ListView Grid.Row="1" Margin="0,8,0,0">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Producto" Width="160"/>
-                                <GridViewColumn Header="Stock" Width="50"/>
-                                <GridViewColumn Header="Punto pedido" Width="80"/>
-                            </GridView>
-                        </ListView.View>
-
-                        <!-- Datos de prueba -->
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Champú cabello teñido 500ml" Width="200"/>
-                                <TextBlock Text="3" Width="60"/>
-                                <TextBlock Text="10" Width="90"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Mascarilla hidratante 250ml" Width="200"/>
-                                <TextBlock Text="5" Width="60"/>
-                                <TextBlock Text="12" Width="90"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Laca fijación fuerte" Width="200"/>
-                                <TextBlock Text="2" Width="60"/>
-                                <TextBlock Text="8" Width="90"/>
-                            </StackPanel>
-                        </ListViewItem>
-                    </ListView>
-                </Grid>
-            </Border>
-        </Grid>
+        <!-- Overlay de carga -->
+        <Border Background="#99FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Cargando datos…" FontSize="16" FontWeight="SemiBold"
+                           Foreground="#5B8DEF" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

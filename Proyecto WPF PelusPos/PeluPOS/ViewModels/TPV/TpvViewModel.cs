@@ -35,6 +35,7 @@ namespace PeluPOS.ViewModels.TPV
             _catalog = catalog;
             _venta = venta;
         }
+        public TpvViewModel() { }
 
         public decimal Total => Ticket.Sum(t => t.Subtotal);
 

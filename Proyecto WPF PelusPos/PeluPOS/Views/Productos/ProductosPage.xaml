@@ -59,13 +59,11 @@
                              VerticalContentAlignment="Center"/>
 
                     <Button Grid.Column="1"
+                            Style="{StaticResource BtnCrear}"
                             Margin="12,0,0,0"
                             Content="+ Crear producto"
                             MinWidth="130" Padding="14,6"
-                            Click="CreateProducto_Click"
-                            Background="{DynamicResource PrimaryBrush}"
-                            Foreground="{DynamicResource TextPrimaryDarkBrush}"
-                            BorderThickness="0"/>
+                            Click="CreateProducto_Click"/>
                 </Grid>
 
                 <!-- Lista tipo Clientes -->
@@ -157,21 +155,17 @@
                                             BorderThickness="0"
                                             Tag="{Binding}"/>
 
-                                    <Button Content="Editar"
+                                    <Button Style="{StaticResource BtnEditar}"
+                                            Content="Editar"
                                             Padding="12,4"
                                             Margin="0,0,8,0"
                                             Click="EditProducto_Click"
-                                            Background="{DynamicResource AccentBrush}"
-                                            Foreground="{DynamicResource TextPrimaryBrush}"
-                                            BorderThickness="0"
                                             Tag="{Binding}"/>
 
-                                    <Button Content="Eliminar"
+                                    <Button Style="{StaticResource BtnEliminar}"
+                                            Content="Eliminar"
                                             Padding="12,4"
                                             Click="DeleteProducto_Click"
-                                            Background="{DynamicResource ErrorBrush}"
-                                            Foreground="{DynamicResource TextPrimaryDarkBrush}"
-                                            BorderThickness="0"
                                             Tag="{Binding Id}"/>
                                 </StackPanel>
                             </Grid>

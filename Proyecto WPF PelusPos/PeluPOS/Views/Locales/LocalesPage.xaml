@@ -8,8 +8,8 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LocalesPage" 
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+      Background="{DynamicResource MaterialDesignPaper}"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -17,66 +17,117 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0 0 0 14">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <!-- Título -->
+        <StackPanel Grid.Row="0" Margin="0 0 0 16">
+            <TextBlock Text="Locales"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="Gestiona los locales disponibles."
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Margin="0,4,0,0"/>
+        </StackPanel>
 
-            <StackPanel>
-                <TextBlock Text="Locales"
-                           FontSize="24"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                <TextBlock Text="Listado de locales disponibles."
-                           FontSize="12"
-                           Foreground="{DynamicResource TextSecondaryBrush}"
-                           Margin="0,4,0,0"/>
-            </StackPanel>
-
-            <Button Grid.Column="1"
-                    Content="+ Añadir local"
-                    MinWidth="130" Padding="14,6"
-                    Click="AddLocal_Click"
-                    Background="{DynamicResource PrimaryBrush}"
-                    Foreground="White"
-                    BorderThickness="0"/>
-        </Grid>
-
-        <!-- Content -->
+        <!-- Tarjeta principal -->
         <Border Grid.Row="1"
                 Background="{DynamicResource SurfaceBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
                 CornerRadius="12"
-                Padding="12">
+                Padding="16"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1">
 
-            <ListView ItemsSource="{Binding Locales}"
-                      SelectedItem="{Binding LocalSeleccionado}"
-                      Background="Transparent"
-                      BorderThickness="0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding Nombre}"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <!-- Botón Añadir -->
+                <Grid Grid.Row="0" Margin="0 0 0 12">
+                    <Button HorizontalAlignment="Right"
+                            Style="{StaticResource BtnCrear}"
+                            Content="+ Añadir local"
+                            MinWidth="130" Padding="14,6"
+                            Click="AddLocal_Click"/>
+                </Grid>
 
-                            <TextBlock Grid.Column="1"
-                                       Margin="5,0,0,0"
-                                       Text="{Binding Direccion}"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                <!-- Lista de locales -->
+                <ListView Grid.Row="1"
+                          ItemsSource="{Binding Locales}"
+                          SelectedItem="{Binding LocalSeleccionado}"
+                          Background="Transparent"
+                          BorderThickness="0">
 
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="0,0,0,6"/>
+                            <Setter Property="Padding" Value="10"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Border x:Name="Bd"
+                                                Background="{DynamicResource BackgroundBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="10">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Info del local -->
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="{Binding Nombre}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding Direccion}"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+
+                                <!-- Acciones -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Style="{StaticResource BtnEditar}"
+                                            Content="Editar"
+                                            Padding="12,4"
+                                            Margin="0,0,8,0"
+                                            Click="EditarLocal_Click"
+                                            Tag="{Binding}"/>
+
+                                    <Button Style="{StaticResource BtnEliminar}"
+                                            Content="Eliminar"
+                                            Padding="12,4"
+                                            Click="EliminarLocal_Click"
+                                            Tag="{Binding}"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+            </Grid>
         </Border>
     </Grid>
 </Page>

@@ -12,8 +12,8 @@ namespace PeluPOS.Views.TPV
     {
         public TpvViewModel ViewModel { get; }
         public string ActiveUserLabel =>
-            SessionService.CurrentEmpleadoId != null
-                ? $"Empleado #{SessionService.CurrentEmpleadoId}"
+            SessionService.CurrentUsername != null
+                ? SessionService.CurrentUsername
                 : "Sin sesión";
 
         public TpvPage()

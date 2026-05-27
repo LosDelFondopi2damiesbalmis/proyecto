@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PeluPOS.Views.Productos"
         mc:Ignorable="d"
         Title="Producto"
-        Width="520" Height="360"
+        Width="520" Height="400"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -16,80 +16,117 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding DialogTitle}"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="{DynamicResource TextPrimaryBrush}"
-                   Margin="0 0 0 12"/>
-
-        <StackPanel Grid.Row="1" Margin="0 0 0 10">
-            <TextBlock Text="Nombre" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-            <TextBox Height="32"
-                     Text="{Binding VM.Nombre}"
-                     Background="{DynamicResource SurfaceBrush}"
-                     Foreground="{DynamicResource TextPrimaryBrush}"
-                     BorderBrush="{DynamicResource BorderBrush}"
-                     BorderThickness="1"
-                     Padding="10,0"/>
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0 0 0 14">
+            <TextBlock Text="{Binding DialogTitle}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="Rellena los datos del producto."
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Margin="0,4,0,0"/>
         </StackPanel>
 
-        <Grid Grid.Row="2" Margin="0 0 0 10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Form -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Precio compra (€)" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                <TextBox Height="32"
-                         Text="{Binding VM.PrecioCompra}"
-                         Background="{DynamicResource SurfaceBrush}"
-                         Foreground="{DynamicResource TextPrimaryBrush}"
-                         BorderBrush="{DynamicResource BorderBrush}"
-                         BorderThickness="1"
-                         Padding="10,0"/>
-            </StackPanel>
+                <!-- Nombre -->
+                <StackPanel Grid.Row="0" Margin="0 0 0 10">
+                    <TextBlock Text="Nombre *"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBox Height="34"
+                             Text="{Binding VM.Nombre, UpdateSourceTrigger=PropertyChanged}"
+                             Background="{DynamicResource BackgroundBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1"
+                             Padding="10,0"/>
+                </StackPanel>
 
-            <StackPanel Grid.Column="2">
-                <TextBlock Text="Precio venta (€)" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                <TextBox Height="32"
-                         Text="{Binding VM.PrecioVenta}"
-                         Background="{DynamicResource SurfaceBrush}"
-                         Foreground="{DynamicResource TextPrimaryBrush}"
-                         BorderBrush="{DynamicResource BorderBrush}"
-                         BorderThickness="1"
-                         Padding="10,0"/>
-            </StackPanel>
-        </Grid>
+                <!-- Precio compra + Precio venta -->
+                <Grid Grid.Row="1" Margin="0 0 0 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="3" Margin="0 0 0 10">
-            <TextBlock Text="Stock inicial" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-            <TextBox Height="32"
-                     Text="{Binding VM.Stock}"
-                     Background="{DynamicResource SurfaceBrush}"
-                     Foreground="{DynamicResource TextPrimaryBrush}"
-                     BorderBrush="{DynamicResource BorderBrush}"
-                     BorderThickness="1"
-                     Padding="10,0"/>
-        </StackPanel>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Precio compra (€)"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 Text="{Binding VM.PrecioCompra, UpdateSourceTrigger=PropertyChanged}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
 
-        <TextBlock Grid.Row="4"
-                   Text="{Binding VM.Error}"
-                   Foreground="{DynamicResource ErrorBrush}"
-                   FontSize="12"
-                   Margin="0,6,0,0"/>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Precio venta (€)"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBox Height="34"
+                                 Text="{Binding VM.PrecioVenta, UpdateSourceTrigger=PropertyChanged}"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10,0"/>
+                    </StackPanel>
+                </Grid>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                <!-- Stock inicial -->
+                <StackPanel Grid.Row="2" Margin="0 0 0 10">
+                    <TextBlock Text="Stock inicial"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBox Height="34"
+                             Text="{Binding VM.Stock, UpdateSourceTrigger=PropertyChanged}"
+                             Background="{DynamicResource BackgroundBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1"
+                             Padding="10,0"/>
+                </StackPanel>
+
+                <!-- Error -->
+                <TextBlock Grid.Row="3"
+                           Text="{Binding VM.Error}"
+                           Foreground="{DynamicResource ErrorBrush}"
+                           FontSize="12"
+                           Margin="0,4,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Footer buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,14,0,0">
             <Button Content="Cancelar"
-                    Width="110" Height="36"
+                    Width="110" Height="38"
                     Margin="0,0,10,0"
                     Click="Cancelar_Click"
                     Background="{DynamicResource SurfaceBrush}"
@@ -97,7 +134,7 @@
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"/>
             <Button Content="Guardar"
-                    Width="110" Height="36"
+                    Width="110" Height="38"
                     Click="Guardar_Click"
                     Background="{DynamicResource PrimaryBrush}"
                     Foreground="{DynamicResource TextPrimaryDarkBrush}"

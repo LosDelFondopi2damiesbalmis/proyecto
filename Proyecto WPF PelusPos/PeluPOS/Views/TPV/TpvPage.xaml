@@ -36,7 +36,7 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Content="⚙"
-                        Padding="10" MinWidth="36" MinHeight="36"
+                        Padding="5" MinWidth="36" MinHeight="36"
                         Margin="0,0,8,0"
                         Click="Gear_Click"
                         Background="{DynamicResource SurfaceBrush}"
@@ -294,7 +294,7 @@
                     </Grid>
 
                     <!-- Catálogo -->
-                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CatalogoFiltrado}">
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Items}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Horizontal"/>

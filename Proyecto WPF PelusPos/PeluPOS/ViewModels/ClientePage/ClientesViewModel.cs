@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PeluPOS.Models.ApiDtos.Clientes;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services;
 
@@ -80,6 +81,28 @@ namespace PeluPOS.ViewModels
             foreach (var cli in resultado)
                 ClientesFiltrados.Add(cli);
         }
+
+        // ── CRUD ──────────────────────────────────────────────────
+
+        public async Task<bool> CreateClienteAsync(ClienteDto dto)
+        {
+            var ok = await _clienteService.CreateAsync(dto);
+            if (ok) await LoadAsync();
+            return ok;
+        }
+
+        public async Task<bool> UpdateClienteAsync(ClienteDto dto)
+        {
+            var ok = await _clienteService.UpdateAsync(dto);
+            if (ok) await LoadAsync();
+            return ok;
+        }
+
+        public async Task<bool> DeleteClienteAsync(long id)
+        {
+            var ok = await _clienteService.DeleteAsync(id);
+            if (ok) await LoadAsync();
+            return ok;
+        }
     }
 }
-

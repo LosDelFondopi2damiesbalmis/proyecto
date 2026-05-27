@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -25,6 +25,7 @@
         ══════════════════════════════════════════ -->
         <Border x:Name="Sidebar"
                 Grid.Column="0"
+                Width="230"
                 Visibility="{Binding ShellState.IsTpvMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -224,7 +225,7 @@
                         <Button Style="{StaticResource NavButton}" Click="Servicios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="✂" Style="{StaticResource NavIcon}" FontFamily="Segoe UI Symbol"/>
-                                <TextBlock Text="Servicios" VerticalAlignment="Center" Foreground="White"/>
+                                <TextBlock Text=" Servicios" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
 

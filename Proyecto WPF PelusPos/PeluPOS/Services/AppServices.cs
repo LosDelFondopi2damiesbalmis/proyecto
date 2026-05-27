@@ -13,7 +13,7 @@ namespace PeluPOS.Services
     /// </summary>
     public static class AppServices
     {
-        public const string ApiBaseUrl = "http://localhost/apiPeluPos/servicio/";
+        public const string ApiBaseUrl = "http://pelupos.spaincentral.cloudapp.azure.com:8080/pelupos/servicio/";
 
         // ── cliente HTTP compartido (el token JWT se actualiza tras el login) ──
         public static readonly ApiClient ApiClient = new(ApiBaseUrl);
@@ -36,7 +36,7 @@ namespace PeluPOS.Services
         public static readonly ILocalService Locales = new LocalService(LocalApi);
         public static readonly IProductoService Productos = new ProductoService(ProductoApi, FacturaApi);
         public static readonly IServicioService Servicios = new ServicioService(ServicioApi, FacturaApi);
-        public static readonly IVentaService Ventas = new VentaService(FacturaApi);
+        public static readonly IVentaService Ventas = new VentaService(FacturaApi, ProductoApi, ServicioApi);
         public static readonly ICatalogService Catalog = new CatalogService(ProductoApi, ServicioApi, ClienteApi);
         public static readonly ITpvVentaService TpvVenta = new TpvVentaService(FacturaApi);
     }

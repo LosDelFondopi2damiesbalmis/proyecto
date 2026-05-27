@@ -10,6 +10,7 @@ namespace PeluPOS.ViewModels
 {
     public partial class NuevoLocalViewModel : ObservableObject
     {
+        [ObservableProperty] private string titulo = "Crear nuevo local";
         [ObservableProperty] private string nombre = string.Empty;
         [ObservableProperty] private string direccion = string.Empty;
 

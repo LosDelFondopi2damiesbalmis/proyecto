@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="← Volver"
+            <Button Content="←"
                     Width="90" Height="34"
                     Click="Back_Click"
                     Background="{DynamicResource SurfaceBrush}"

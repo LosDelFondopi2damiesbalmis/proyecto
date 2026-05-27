@@ -13,6 +13,33 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
+    <!-- Botón Crear / Añadir (azul primario) -->
+    <Style x:Key="BtnCrear" TargetType="Button"
+           BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"   Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="Foreground"   Value="White"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+    </Style>
+
+    <!-- Botón Editar (naranja) -->
+    <Style x:Key="BtnEditar" TargetType="Button"
+           BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"   Value="{StaticResource WarningBrush}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource WarningBrush}"/>
+        <Setter Property="Foreground"   Value="White"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+    </Style>
+
+    <!-- Botón Eliminar (rojo) -->
+    <Style x:Key="BtnEliminar" TargetType="Button"
+           BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"   Value="{StaticResource ErrorBrush}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource ErrorBrush}"/>
+        <Setter Property="Foreground"   Value="White"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+    </Style>
+
     <!-- ========================= -->
     <!-- COMBOBOX -->
     <!-- ========================= -->

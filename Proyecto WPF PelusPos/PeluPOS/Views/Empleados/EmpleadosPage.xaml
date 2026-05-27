@@ -59,13 +59,11 @@
                              VerticalContentAlignment="Center"/>
 
                     <Button Grid.Column="1"
+                            Style="{StaticResource BtnCrear}"
                             Margin="12,0,0,0"
                             Content="+ Crear empleado"
                             MinWidth="130" Padding="14,6"
-                            Click="CreateEmpleado_Click"
-                            Background="{DynamicResource PrimaryBrush}"
-                            Foreground="{DynamicResource TextPrimaryDarkBrush}"
-                            BorderThickness="0"/>
+                            Click="CreateEmpleado_Click"/>
                 </Grid>
 
                 <!-- Lista tipo resto de páginas -->
@@ -114,20 +112,20 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Info -->
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Nombre}"
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="{Binding nombre}"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-                                    <TextBlock Text="{Binding Cargo, StringFormat=Cargo: {0}}"
+                                    <TextBlock Text="{Binding cargo, StringFormat=Cargo: {0}}"
                                                FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                                    <TextBlock Text="{Binding Email, StringFormat=Email: {0}}"
+                                    <TextBlock Text="{Binding email, StringFormat=Email: {0}}"
                                                FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                                    <TextBlock Text="{Binding Local.Nombre, StringFormat=Local: {0}}"
+                                    <TextBlock Text="{Binding LocalNombre, StringFormat=Local: {0}}"
                                                FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>
@@ -141,28 +139,24 @@
                                             Background="{DynamicResource AccentBrush}"
                                             Foreground="{DynamicResource TextPrimaryBrush}"
                                             BorderThickness="0"
-                                            Tag="{Binding Id}"/>
-                                    <Button Content="Editar"
+                                            Tag="{Binding idEmpleado}"/>
+                                    <Button Style="{StaticResource BtnEditar}"
+                                            Content="Editar"
                                             Padding="12,4"
                                             Margin="0,0,8,0"
                                             Click="EditEmpleado_Click"
-                                            Background="{DynamicResource AccentBrush}"
-                                            Foreground="{DynamicResource TextPrimaryBrush}"
-                                            BorderThickness="0"
                                             Tag="{Binding}"/>
 
-                                    <Button Content="Eliminar"
+                                    <Button Style="{StaticResource BtnEliminar}"
+                                            Content="Eliminar"
+                                            Margin="0,0,8,0"
                                             Padding="12,4"
                                             Click="DeleteEmpleado_Click"
-                                            Background="{DynamicResource ErrorBrush}"
-                                            Foreground="{DynamicResource TextPrimaryDarkBrush}"
-                                            BorderThickness="0"
-                                            Tag="{Binding Id}"/>
+                                            Tag="{Binding idEmpleado}"/>
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-
                 </ListView>
             </Grid>
         </Border>

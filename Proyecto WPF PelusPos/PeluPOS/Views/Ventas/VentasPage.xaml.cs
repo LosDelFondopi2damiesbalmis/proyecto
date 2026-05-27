@@ -29,12 +29,6 @@ namespace PeluPOS.Views.Ventas
             OpenDetalle(ViewModel.VentaSeleccionada);
         }
 
-        private void Ver_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn || btn.Tag is not VentaRowViewModel row) return;
-            OpenDetalle(row);
-        }
-
         private async void OpenDetalle(VentaRowViewModel row)
         {
             var vm = new VentaDetalleViewModel(row.Factura);

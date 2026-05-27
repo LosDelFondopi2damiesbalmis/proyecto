@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using PeluPOS.Models.ApiDtos.Empleados;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services;
 using PeluPOS.ViewModels;
@@ -47,26 +48,25 @@ namespace PeluPOS.Views.EmpleadosPage
                 vm.Telefono,
                 vm.Email,
                 vm.Cargo,
-                vm.LocalSeleccionado!.Id,
-                vm.Password
+                vm.LocalSeleccionado!.Id
             ));
         }
 
         private async void EditEmpleado_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button btn || btn.Tag is not Empleado emp) return;
+            if (sender is not Button btn || btn.Tag is not EmpleadoDto emp) return;
 
             var vm = new EmpleadoEditorViewModel
             {
-                Nombre = emp.Nombre,
-                Telefono = emp.Telefono,
-                Email = emp.Email,
-                Cargo = emp.Cargo
+                Nombre = emp.nombre,
+                Telefono = emp.telefono ?? 0,
+                Email = emp.email ?? string.Empty,
+                Cargo = emp.cargo ?? string.Empty
             };
 
             foreach (var l in ViewModel.Locales) vm.Locales.Add(l);
             vm.LocalSeleccionado =
-                vm.Locales.FirstOrDefault(x => x.Id == emp.Local?.Id) ?? vm.Locales.FirstOrDefault();
+                vm.Locales.FirstOrDefault(x => x.Id == emp.idLocal) ?? vm.Locales.FirstOrDefault();
 
             var dlg = new EmpleadoDialog("Editar empleado", vm, isCreate: false)
             {
@@ -76,7 +76,7 @@ namespace PeluPOS.Views.EmpleadosPage
             if (dlg.ShowDialog() != true) return;
 
             await ViewModel.EditAsync((
-                emp.Id,
+                emp.idEmpleado,
                 vm.Nombre,
                 vm.Telefono,
                 vm.Email,

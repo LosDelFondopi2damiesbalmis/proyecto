@@ -29,6 +29,19 @@ namespace PeluPOS.Services.Locales
             return ToEntity(all.Last());
         }
 
+        public async Task<bool> UpdateAsync(long id, string nombre, string direccion)
+        {
+            var dto = new LocalDto { idLocal = id, nombre = nombre, direccion = direccion };
+            var result = await _api.UpdateAsync(dto);
+            return result != null;
+        }
+
+        public async Task<bool> DeleteAsync(long id)
+        {
+            var result = await _api.DeleteAsync(id);
+            return result != null;
+        }
+
         private static Local ToEntity(LocalDto d) => new Local
         {
             Id = d.idLocal,

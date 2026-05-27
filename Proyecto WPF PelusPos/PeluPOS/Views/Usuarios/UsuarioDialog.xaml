@@ -1,11 +1,11 @@
-﻿<Window x:Class="PeluPOS.Views.Empleados.EmpleadoDialog"
+<Window x:Class="PeluPOS.Views.Usuarios.UsuarioDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PeluPOS.Views.Empleados"
+        xmlns:local="clr-namespace:PeluPOS.Views.Usuarios"
         mc:Ignorable="d"
-        Title="EmpleadoDialog" Height="620" Width="800"
+        Title="UsuarioDialog" Height="540" Width="500"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
@@ -22,7 +22,7 @@
                        FontSize="18"
                        FontWeight="SemiBold"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <TextBlock Text="Rellena los datos del empleado."
+            <TextBlock Text="Rellena los datos del usuario."
                        FontSize="12"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        Margin="0,4,0,0"/>
@@ -35,10 +35,8 @@
                 BorderThickness="1"
                 CornerRadius="12"
                 Padding="16">
-
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -47,13 +45,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Nombre -->
+                <!-- Nombre de usuario -->
                 <StackPanel Grid.Row="0" Margin="0 0 0 10">
-                    <TextBlock Text="Nombre"
+                    <TextBlock Text="Nombre de usuario"
                                FontSize="12"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <TextBox Height="34"
-                             Text="{Binding VM.Nombre, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding VM.NombreUsuario, UpdateSourceTrigger=PropertyChanged}"
                              Background="{DynamicResource BackgroundBrush}"
                              Foreground="{DynamicResource TextPrimaryBrush}"
                              BorderBrush="{DynamicResource BorderBrush}"
@@ -61,64 +59,45 @@
                              Padding="10,0"/>
                 </StackPanel>
 
-                <!-- Teléfono + Cargo -->
-                <Grid Grid.Row="1" Margin="0 0 0 10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Teléfono"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBox Height="34"
-                                 Text="{Binding VM.Telefono, UpdateSourceTrigger=PropertyChanged}"
+                <!-- Contraseña (solo CREATE) -->
+                <StackPanel Grid.Row="1" Margin="0 0 0 10"
+                            Visibility="{Binding PasswordVisibility}">
+                    <TextBlock Text="Contraseña"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <PasswordBox Height="34"
+                                 x:Name="PasswordBox"
                                  Background="{DynamicResource BackgroundBrush}"
                                  Foreground="{DynamicResource TextPrimaryBrush}"
                                  BorderBrush="{DynamicResource BorderBrush}"
                                  BorderThickness="1"
-                                 Padding="10,0"/>
-                    </StackPanel>
+                                 Padding="10,0"
+                                 PasswordChanged="PasswordBox_PasswordChanged"/>
+                </StackPanel>
 
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="Cargo"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBox Height="34"
-                                 Text="{Binding VM.Cargo, UpdateSourceTrigger=PropertyChanged}"
-                                 Background="{DynamicResource BackgroundBrush}"
-                                 Foreground="{DynamicResource TextPrimaryBrush}"
-                                 BorderBrush="{DynamicResource BorderBrush}"
-                                 BorderThickness="1"
-                                 Padding="10,0"/>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Email -->
+                <!-- Rol -->
                 <StackPanel Grid.Row="2" Margin="0 0 0 10">
-                    <TextBlock Text="Email"
-                               FontSize="12"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    <TextBox Height="34"
-                             Text="{Binding VM.Email, UpdateSourceTrigger=PropertyChanged}"
-                             Background="{DynamicResource BackgroundBrush}"
-                             Foreground="{DynamicResource TextPrimaryBrush}"
-                             BorderBrush="{DynamicResource BorderBrush}"
-                             BorderThickness="1"
-                             Padding="10,0"/>
-                </StackPanel>
-
-                <!-- Local -->
-                <StackPanel Grid.Row="3" Margin="0 0 0 10">
-                    <TextBlock Text="Local"
+                    <TextBlock Text="Rol"
                                FontSize="12"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <ComboBox Height="34"
-                              ItemsSource="{Binding VM.Locales}"
-                              SelectedItem="{Binding VM.LocalSeleccionado}"
-                              DisplayMemberPath="Nombre"
+                              ItemsSource="{Binding VM.Roles}"
+                              SelectedItem="{Binding VM.RolSeleccionado}"
+                              Background="{DynamicResource BackgroundBrush}"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              BorderBrush="{DynamicResource BorderBrush}"
+                              BorderThickness="1"/>
+                </StackPanel>
+
+                <!-- Empleado vinculado (opcional) -->
+                <StackPanel Grid.Row="3" Margin="0 0 0 10">
+                    <TextBlock Text="Empleado vinculado (opcional)"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <ComboBox Height="34"
+                              ItemsSource="{Binding VM.Empleados}"
+                              SelectedItem="{Binding VM.EmpleadoSeleccionado}"
+                              DisplayMemberPath="nombre"
                               Background="{DynamicResource BackgroundBrush}"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               BorderBrush="{DynamicResource BorderBrush}"
@@ -126,7 +105,7 @@
                 </StackPanel>
 
                 <!-- Error -->
-                <TextBlock Grid.Row="5"
+                <TextBlock Grid.Row="4"
                            Text="{Binding VM.Error}"
                            Foreground="{DynamicResource ErrorBrush}"
                            FontSize="12"
@@ -147,7 +126,6 @@
                     Foreground="{DynamicResource TextPrimaryBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"/>
-
             <Button Content="Guardar"
                     Width="110" Height="38"
                     Click="Guardar_Click"

@@ -29,8 +29,7 @@ namespace PeluPOS.ViewModels
         public bool IsValidCreate =>
             !string.IsNullOrWhiteSpace(Nombre) &&
             !string.IsNullOrWhiteSpace(Email) &&
-            LocalSeleccionado != null &&
-            !string.IsNullOrWhiteSpace(Password);
+            LocalSeleccionado != null;
 
         public bool IsValidEdit =>
             !string.IsNullOrWhiteSpace(Nombre) &&
@@ -42,7 +41,6 @@ namespace PeluPOS.ViewModels
             if (string.IsNullOrWhiteSpace(Nombre)) Error = "El nombre es obligatorio.";
             else if (string.IsNullOrWhiteSpace(Email)) Error = "El email es obligatorio.";
             else if (LocalSeleccionado == null) Error = "Selecciona un local.";
-            else if (string.IsNullOrWhiteSpace(Password)) Error = "La contraseña es obligatoria.";
             else Error = null;
         }
 
