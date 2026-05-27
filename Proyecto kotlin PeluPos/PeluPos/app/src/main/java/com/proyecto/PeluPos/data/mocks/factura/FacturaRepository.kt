@@ -1,7 +1,11 @@
 package com.proyecto.PeluPos.data.mocks.factura
 
+import com.proyecto.PeluPos.data.services.facturas.FacturaProductoService
 import com.proyecto.PeluPos.data.services.facturas.FacturaService
+import com.proyecto.PeluPos.data.services.facturas.FacturaServicioService
 import com.proyecto.PeluPos.models.Factura
+import com.proyecto.PeluPos.models.FacturaProductoDto
+import com.proyecto.PeluPos.models.FacturaServicioDto
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -10,25 +14,30 @@ import javax.inject.Inject
 
 @Singleton
 class FacturaRepository @Inject constructor(
-    private val facturaService: FacturaService
+    private val facturaService: FacturaService,
+    // 🚀 NUEVO: Inyectamos los dos nuevos servicios
+    private val facturaProductoService: FacturaProductoService,
+    private val facturaServicioService: FacturaServicioService
 ) {
-    // En tu FacturaRepository.kt
+
+    // --- MÉTODOS ORIGINALES DE FACTURA ---
+
     suspend fun getFacturas(): List<Factura> {
         val response = facturaService.getFacturas()
         if (response.isSuccessful) {
             val dtos = response.body() ?: emptyList()
-            // 🚀 AQUÍ ESTÁ LA CLAVE: Mapeamos el DTO complejo a tu Factura simple
             return dtos.map { dto ->
                 Factura(
                     idFactura = dto.idFactura,
                     monto = dto.monto,
-                    fecha = parseFecha(dto.fecha), // Usa un SimpleDateFormat para el string
+                    fecha = parseFecha(dto.fecha),
                     pendiente = dto.pendiente,
                     tipoPago = dto.tipoPago,
-                    cliente = dto.idCliente, // O dto.idCliente.toDomain() si es necesario
+                    cliente = dto.idCliente,
                     empleado = dto.idEmpleado,
-                    productos = dto.facturaProductoCollection.map { it.producto }.toMutableList(),
-                    servicios = dto.facturaServicioCollection.map { it.servicio }.toMutableList()
+                    // 🚀 USAMOS mapNotNull PARA EXTRAER LOS PRODUCTOS DE FORMA SEGURA
+                    productos = dto.facturaProductoCollection.mapNotNull { it.producto }.toMutableList(),
+                    servicios = dto.facturaServicioCollection.mapNotNull { it.servicio }.toMutableList()
                 )
             }
         } else {
@@ -37,13 +46,9 @@ class FacturaRepository @Inject constructor(
     }
 
     suspend fun getFactura(id: Long): Factura? {
-        // 1. Llamamos al servicio esperando un DTO
         val response = facturaService.getFactura(id)
-
         if (response.isSuccessful && response.body() != null) {
             val dto = response.body()!!
-
-            // 2. Mapeamos el DTO único a tu modelo de Factura simple
             return Factura(
                 idFactura = dto.idFactura,
                 monto = dto.monto,
@@ -52,60 +57,76 @@ class FacturaRepository @Inject constructor(
                 tipoPago = dto.tipoPago,
                 cliente = dto.idCliente,
                 empleado = dto.idEmpleado,
-                productos = dto.facturaProductoCollection.map { it.producto }.toMutableList(),
-                servicios = dto.facturaServicioCollection.map { it.servicio }.toMutableList()
+                productos = dto.facturaProductoCollection.mapNotNull { it.producto }.toMutableList(),
+                servicios = dto.facturaServicioCollection.mapNotNull { it.servicio }.toMutableList()
             )
         } else if (response.code() == 404) {
-            return null // Si no existe, devolvemos null tranquilamente
+            return null
         } else {
             throw Exception("Error al buscar la factura: ${response.code()}")
         }
     }
 
     suspend fun createFactura(factura: Factura): Factura {
-        // Usamos el mapper para convertir Factura -> FacturaRequestDto
         val requestDto = factura.toRequestDto()
-
         val response = facturaService.createFactura(requestDto)
-
         if (response.isSuccessful && response.body() != null) {
-            // Aquí podrías convertir el resultado de vuelta a Factura si fuera necesario
-            return factura
+            return response.body()!!
         } else {
             throw Exception("Error al crear: ${response.code()}")
         }
     }
 
     suspend fun updateFactura(id: Long, factura: Factura): Factura {
-        // 1. Convertimos tu Factura (Domain) al formato plano que espera Tomcat
         val requestDto = factura.toRequestDto()
-
-        // 2. Enviamos el DTO al servicio
         val response = facturaService.updateFactura(id, requestDto)
-
-        // 3. Gestionamos la respuesta
         if (response.isSuccessful && response.body() != null) {
-            // Aquí devuelves la factura actualizada.
-            // Si el servidor te devuelve el objeto plano, podrías mapearlo de vuelta si fuera necesario.
-            // Como ya tienes la factura original, retornar 'factura' suele ser suficiente.
             return factura
         } else {
             throw Exception("Error del servidor al actualizar: ${response.code()}")
         }
     }
-    private fun parseFecha(fechaString: String): Date {
-        return try {
-            // Este formato "yyyy-MM-dd'T'HH:mm:ss" coincide con el que envías desde Tomcat
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            format.parse(fechaString) ?: Date()
-        } catch (e: Exception) {
-            Date() // Si falla por cualquier cosa, devuelve la fecha de hoy
-        }
-    }
+
     suspend fun deleteFactura(id: Long) {
         val response = facturaService.deleteFactura(id)
         if (!response.isSuccessful) {
             throw Exception("No se pudo borrar la factura")
+        }
+    }
+
+    private fun parseFecha(fechaString: String): Date {
+        return try {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            format.parse(fechaString) ?: Date()
+        } catch (e: Exception) {
+            Date()
+        }
+    }
+
+    // --- 🚀 NUEVOS MÉTODOS PARA PRODUCTOS Y SERVICIOS ---
+
+    suspend fun addProductoAFactura(facturaProducto: FacturaProductoDto) {
+        val response = facturaProductoService.createFacturaProducto(facturaProducto)
+        if (!response.isSuccessful) {
+            throw Exception("Error al vincular el producto a la factura: ${response.code()}")
+        }
+    }
+    suspend fun deleteFacturaProducto(idFactura: Long, idProducto: Long) {
+        val response = facturaProductoService.deleteFacturaProducto(idFactura, idProducto)
+        if (!response.isSuccessful) {
+            throw Exception("Error al borrar el producto de la factura: ${response.code()}")
+        }
+    }
+    suspend fun addServicioAFactura(facturaServicio: FacturaServicioDto) {
+        val response = facturaServicioService.createFacturaServicio(facturaServicio)
+        if (!response.isSuccessful) {
+            throw Exception("Error al vincular el servicio a la factura: ${response.code()}")
+        }
+    }
+    suspend fun deleteFacturaServicio(idFactura: Long, idServicio: Long) {
+        val response = facturaServicioService.deleteFacturaServicio(idFactura, idServicio)
+        if (!response.isSuccessful) {
+            throw Exception("Error al borrar el servicio de la factura: ${response.code()}")
         }
     }
 }

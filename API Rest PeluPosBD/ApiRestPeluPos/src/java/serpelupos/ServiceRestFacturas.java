@@ -123,11 +123,7 @@ public class ServiceRestFacturas {
             } else {
                 dao.create(factura);
                 statusResul = Response.Status.CREATED;
-                mensaje.put("mensaje", "Factura " + factura.getIdFactura() + " grabada");
-                response = Response
-                        .status(statusResul)
-                        .entity(mensaje)
-                        .build();
+                response = Response.status(statusResul).entity(factura).build();
             }
         } catch (Exception ex) {
             ex.printStackTrace(); 

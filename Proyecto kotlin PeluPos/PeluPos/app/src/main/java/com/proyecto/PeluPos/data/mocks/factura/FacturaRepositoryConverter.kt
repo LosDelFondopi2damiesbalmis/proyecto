@@ -60,8 +60,8 @@ fun FacturaDto.toDomain(): Factura {
         tipoPago = this.tipoPago,
         cliente = this.idCliente,
         empleado = this.idEmpleado,
-        productos = this.facturaProductoCollection.map { it.producto }.toMutableList(),
-        servicios = this.facturaServicioCollection.map { it.servicio }.toMutableList()
+        productos = this.facturaProductoCollection.mapNotNull { it.producto }.toMutableList(),
+        servicios = this.facturaServicioCollection.mapNotNull { it.servicio }.toMutableList()
     )
 }
 fun Factura.toRequestDto(): FacturaRequestDto {
