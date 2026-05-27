@@ -186,14 +186,46 @@ class ProductosViewModel @Inject constructor(
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
                 try {
-                    // SOLUCIÓN 3: Pasamos el id a Int con .toInt()
+                    // 1. Intentamos borrarlo de verdad en la base de datos
                     productoRepository.borrarProducto(id.toInt())
 
-                    // SOLUCIÓN 4: Ponemos el mensaje a mano
+                    // 2. Si sale bien, mostramos el mensaje normal
                     _uiState.update {
                         it.copy(mensaje = "Producto eliminado", isLoading = false)
                     }
                     cargarDatos()
+
+                } catch (e: retrofit2.HttpException) {
+
+                    if (e.code() == 400) {
+                        try {
+                            // Buscamos el producto en la lista que tienes cargada
+                            val productoActual = _uiState.value.todosLosProductos.find { it.idProducto?.toInt() == id.toInt() }
+
+                            if (productoActual != null) {
+                                // Le cambiamos el nombre añadiendo una marca secreta
+                                val productoOculto = productoActual.copy(
+                                    nombre = "[OCULTO] " + productoActual.nombre,
+                                    precioVenta = 0.0,
+                                    stock = 0
+                                )
+
+                                // Llamamos a tu función de editar (usa el nombre exacto que tengas en tu repositorio)
+                                productoRepository.actualizarProducto( productoOculto)
+
+                                _uiState.update {
+                                    it.copy(mensaje = "El producto tenía ventas, así que se ha ocultado.", isLoading = false)
+                                }
+                                cargarDatos()
+                            }
+                        } catch (editError: Exception) {
+                            _uiState.update { it.copy(error = "No se pudo ocultar el producto", isLoading = false) }
+                        }
+                    } else {
+                        // Si es otro error (ej: 500)
+                        _uiState.update { it.copy(error = "Error del servidor: ${e.code()}", isLoading = false) }
+                    }
+
                 } catch (e: Exception) {
                     _uiState.update { it.copy(error = e.message, isLoading = false) }
                 }

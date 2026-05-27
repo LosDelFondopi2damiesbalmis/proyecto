@@ -9,7 +9,7 @@ sealed interface FacturacionEvent {
     data class OnClienteSeleccionado(val cliente: Cliente) : FacturacionEvent
     data class OnTipoPagoSeleccionado(val tipoPago: String) : FacturacionEvent
     object OnGuardarFactura : FacturacionEvent
-
+    object OnRecargarDatos : FacturacionEvent
     // Historial
     data class OnSearchQueryChange(val query: String) : FacturacionEvent
     data class OnEliminarFactura(val idFactura: Long) : FacturacionEvent

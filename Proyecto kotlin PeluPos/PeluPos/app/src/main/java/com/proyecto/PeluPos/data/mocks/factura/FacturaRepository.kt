@@ -26,20 +26,28 @@ class FacturaRepository @Inject constructor(
         val response = facturaService.getFacturas()
         if (response.isSuccessful) {
             val dtos = response.body() ?: emptyList()
-            return dtos.map { dto ->
+
+            // 🚀 Cambiamos .map por .mapNotNull
+            return dtos.mapNotNull { dto ->
+                // Si el cliente o el empleado faltan en el DTO, ignoramos esta factura corrupta
+                if (dto.idCliente == null || dto.idEmpleado == null) {
+                    return@mapNotNull null
+                }
+
                 Factura(
                     idFactura = dto.idFactura,
                     monto = dto.monto,
                     fecha = parseFecha(dto.fecha),
                     pendiente = dto.pendiente,
                     tipoPago = dto.tipoPago,
-                    cliente = dto.idCliente,
-                    empleado = dto.idEmpleado,
-                    // 🚀 USAMOS mapNotNull PARA EXTRAER LOS PRODUCTOS DE FORMA SEGURA
+                    cliente = dto.idCliente,   // Ya estamos 100% seguros de que no es null
+                    empleado = dto.idEmpleado, // Ya estamos 100% seguros de que no es null
                     productos = dto.facturaProductoCollection.mapNotNull { it.producto }.toMutableList(),
                     servicios = dto.facturaServicioCollection.mapNotNull { it.servicio }.toMutableList()
                 )
             }
+        } else if (response.code() == 404) {
+            return emptyList()
         } else {
             throw Exception("Error: ${response.code()}")
         }

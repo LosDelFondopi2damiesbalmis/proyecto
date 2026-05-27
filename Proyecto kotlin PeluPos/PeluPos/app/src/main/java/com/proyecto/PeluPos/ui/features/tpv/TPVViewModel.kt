@@ -56,6 +56,9 @@ class TpvViewModel @Inject constructor(
             TpvEvent.OnVaciarCarrito -> {
                 carritoRepository.vaciarCarrito()
             }
+            TpvEvent.OnLimpiarCarrito -> {
+                carritoRepository.vaciarCarrito()
+            }
         }
     }
 }

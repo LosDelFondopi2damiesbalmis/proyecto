@@ -16,6 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.proyecto.PeluPos.models.Cliente
 import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Factura
@@ -35,35 +38,60 @@ fun VentasScreen(
     toggleSidebar: () -> Unit,
     navigateToNewSale: () -> Unit,
     navigateToSaleDetail: (Long) -> Unit,
-    onBack: () -> Unit, // Recibimos el callback
+    onBack: () -> Unit,
 ) {
-    // Calculamos el total facturado sumando los montos de la lista visible
-    val totalFacturado = facturas.sumOf { it.monto }
+    // 🚀 RECARGA AUTOMÁTICA AL VOLVER A LA PANTALLA
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onEvent(FacturacionEvent.OnRecargarDatos)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
-    // Formateador de fecha real
+    val totalFacturado = facturas.sumOf { it.monto }
     val sdf = remember { SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()) }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Historial de Ventas") },
-                // BOTÓN DE VOLVER
+                title = { /* 🚀 LO DEJAMOS VACÍO PARA QUE NO SE DUPLIQUE CON TU OTRO MENÚ */ },
                 navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
                 }
             )
         }
     ) { paddingValues ->
 
-
-        Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(paddingValues)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)
+        ) {
+            // --- CABECERA ---
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                // Título grande movido aquí (si lo quieres ver una sola vez)
                 Text(
-                    "Historial Ventas",
+                    text = "Historial de Ventas",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
+
                 Text(
-                    "Total lista: ${String.format("%.2f", totalFacturado)}€",
-                    color = MaterialTheme.colorScheme.primary
+                    text = "Total lista: ${String.format("%.2f", totalFacturado)}€",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -79,12 +107,13 @@ fun VentasScreen(
                 )
             }
 
+            // --- LISTA DE FACTURAS ---
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 items(facturas) { factura ->
-                    // Para mostrar un resumen del servicio, podemos coger el primer servicio o producto
                     val resumenServicio = factura.servicios.firstOrNull()?.nombre
                         ?: factura.productos.firstOrNull()?.nombre
                         ?: "Varios ítems"
@@ -118,35 +147,44 @@ fun VentaCardMap(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        // 🚀 AÑADIMOS BOXWITHCONSTRAINTS PARA HACERLA RESPONSIVE
+        BoxWithConstraints {
+            val isCompact = this.maxWidth < 300.dp
 
-            // INFO IZQUIERDA
-            Row(modifier = Modifier.weight(1f)) {
-                // Icono dinámico según texto
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (metodoPago == "Tarjeta")
-                        MaterialTheme.colorScheme.primaryContainer
-                    else
-                        MaterialTheme.colorScheme.tertiaryContainer, // Color diferente para efectivo
-                    modifier = Modifier.size(48.dp)
+            if (isCompact) {
+                // --- DISEÑO VERTICAL (Para pantallas/ventanas muy estrechas) ---
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = if (metodoPago == "Tarjeta") Icons.Default.CreditCard else Icons.Default.AttachMoney,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (metodoPago == "Tarjeta") MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = if (metodoPago == "Tarjeta") Icons.Default.CreditCard else Icons.Default.AttachMoney,
+                                    contentDescription = null,
+                                    tint = if (metodoPago == "Tarjeta") MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = String.format("%.2f €", precio),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
-                }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Column {
                     Text(
                         text = servicio,
                         style = MaterialTheme.typography.titleMedium,
@@ -155,31 +193,77 @@ fun VentaCardMap(
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Schedule, null, modifier = Modifier.size(12.dp), tint = Color.Gray)
-                        Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "$fecha • $empleado",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = metodoPago,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+            } else {
+                // --- DISEÑO HORIZONTAL ORIGINAL (Para vistas normales) ---
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (metodoPago == "Tarjeta") MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = if (metodoPago == "Tarjeta") Icons.Default.CreditCard else Icons.Default.AttachMoney,
+                                    contentDescription = null,
+                                    tint = if (metodoPago == "Tarjeta") MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column {
+                            Text(
+                                text = servicio,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Schedule, null, modifier = Modifier.size(12.dp), tint = Color.Gray)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "$fecha • $empleado",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "$fecha • $empleado",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = String.format("%.2f €", precio),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = metodoPago,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline
                         )
                     }
                 }
-            }
-
-            // INFO PRECIO DERECHA
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "${precio}€",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = metodoPago,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
             }
         }
     }
