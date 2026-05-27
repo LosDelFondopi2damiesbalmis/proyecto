@@ -115,60 +115,129 @@ fun LocalCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Store, null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                }
-            }
+        // 🚀 LA MAGIA RESPONSIVE
+        BoxWithConstraints {
+            val isCompact = this.maxWidth < 300.dp
 
-            Spacer(modifier = Modifier.width(16.dp))
+            if (isCompact) {
+                // --- DISEÑO VERTICAL (Para cuando el menú lateral está abierto) ---
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(40.dp), // Un poco más pequeño
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.Store, null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                            }
+                        }
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = local.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        IconButton(onClick = onEditClick, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)) {
+                            Icon(Icons.Default.Edit, "Modificar Local")
+                        }
+                    }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = local.direccion, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
+                    // Título protegido con maxLines
+                    Text(text = local.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                // Empleados asignados
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.secondary)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    if (local.empleadoCollection.isNotEmpty()) {
-                        Text(
-                            text = local.empleadoCollection.joinToString(", ") { it.nombre },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    } else {
-                        Text("Sin equipo asignado", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline, fontStyle = FontStyle.Italic)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = local.direccion, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Empleados asignados
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.secondary)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        if (local.empleadoCollection.isNotEmpty()) {
+                            Text(
+                                text = local.empleadoCollection.joinToString(", ") { it.nombre },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        } else {
+                            Text("Sin equipo asignado", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline, fontStyle = FontStyle.Italic)
+                        }
                     }
                 }
-            }
+            } else {
+                // --- DISEÑO HORIZONTAL ORIGINAL (Para cuando hay espacio) ---
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier.size(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.Store, null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                        }
+                    }
 
-            IconButton(onClick = onEditClick, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)) {
-                Icon(Icons.Default.Edit, "Modificar Local")
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        // ⚠️ AÑADIDO: Límite de líneas al título
+                        Text(text = local.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = local.direccion, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Empleados asignados
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.secondary)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            if (local.empleadoCollection.isNotEmpty()) {
+                                Text(
+                                    text = local.empleadoCollection.joinToString(", ") { it.nombre },
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            } else {
+                                Text("Sin equipo asignado", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline, fontStyle = FontStyle.Italic)
+                            }
+                        }
+                    }
+
+                    IconButton(onClick = onEditClick, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)) {
+                        Icon(Icons.Default.Edit, "Modificar Local")
+                    }
+                }
             }
         }
     }
 }
-
 // --- PREVIEWS ---
 
 private val mockEmpleado1 = Empleado(1L, 600123456L, "a@a.com", "Barbero", "Carlos", null)

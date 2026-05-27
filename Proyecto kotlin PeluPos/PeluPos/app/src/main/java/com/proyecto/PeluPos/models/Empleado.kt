@@ -11,3 +11,9 @@ data class Empleado(
     @SerializedName("idLocal")
     var idLocal: Local? = null
 )
+
+data class ResumenVentas(
+    @SerializedName("totalFacturado") val totalFacturado: Double = 0.0,
+    @SerializedName("productosVendidos") val productosVendidos: Long = 0L,
+    @SerializedName("serviciosRealizados") val serviciosRealizados: Long = 0L
+)

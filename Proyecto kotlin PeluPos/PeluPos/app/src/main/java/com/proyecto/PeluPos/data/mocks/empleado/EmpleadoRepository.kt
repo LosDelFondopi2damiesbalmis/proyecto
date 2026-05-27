@@ -2,6 +2,7 @@ package com.proyecto.PeluPos.data.mocks.empleado
 
 import com.proyecto.PeluPos.data.services.empleados.EmpleadoService
 import com.proyecto.PeluPos.models.Empleado
+import com.proyecto.PeluPos.models.ResumenVentas
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -56,5 +57,9 @@ class EmpleadoRepository @Inject constructor(
         if (!response.isSuccessful) {
             throw Exception("No se pudo borrar el empleado")
         }
+    }
+    // En tu EmpleadoRepository:
+    suspend fun getResumenVentas(idEmpleado: Long): ResumenVentas {
+        return empleadoService.getResumenVentasEmpleado(idEmpleado)
     }
 }
