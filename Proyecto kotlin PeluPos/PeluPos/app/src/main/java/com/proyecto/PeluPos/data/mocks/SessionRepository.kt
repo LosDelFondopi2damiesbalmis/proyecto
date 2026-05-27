@@ -1,6 +1,8 @@
 package com.proyecto.PeluPos.data.mocks
 
 import android.content.Context
+import android.util.Log
+import com.proyecto.PeluPos.data.services.autentication.ApiServicesException
 import com.proyecto.PeluPos.data.services.autentication.AuthServiceImplementation
 import com.proyecto.PeluPos.models.LoginRequest
 import com.proyecto.PeluPos.models.LoginResponse
@@ -21,22 +23,51 @@ class SessionRepository @Inject constructor(
 
     suspend fun login(usuario: String, contrasena: String): LoginResponse = withContext(Dispatchers.IO) {
         val request = LoginRequest(usuario = usuario, contrasena = contrasena)
-        val response = authService.login(request)
 
-        // Si el token nos llega bien (como te acaba de pasar en el Logcat)
-        if (!response.jwtToken.isNullOrEmpty()) {
+        try {
+            // 1. Llamamos a Tomcat. Como no usas "Response<>", esto devuelve los datos directamente
+            val dato = authService.login(request)
+
+            // 2. Comprobamos que el token exista realmente
+            if (dato.jwtToken.isNullOrEmpty()) {
+                throw ApiServicesException("Credenciales incorrectas")
+            }
+
+            // 3. ✅ ÉXITO: Guardamos los datos
             prefs.edit().apply {
-                putString("jwt_token", response.jwtToken)
-                putString("usuario", response.usuario)
-                putString("rol", response.rolUsuario)
-                // 🚀 NUEVO: Guardamos también los IDs
-                putString("idUsuario", response.idUsuario)
-                putString("idEmpleado", response.idEmpleado)
+                putString("jwt_token", dato.jwtToken)
+                putString("usuario", dato.usuario)
+                putString("rol", dato.rolUsuario)
+                putString("idUsuario", dato.idUsuario)
+                putString("idEmpleado", dato.idEmpleado)
                 apply()
             }
-        }
 
-        return@withContext response
+            return@withContext dato
+
+        } catch (e: retrofit2.HttpException) {
+            // 4. ❌ FALLO HTTP (Ej: Tomcat devuelve 401 Unauthorized o 403)
+            // Como Retrofit salta aquí directamente si hay error, limpiamos la memoria
+            prefs.edit().clear().apply()
+
+            // Podemos leer el errorBody desde la excepción
+            val bodyError = e.response()?.errorBody()?.string() ?: ""
+            Log.e("LOGIN", "Error (código ${e.code()}): \n$bodyError")
+
+            throw ApiServicesException("Contraseña o usuario incorrectos")
+
+        } catch (e: Exception) {
+            // 5. ❌ FALLO DE RED / OTRA EXCEPCIÓN: ¡LIMPIAMOS MEMORIA POR SEGURIDAD!
+            prefs.edit().clear().apply()
+
+            Log.e("LOGIN", "Error de red o ejecución: ${e.localizedMessage}")
+
+            // Si es nuestra propia excepción (la del token vacío), la dejamos pasar
+            if (e is ApiServicesException) throw e
+
+            // Si es otro error (ej. Timeout, servidor apagado)
+            throw ApiServicesException("No se pudo conectar con el servidor. Comprueba tu conexión.")
+        }
     }
 
     // 🚀 EL DASHBOARD AHORA LEERÁ SIEMPRE DEL DISCO, JAMÁS SERÁ NULL

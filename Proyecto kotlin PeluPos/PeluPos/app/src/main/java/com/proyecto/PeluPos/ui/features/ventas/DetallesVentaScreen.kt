@@ -179,7 +179,8 @@ fun DetallesVentaScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { onEvent(FacturacionEvent.OnEliminarFactura(factura.idFactura)) },
+                    onClick = { onEvent(FacturacionEvent.OnEliminarFactura(factura.idFactura))
+                                onBack()},
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)

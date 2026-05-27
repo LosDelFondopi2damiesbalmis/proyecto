@@ -8,10 +8,7 @@ import com.proyecto.PeluPos.data.mocks.empleado.EmpleadoRepository
 import com.proyecto.PeluPos.data.mocks.factura.FacturaRepository
 import com.proyecto.PeluPos.data.mocks.producto.ProductoRepository
 import com.proyecto.PeluPos.data.mocks.servicio.ServicioRepository
-import com.proyecto.PeluPos.models.Cliente
-import com.proyecto.PeluPos.models.Empleado
 import com.proyecto.PeluPos.models.Factura
-import com.proyecto.PeluPos.models.FacturaMinDto
 import com.proyecto.PeluPos.models.FacturaProductoDto
 import com.proyecto.PeluPos.models.FacturaProductoPKDto
 import com.proyecto.PeluPos.models.FacturaServicioDto
@@ -43,39 +40,58 @@ class FacturacionViewModel @Inject constructor(
         observarCarrito()
     }
 
-    private fun cargarDatosIniciales() {
+    fun cargarDatosIniciales() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true) }
+
             try {
-                // 1. Cargamos TODOS los catálogos asíncronamente desde Tomcat
-                val productos = productoRepository.obtenerProductos()
-                val servicios = servicioRepository.getServicios()
-                val empleadosReales = empleadoRepository.getEmpleados() // 🚀 Datos reales de red
-                val clientesReales = clienteRepository.getClientes()    // 🚀 Datos reales de red
-
-                // 2. Traemos el historial real de facturas emitidas
-                val historialFacturas = facturaRepository.getFacturas()
-
-                // 3. Actualizamos el estado con la información real de la BD
-                _uiState.update {
-                    it.copy(
-                        productosDisponibles = productos,
-                        serviciosDisponibles = servicios,
-                        empleadosDisponibles = empleadosReales,
-                        clientesDisponibles = clientesReales,
-                        todasLasFacturas = historialFacturas,
-                        facturasVisibles = filtradasPorQuery(historialFacturas, it.searchQuery),
-                        isLoading = false
-                    )
-                }
+                val facturas = facturaRepository.getFacturas()
+                _uiState.update { it.copy(
+                    todasLasFacturas = facturas,
+                    facturasVisibles = facturas // 👈 ¡ESTA ES LA LÍNEA MÁGICA!
+                ) }
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Error al sincronizar datos con el servidor: ${e.message}"
-                    )
-                }
+                android.util.Log.e("CARGA_DATOS", "Fallo en Facturas: ${e.message}")
+                _uiState.update { it.copy(
+                    todasLasFacturas = emptyList(),
+                    facturasVisibles = emptyList() // Vaciamos ambas por seguridad
+                ) }
             }
+
+            // 🚀 2. Intentamos cargar Clientes
+            try {
+                val clientes = clienteRepository.getClientes()
+                _uiState.update { it.copy(clientesDisponibles = clientes) }
+            } catch (e: Exception) {
+                android.util.Log.e("CARGA_DATOS", "Fallo en Clientes: ${e.message}")
+            }
+
+            // 🚀 3. Intentamos cargar Empleados
+            try {
+                val empleados = empleadoRepository.getEmpleados()
+                _uiState.update { it.copy(empleadosDisponibles = empleados) }
+            } catch (e: Exception) {
+                android.util.Log.e("CARGA_DATOS", "Fallo en Empleados: ${e.message}")
+            }
+
+            // 🚀 4. Intentamos cargar Productos
+            try {
+                val productos = productoRepository.obtenerProductos()
+                _uiState.update { it.copy(productosDisponibles = productos) }
+            } catch (e: Exception) {
+                android.util.Log.e("CARGA_DATOS", "Fallo en Productos: ${e.message}")
+            }
+
+            // 🚀 5. Intentamos cargar Servicios (¡Aquí está el nuevo!)
+            try {
+                // Asegúrate de que el nombre de la función coincida con la de tu repositorio real
+                val servicios = servicioRepository.getServicios()
+                _uiState.update { it.copy(serviciosDisponibles = servicios) }
+            } catch (e: Exception) {
+                android.util.Log.e("CARGA_DATOS", "Fallo en Servicios: ${e.message}")
+            }
+
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -102,6 +118,7 @@ class FacturacionViewModel @Inject constructor(
                 devolverFactura(event.idFactura)
             }
             FacturacionEvent.OnGuardarFactura -> guardarFactura()
+            FacturacionEvent.OnRecargarDatos -> cargarDatosIniciales()
 
             // --- HISTORIAL ---
             is FacturacionEvent.OnSearchQueryChange -> {
