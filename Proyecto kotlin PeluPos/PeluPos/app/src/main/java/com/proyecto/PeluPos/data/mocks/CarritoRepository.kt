@@ -23,7 +23,14 @@ class CarritoRepository @Inject constructor() {
     }
 
     fun agregarServicio(servicio: Servicio) {
-        _serviciosEscogidos.update { actual -> actual + servicio }
+        _serviciosEscogidos.update { actual ->
+
+            if (actual.any { it.idServicio == servicio.idServicio }) {
+                actual
+            } else {
+                actual + servicio
+            }
+        }
     }
 
     fun vaciarCarrito() {

@@ -33,7 +33,8 @@ import java.util.Locale
 @Composable
 fun DetallesVentaScreen(
     factura: Factura?, // <-- Ahora recibimos el objeto real
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onEvent: (FacturacionEvent) -> Unit
 ) {
 
     if (factura == null) {
@@ -178,7 +179,7 @@ fun DetallesVentaScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* Lógica devolución */ },
+                    onClick = { onEvent(FacturacionEvent.OnEliminarFactura(factura.idFactura)) },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
@@ -226,30 +227,30 @@ fun DetailRow(icon: ImageVector, label: String, value: String) {
         }
     }
 }
-
-// --- PREVIEW CON DATOS REALES ---
-@Preview(showBackground = true)
-@Composable
-fun PreviewSaleDetail() {
-    // Mocks
-    val empleadoMock = Empleado(1L, telefono = 5323523, "carlos@pelu.com", "Peluquero", nombre = "Carlos")
-    val clienteMock = Cliente(1L, "Juan Pérez", 0.0, 655111222)
-    val servicioMock =
-        Servicio(1L, "Corte Degradado + Barba", 25.0, "Corte y perfilado", empleadoMock)
-
-    val facturaMock = Factura(
-        idFactura = 123456789L,
-        monto = 25.0,
-        fecha = Date(),
-        pendiente = false,
-        tipoPago = "Tarjeta",
-        cliente = clienteMock,
-        empleado = empleadoMock,
-        servicios = mutableListOf(servicioMock),
-        productos = mutableListOf()
-    )
-
-    MaterialTheme { // Usa tu PeluPosTheme aquí en tu código real
-        DetallesVentaScreen(factura = facturaMock, onBack = {})
-    }
-}
+//
+//// --- PREVIEW CON DATOS REALES ---
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewSaleDetail() {
+//    // Mocks
+//    val empleadoMock = Empleado(1L, telefono = 5323523, "carlos@pelu.com", "Peluquero", nombre = "Carlos")
+//    val clienteMock = Cliente(1L, "Juan Pérez", 0.0, 655111222)
+//    val servicioMock =
+//        Servicio(1L, "Corte Degradado + Barba", 25.0, "Corte y perfilado", empleadoMock)
+//
+//    val facturaMock = Factura(
+//        idFactura = 123456789L,
+//        monto = 25.0,
+//        fecha = Date(),
+//        pendiente = false,
+//        tipoPago = "Tarjeta",
+//        cliente = clienteMock,
+//        empleado = empleadoMock,
+//        servicios = mutableListOf(servicioMock),
+//        productos = mutableListOf()
+//    )
+//
+//    MaterialTheme { // Usa tu PeluPosTheme aquí en tu código real
+//        DetallesVentaScreen(factura = facturaMock, onBack = {})
+//    }
+//}
