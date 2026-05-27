@@ -12,4 +12,6 @@ sealed interface ClientesEvent {
     data class OnDeudaChange(val deuda: String) : ClientesEvent
     data class SaldarDeuda(val idCliente: Long) : ClientesEvent
     object GuardarCliente : ClientesEvent
+
+    object BorrarCliente : ClientesEvent
 }

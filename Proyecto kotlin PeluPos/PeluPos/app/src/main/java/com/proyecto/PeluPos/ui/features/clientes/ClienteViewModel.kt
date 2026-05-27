@@ -84,7 +84,7 @@ class ClientesViewModel @Inject constructor(
     fun onEvent(event: ClientesEvent) {
         when (event) {
             ClientesEvent.CargarClientes -> cargarDatos()
-
+            ClientesEvent.BorrarCliente -> borrarCliente()
             is ClientesEvent.OnSearchQueryChange -> {
                 _uiState.update {
                     it.copy(
@@ -124,6 +124,36 @@ class ClientesViewModel @Inject constructor(
                 } catch (e: Exception) {
                     _uiState.update { it.copy(isLoading = false, error = "No se pudo saldar la deuda: ${e.message}") }
                 }
+            }
+        }
+    }
+    private fun borrarCliente() {
+        // Obtenemos el ID del cliente que estamos editando
+        val id = _uiState.value.editandoClienteId ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null, mensaje = null) }
+            try {
+                // ⚠️ Asegúrate de que el método en tu repository se llame así
+                clienteRepository.deleteCliente(id)
+
+                _uiState.update { it.copy(mensaje = "Cliente eliminado con éxito", isLoading = false) }
+                cargarDatos()
+
+            } catch (e: retrofit2.HttpException) {
+                // 🛡️ ESCUDO: Si el cliente ya tiene facturas, Tomcat dará error 400
+                if (e.code() == 400) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "No se puede borrar: Este cliente ya tiene facturas en el historial."
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(isLoading = false, error = "Error del servidor: ${e.code()}") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Error al borrar cliente: ${e.message}") }
             }
         }
     }
