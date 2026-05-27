@@ -30,6 +30,23 @@ fun ClienteFormScreen(
                 title = { Text(if (isEditing) "Modificar Cliente" else "Nuevo Cliente", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, "Volver") }
+                },
+                // 🚀 NUEVO: Botón de borrar a la derecha
+                actions = {
+                    if (isEditing) {
+                        IconButton(
+                            onClick = {
+                                onEvent(ClientesEvent.BorrarCliente)
+                                onNavigateBack() // Volvemos a la lista tras darle a borrar
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Borrar Cliente",
+                                tint = MaterialTheme.colorScheme.error // Lo ponemos en rojo
+                            )
+                        }
+                    }
                 }
             )
         }
