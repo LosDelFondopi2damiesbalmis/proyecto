@@ -36,7 +36,7 @@ namespace PeluPOS.Services
         public static readonly ILocalService Locales = new LocalService(LocalApi);
         public static readonly IProductoService Productos = new ProductoService(ProductoApi, FacturaApi);
         public static readonly IServicioService Servicios = new ServicioService(ServicioApi, FacturaApi);
-        public static readonly IVentaService Ventas = new VentaService(FacturaApi);
+        public static readonly IVentaService Ventas = new VentaService(FacturaApi, ProductoApi, ServicioApi);
         public static readonly ICatalogService Catalog = new CatalogService(ProductoApi, ServicioApi, ClienteApi);
         public static readonly ITpvVentaService TpvVenta = new TpvVentaService(FacturaApi);
     }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PeluPOS.Views.Locales"
         mc:Ignorable="d"
-        Title="NuevoLocalDialog"  Width="420" Height="350"
+        Title="NuevoLocalDialog" Width="420" Height="380"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -15,64 +15,94 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding Titulo}"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="{DynamicResource TextPrimaryBrush}"
-                   Margin="0 0 0 12"/>
-
-        <StackPanel Grid.Row="1" Margin="0 0 0 10">
-            <TextBlock Text="Nombre"
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0 0 0 14">
+            <TextBlock Text="{Binding Titulo}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="Rellena los datos del local."
+                       FontSize="12"
                        Foreground="{DynamicResource TextSecondaryBrush}"
-                       FontSize="12"/>
-            <TextBox Height="34"
-                     Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{DynamicResource BackgroundBrush}"
-                     Foreground="{DynamicResource TextPrimaryBrush}"
-                     BorderBrush="{DynamicResource BorderBrush}"
-                     BorderThickness="1"
-                     Padding="10,0"/>
+                       Margin="0,4,0,0"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Margin="0 0 0 10">
-            <TextBlock Text="Dirección"
-                       Foreground="{DynamicResource TextSecondaryBrush}"
-                       FontSize="12"/>
-            <TextBox Height="34"
-                     Text="{Binding Direccion, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{DynamicResource BackgroundBrush}"
-                     Foreground="{DynamicResource TextPrimaryBrush}"
-                     BorderBrush="{DynamicResource BorderBrush}"
-                     BorderThickness="1"
-                     Padding="10,0"/>
-        </StackPanel>
+        <!-- Form -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="16">
 
-        <TextBlock Grid.Row="3"
-                   Text="{Binding Error}"
-                   Foreground="{DynamicResource ErrorBrush}"
-                   FontSize="12"
-                   Margin="0,6,0,0"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                <!-- Nombre -->
+                <StackPanel Grid.Row="0" Margin="0 0 0 10">
+                    <TextBlock Text="Nombre *"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBox Height="34"
+                             Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
+                             Background="{DynamicResource BackgroundBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1"
+                             Padding="10,0"/>
+                </StackPanel>
+
+                <!-- Dirección -->
+                <StackPanel Grid.Row="1" Margin="0 0 0 10">
+                    <TextBlock Text="Dirección"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBox Height="34"
+                             Text="{Binding Direccion, UpdateSourceTrigger=PropertyChanged}"
+                             Background="{DynamicResource BackgroundBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1"
+                             Padding="10,0"/>
+                </StackPanel>
+
+                <!-- Error -->
+                <TextBlock Grid.Row="2"
+                           Text="{Binding Error}"
+                           Foreground="{DynamicResource ErrorBrush}"
+                           FontSize="12"
+                           Margin="0,4,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Footer buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,14,0,0">
             <Button Content="Cancelar"
-                    Width="110" Height="36"
+                    Width="110" Height="38"
                     Margin="0,0,10,0"
                     Click="Cancelar_Click"
                     Background="{DynamicResource SurfaceBrush}"
                     Foreground="{DynamicResource TextPrimaryBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"/>
+
             <Button Content="Guardar"
-                    Width="110" Height="36"
+                    Width="110" Height="38"
                     Click="Guardar_Click"
                     Background="{DynamicResource PrimaryBrush}"
-                    Foreground="White"
+                    Foreground="{DynamicResource TextPrimaryDarkBrush}"
                     BorderThickness="0"/>
         </StackPanel>
     </Grid>
