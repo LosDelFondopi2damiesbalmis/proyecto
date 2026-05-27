@@ -23,8 +23,6 @@ namespace PeluPOS.Views.Usuarios
 
         private async Task CargarDesdeApiAsync()
         {
-            CountText.Text = "Cargando…";
-
             var dtos = await AppServices.UsuarioApi.GetUsuariosAsync();
 
             _all = dtos.Select(u => new UsuarioRow
@@ -46,8 +44,7 @@ namespace PeluPOS.Views.Usuarios
             foreach (var u in (data ?? _all))
                 _usuarios.Add(u);
 
-            UsuariosGrid.ItemsSource = _usuarios;
-            CountText.Text = $"{_usuarios.Count} usuarios";
+            UsuariosListView.ItemsSource = _usuarios;
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -154,16 +151,6 @@ namespace PeluPOS.Views.Usuarios
             }
 
             await CargarDesdeApiAsync();
-        }
-
-        private async void Recargar_Click(object sender, RoutedEventArgs e)
-        {
-            await CargarDesdeApiAsync();
-        }
-
-        private void Exportar_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Exportar: aquí generarías Excel/CSV.");
         }
 
         // ── helpers ──────────────────────────────────────────────────────────

@@ -22,10 +22,11 @@ namespace PeluPOS.Views.Locales
     {
         public NuevoLocalViewModel VM { get; }
 
-        public NuevoLocalDialog(NuevoLocalViewModel vm)
+        public NuevoLocalDialog(NuevoLocalViewModel vm, string titulo = "Crear nuevo local")
         {
             InitializeComponent();
             VM = vm;
+            VM.Titulo = titulo;
             DataContext = VM;
         }
 

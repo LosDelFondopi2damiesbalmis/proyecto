@@ -225,7 +225,7 @@
                         <Button Style="{StaticResource NavButton}" Click="Servicios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="✂" Style="{StaticResource NavIcon}" FontFamily="Segoe UI Symbol"/>
-                                <TextBlock Text="Servicios" VerticalAlignment="Center" Foreground="White"/>
+                                <TextBlock Text=" Servicios" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
 

@@ -112,7 +112,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Info -->
-                                <StackPanel>
+                                <StackPanel Margin="5">
                                     <TextBlock Text="{Binding Nombre}"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -149,6 +149,7 @@
 
                                     <Button Style="{StaticResource BtnEliminar}"
                                             Content="Eliminar"
+                                            Margin="0,0,0,0"
                                             Padding="12,4"
                                             Click="DeleteEmpleado_Click"
                                             Tag="{Binding Id}"/>
@@ -156,7 +157,6 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-
                 </ListView>
             </Grid>
         </Border>

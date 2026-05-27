@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PeluPOS.Views.Locales"
         mc:Ignorable="d"
-        Title="NuevoLocalDialog"  Width="420" Height="300"
+        Title="NuevoLocalDialog"  Width="420" Height="350"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Crear nuevo local"
+        <TextBlock Text="{Binding Titulo}"
                    FontSize="18"
                    FontWeight="SemiBold"
                    Foreground="{DynamicResource TextPrimaryBrush}"
@@ -31,26 +31,26 @@
             <TextBlock Text="Nombre"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        FontSize="12"/>
-            <TextBox Height="32"
+            <TextBox Height="34"
                      Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{DynamicResource SurfaceBrush}"
+                     Background="{DynamicResource BackgroundBrush}"
                      Foreground="{DynamicResource TextPrimaryBrush}"
                      BorderBrush="{DynamicResource BorderBrush}"
                      BorderThickness="1"
-                     Padding="0,5,0,0"/>
+                     Padding="10,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0 0 0 10">
             <TextBlock Text="Dirección"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        FontSize="12"/>
-            <TextBox Height="30"
+            <TextBox Height="34"
                      Text="{Binding Direccion, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{DynamicResource SurfaceBrush}"
+                     Background="{DynamicResource BackgroundBrush}"
                      Foreground="{DynamicResource TextPrimaryBrush}"
                      BorderBrush="{DynamicResource BorderBrush}"
                      BorderThickness="1"
-                     Padding="0,5,0,0"/>
+                     Padding="10,0"/>
         </StackPanel>
 
         <TextBlock Grid.Row="3"

@@ -11,5 +11,7 @@ namespace PeluPOS.Services.Locales
     {
         Task<IReadOnlyList<Local>> GetAllAsync();
         Task<Local> AddAsync(string nombre, string direccion);
+        Task<bool> UpdateAsync(long id, string nombre, string direccion);
+        Task<bool> DeleteAsync(long id);
     }
 }
