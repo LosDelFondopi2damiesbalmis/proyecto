@@ -1,8 +1,6 @@
 using PeluPOS.Models.ApiDtos.Clientes;
 using PeluPOS.Models.ApiDtos.Empleados;
 using PeluPOS.Models.ApiDtos.Facturas;
-using PeluPOS.Models.ApiDtos.Productos;
-using PeluPOS.Models.ApiDtos.Servicios;
 using PeluPOS.Models.Entities;
 using PeluPOS.Services.Api;
 
@@ -24,10 +22,13 @@ namespace PeluPOS.Services.TPV
             bool pendiente,
             IReadOnlyList<LineaFactura> lineas)
         {
-            if (lineas == null || lineas.Count == 0) throw new InvalidOperationException("No hay líneas en el ticket.");
-            if (string.IsNullOrWhiteSpace(tipoPago)) tipoPago = "Efectivo";
+            if (lineas == null || lineas.Count == 0)
+                throw new InvalidOperationException("No hay líneas en el ticket.");
+            if (string.IsNullOrWhiteSpace(tipoPago))
+                tipoPago = "Efectivo";
 
-            var dto = new FacturaDto
+            // ── PASO 1: Crear la cabecera de la factura (sin líneas) ──────────
+            var headerDto = new FacturaDto
             {
                 monto      = lineas.Sum(l => l.Cantidad * l.PrecioUnitario),
                 fecha      = DateTime.Now,
@@ -36,42 +37,63 @@ namespace PeluPOS.Services.TPV
                 idEmpleado = new EmpleadoDto { idEmpleado = empleadoId },
                 idCliente  = cliente != null ? new ClienteDto { idCliente = cliente.Id } : null
             };
+            // Las colecciones deben estar vacías para que la API no intente
+            // procesar líneas cuyo FK (idFactura) aún no existe.
+            headerDto.facturaProductoCollection = new List<FacturaProductoDto>();
+            headerDto.facturaServicioCollection  = new List<FacturaServicioDto>();
 
-            foreach (var l in lineas)
+            var facturaCreada = await _facturaApi.CreateAsync(headerDto)
+                ?? throw new InvalidOperationException("La API no devolvió la factura creada.");
+
+            long newIdFactura = facturaCreada.idFactura;
+
+            // ── PASO 2: Crear cada línea de producto ──────────────────────────
+            foreach (var l in lineas.Where(x => x.Producto != null))
             {
-                if (l.Producto != null)
+                var lineaDto = new FacturaProductoDto
                 {
-                    dto.facturaProductoCollection.Add(new FacturaProductoDto
+                    facturaProductoPK = new FacturaProductoPkDto
                     {
-                        facturaProductoPK = new FacturaProductoPkDto { idProducto = l.Producto.Id },
-                        cantidad          = l.Cantidad,
-                        precioVendido     = l.PrecioUnitario,
-                        producto          = new ProductoDto { idProducto = l.Producto.Id, nombre = l.Producto.Nombre }
-                    });
-                }
-                else if (l.Servicio != null)
-                {
-                    dto.facturaServicioCollection.Add(new FacturaServicioDto
-                    {
-                        facturaServicioPK = new FacturaServicioPkDto { idServicio = l.Servicio.Id },
-                        cantidad          = l.Cantidad,
-                        precioCobrado     = l.PrecioUnitario,
-                        servicio          = new ServicioDto { idServicio = l.Servicio.Id, nombre = l.Servicio.Nombre }
-                    });
-                }
+                        idFactura  = newIdFactura,
+                        idProducto = l.Producto!.Id
+                    },
+                    cantidad      = l.Cantidad,
+                    precioVendido = l.PrecioUnitario
+                    // producto is intentionally omitted: the Java API reconstructs it
+                    // from facturaProductoPK.idProducto, so sending a partial object
+                    // with null @NotNull fields would cause JSON-B validation errors.
+                };
+                await _facturaApi.AddProductoAsync(lineaDto);
             }
 
-            await _facturaApi.CreateAsync(dto);
+            // ── PASO 3: Crear cada línea de servicio ──────────────────────────
+            foreach (var l in lineas.Where(x => x.Servicio != null))
+            {
+                var lineaDto = new FacturaServicioDto
+                {
+                    facturaServicioPK = new FacturaServicioPkDto
+                    {
+                        idFactura  = newIdFactura,
+                        idServicio = l.Servicio!.Id
+                    },
+                    cantidad      = l.Cantidad,
+                    precioCobrado = l.PrecioUnitario
+                    // servicio is intentionally omitted: the Java API reconstructs it
+                    // from facturaServicioPK.idServicio.
+                };
+                await _facturaApi.AddServicioAsync(lineaDto);
+            }
 
+            // ── Construir la entidad local con el ID real devuelto por la API ─
             var factura = new Factura
             {
-                Id        = 0,
-                Fecha     = dto.fecha,
+                Id        = newIdFactura,
+                Fecha     = headerDto.fecha,
                 TipoPago  = tipoPago,
                 Pendiente = pendiente,
                 Cliente   = cliente,
                 Empleado  = new Empleado { Id = empleadoId },
-                Monto     = dto.monto
+                Monto     = headerDto.monto
             };
 
             foreach (var l in lineas)

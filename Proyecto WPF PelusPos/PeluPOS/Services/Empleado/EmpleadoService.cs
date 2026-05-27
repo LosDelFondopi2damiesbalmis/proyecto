@@ -24,15 +24,29 @@ namespace PeluPOS.Services
 
         // ── mappers ──────────────────────────────────────────────────────────
 
-        private static Empleado MapEmpleado(EmpleadoDto dto) => new Empleado
+        private static Empleado MapEmpleado(EmpleadoDto dto)
         {
-            Id       = dto.idEmpleado,
-            Nombre   = dto.nombre,
-            Cargo    = dto.cargo    ?? string.Empty,
-            Email    = dto.email    ?? string.Empty,
-            Telefono = dto.telefono ?? 0L,
-            LocalId  = dto.idLocal  ?? 0L
-        };
+            // The backend may send the local either as a nested object
+            // (Spring Boot default: "local": { "idLocal": 1, "nombre": "…" })
+            // or as a flat scalar ("idLocal": 1).  Try the nested object first.
+            var localId     = dto.local?.idLocal ?? dto.idLocal ?? 0L;
+            var localNombre = dto.local?.nombre  ?? string.Empty;
+
+            return new Empleado
+            {
+                Id       = dto.idEmpleado,
+                Nombre   = dto.nombre,
+                Cargo    = dto.cargo    ?? string.Empty,
+                Email    = dto.email    ?? string.Empty,
+                Telefono = dto.telefono ?? 0L,
+                LocalId  = localId,
+                Local    = localId == 0 ? null : new Local
+                {
+                    Id     = localId,
+                    Nombre = localNombre
+                }
+            };
+        }
 
         private static Factura MapFactura(Models.ApiDtos.Facturas.FacturaDto dto) => new Factura
         {
@@ -83,7 +97,7 @@ namespace PeluPOS.Services
                 cargo    = cargo,
                 email    = email,
                 telefono = telefono,
-                idLocal  = localId
+                local    = localId == 0 ? null : new Models.ApiDtos.Locales.LocalDto { idLocal = localId }
             };
             await _empleadoApi.CreateAsync(dto);
 
@@ -111,7 +125,8 @@ namespace PeluPOS.Services
                 nombre     = nombre,
                 cargo      = cargo,
                 email      = email,
-                telefono   = telefono
+                telefono   = telefono,
+                local      = localId == 0 ? null : new Models.ApiDtos.Locales.LocalDto { idLocal = localId }
             };
             await _empleadoApi.UpdateAsync(dto);
         }

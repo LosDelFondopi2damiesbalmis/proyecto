@@ -40,15 +40,22 @@ namespace PeluPOS.ViewModels
 
             foreach (var e in empleados)
             {
+                // Primary: cross-reference the Locales collection loaded above.
+                // Fallback: use the Local navigation property set by MapEmpleado,
+                //           which carries the name directly from the API nested object.
+                var localNombre = Locales.FirstOrDefault(l => l.Id == e.LocalId)?.Nombre
+                                  ?? e.Local?.Nombre
+                                  ?? string.Empty;
+
                 _todos.Add(new EmpleadoDto
                 {
-                    idEmpleado = e.Id,
-                    nombre = e.Nombre,
-                    cargo = e.Cargo,
-                    email = e.Email,
-                    telefono = e.Telefono,
-                    idLocal = e.LocalId,
-                    LocalNombre = Locales.FirstOrDefault(l => l.Id == e.LocalId)?.Nombre
+                    idEmpleado  = e.Id,
+                    nombre      = e.Nombre,
+                    cargo       = e.Cargo,
+                    email       = e.Email,
+                    telefono    = e.Telefono,
+                    idLocal     = e.LocalId,
+                    LocalNombre = localNombre
                 });
             }
             AplicarFiltro();
