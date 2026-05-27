@@ -1,11 +1,14 @@
 package com.proyecto.PeluPos.di
 
+import com.google.gson.GsonBuilder
 import com.proyecto.PeluPos.data.mocks.CarritoRepository
 import com.proyecto.PeluPos.data.services.autentication.AuthInterceptor
 import com.proyecto.PeluPos.data.services.autentication.AuthService
 import com.proyecto.PeluPos.data.services.clientes.ClienteService
 import com.proyecto.PeluPos.data.services.empleados.EmpleadoService
+import com.proyecto.PeluPos.data.services.facturas.FacturaProductoService
 import com.proyecto.PeluPos.data.services.facturas.FacturaService
+import com.proyecto.PeluPos.data.services.facturas.FacturaServicioService
 import com.proyecto.PeluPos.data.services.locales.LocalService
 import com.proyecto.PeluPos.data.services.productos.ProductoService
 import com.proyecto.PeluPos.data.services.servicios.ServicioService
@@ -40,7 +43,17 @@ class ModuleApp {
     fun provideClienteService(retrofit: Retrofit): ClienteService {
         return retrofit.create(ClienteService::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideFacturaProductoService(retrofit: Retrofit): FacturaProductoService {
+        return retrofit.create(FacturaProductoService::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideFacturaServicioService(retrofit: Retrofit): FacturaServicioService {
+        return retrofit.create(FacturaServicioService::class.java)
+    }
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -65,11 +78,14 @@ class ModuleApp {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val gson = GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss") // <--- ¡La clave está aquí!
+            .create()
         return Retrofit.Builder()
             .client(okHttpClient)
             // IMPORTANTE: Cambia "api/" por la ruta base real de tu API en NetBeans [cite: 15]
             .baseUrl("http://pelupos.spaincentral.cloudapp.azure.com:8080/pelupos/servicio/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 

@@ -25,27 +25,39 @@ data class FacturaDto(
     val facturaServicioCollection: List<FacturaServicioDto>
 )
 
-data class FacturaProductoDto(
-    @SerializedName("producto")
-    val producto: Producto,
-
-    @SerializedName("cantidad")
-    val cantidad: Int,
-
-    @SerializedName("precioVendido")
-    val precioVendido: Double? = null
+data class FacturaMinDto(
+    @SerializedName("idFactura")
+    val idFactura: Long
 )
 
-// DTO para los Servicios
+
+// 1. Creamos los DTOs para las Claves Compuestas
+data class FacturaProductoPKDto(
+    @SerializedName("idFactura") val idFactura: Long,
+
+    @SerializedName("idProducto") val idProducto: Long
+)
+
+data class FacturaServicioPKDto(
+    @SerializedName("idFactura") val idFactura: Long,
+
+    @SerializedName("idServicio") val idServicio: Long
+)
+
+// 2. Actualizamos los DTOs principales
+data class FacturaProductoDto(
+    @SerializedName("facturaProductoPK") val facturaProductoPK: FacturaProductoPKDto, // 🚀 Mandamos la clave directamente
+    @SerializedName("cantidad") val cantidad: Int,
+    @SerializedName("producto") val producto: Producto? = null,
+    @SerializedName("precioVendido") val precioVendido: Double? = null
+)
+
 data class FacturaServicioDto(
-    @SerializedName("servicio")
-    val servicio: Servicio,
+    @SerializedName("facturaServicioPK") val facturaServicioPK: FacturaServicioPKDto, // 🚀 Mandamos la clave directamente
+    @SerializedName("cantidad") val cantidad: Int,
+    @SerializedName("servicio") val servicio: Servicio? = null,
+    @SerializedName("precioCobrado") val precioCobrado: Double? = null
 
-    @SerializedName("cantidad")
-    val cantidad: Int,
-
-    @SerializedName("precioCobrado")
-    val precioCobrado: Double? = null
 )
 data class ClienteIdDto(val idCliente: Long)
 

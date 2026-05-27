@@ -83,7 +83,8 @@ fun NavGraphBuilder.salesDestination(
 
         DetallesVentaScreen(
             factura = facturaEncontrada,
-            onBack = onBack
+            onBack = onBack,
+            onEvent = { event -> vm.onEvent(event) }
         )
     }
 }

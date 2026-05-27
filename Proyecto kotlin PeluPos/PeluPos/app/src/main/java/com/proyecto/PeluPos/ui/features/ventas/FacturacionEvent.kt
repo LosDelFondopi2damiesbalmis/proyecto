@@ -12,4 +12,5 @@ sealed interface FacturacionEvent {
 
     // Historial
     data class OnSearchQueryChange(val query: String) : FacturacionEvent
+    data class OnEliminarFactura(val idFactura: Long) : FacturacionEvent
 }
